@@ -1,0 +1,10 @@
+A jQuery UI datepicker widget that allows for multiple calendars and calendar systems.
+Documentation at http://bililite.com/blog/2009/04/03/new-jquery-widget-flexcal/
+
+jquery.flexcal.js is the main file; it requires an HTML template, either flexcal.html or you can include flexcaltemplate.js which uses a "data:" URL to include the HTML as javascript.
+
+It depends on my jQuery UI subclassing routines, jquery.ui.subclass.ui (documentation at http://bililite.com/blog/extending-jquery-ui-widgets/ ) and popup widget, jquery.textpopup.js (documentation at http://bililite.com/blog/2009/01/02/new-ui-widgets-textpopup-and-hebrewkeyboard/ )
+
+jquery.ui.datepicker-fr.js is from the jQuery UI project, and is the French localization for datepicker. The examples in the documentation use it.
+
+jquery.timepickr.js is a time picker widget (documentation at http://bililite.com/blog/2009/07/09/updating-timepickr/ )
