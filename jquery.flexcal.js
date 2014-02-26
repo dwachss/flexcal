@@ -1,5 +1,5 @@
 // flexcal: a multi-calendar date picker 
-// Version 2.1.1
+// Version 2.1.2
 // Copyright (c) 2011 Daniel Wachsstock
 // MIT license:
 // Permission is hereby granted, free of charge, to any person
@@ -111,12 +111,8 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 	},
 	commit: function(d){
 		this.options.current = d;
-		// only change the value if it's valid (there's a calendar square for this date with a class of "commit")
-		// Note this looks in either calendar (the visible one or the hidden one); if you change criteria midstream this will fail
-		if (this.o.elements.find('a.commit[rel="'+this._date2string(d)+'"]').length > 0){
-			this.element.val(this.format(d));
-			this._trigger('commit', 0, d);
-		}
+		this.element.val(this.format(d));
+		this._trigger('commit', 0, d);
 		this.element[0].focus(); 
 		this.hide();
 	},
