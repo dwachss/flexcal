@@ -167,14 +167,14 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 				self.commit(self._createDate($target.attr('rel')));
 			}else if ($target.is('.ui-tabs-nav li:not(.ui-tabs-selected) a')){
 				self._makeCurrentCalendar(self.tabs.index($target.parent())); // the click is on the <a> but the data is on the <li>
-				self._setDate();
+				self._setDate(null, true);
 			}
 			return false; // and don't leave the page (or even change to a /# page)
 		}).keydown(function (e){
 			// from http://dev.aol.com/dhtml_style_guide#datepicker plus respecting isRTL, and changing control-keys to alt keys (FF uses ctrl-page up/down to switch tabs)
 			// alt-arrow keys switches calendars
 			var oneDay = 86400000, dir = self.o.l10n.isRTL ? -1 : 1;
-			function offsetDate(d) { self._setDate(new Date (self.options.current.getTime()+d*oneDay), true); return false; }
+			function offsetDate(d) { self._setDate(new Date (self.options.current.getTime()+d*oneDay)); return false; }
 			function calendarDate(which) { self._setDate(self.o.l10n.calendar(self.options.current)[which], true); return false; }
 			if (!e.ctrlKey && !e.altKey) switch (e.keyCode){
 				case $.ui.keyCode.ENTER: self.commit(self.options.current); return false;
@@ -199,11 +199,11 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 				case $.ui.keyCode.PAGE_DOWN: return calendarDate('nextYear');
 				case $.ui.keyCode.RIGHT:
 					self._makeCurrentCalendar((self.options.tab+1)%self.tabs.length);
-					self._setDate();
+					self._setDate(null, true);
 					return false;
 				case $.ui.keyCode.LEFT:
 					self._makeCurrentCalendar((self.options.tab+self.tabs.length-1)%self.tabs.length);
-					self._setDate();
+					self._setDate(null, true);
 					return false;
 			}
 		});
@@ -320,11 +320,11 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 		this.o.rev = (n < this.options.tab) ^ !!this.o.l10n.isRTL; // true if the transition should indicate backwards
 		this.options.tab = n;
 	},
-	_setDate: function(d, dontAnimate){
-		// dontAnimate is true if we shouldn't animate the transition if d is in the same month
+	_setDate: function(d, forceAnimate){
+		// forceAnimate is true if we want to animate the transition if d is in the same month (like if changing calendars)
 		var oldd = this.options.current, currCalendar = this.o.elements.eq(this.o.currSlide).find('table');
 		d = this.options.current = this._createDate(d, oldd);
-		if (dontAnimate && currCalendar.find('a[rel="'+this._date2string(d)+'"]').length > 0){
+		if (!forceAnimate && currCalendar.find('a[rel="'+this._date2string(d)+'"]').length > 0){
 			// the find(..) just looks for a date element with the desired date (stored in the rel attribute). If it's there, then the new date is showing and we can use it
 			currCalendar.find('a').removeClass('ui-state-focus').filter('[rel="'+this._date2string(d)+'"]').addClass('ui-state-focus');
 		}else{
@@ -366,16 +366,16 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 		// _setTabs redraws the tab bar; _setDate redraws the calendar
 		if (key == 'calendars' || key == 'calendarNames' || key == 'hidetabs'){
 			this._setTabs();
-			this._setDate();
+			this._setDate(null, true);
 		}
 		if (key == 'l10n'){
 			this._setL10n(value);
-			this._setDate();
+			this._setDate(null, true);
 		}
 		if (key == 'tab'){
 			this._setTabs();
 			this._makeCurrentCalendar(value);
-			this._setDate();
+			this._setDate(null, true);
 		}
 		if (key == 'transitionOptions') $.extend (this.o, value); // actually change the transition options
 	},

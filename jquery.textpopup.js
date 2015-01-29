@@ -63,7 +63,11 @@
 			if (box.is(':visible, :animated')) return;
 			self.position();
 			self.options.show.apply(box, this._speed);
-			box.queue(function(){self._trigger('shown'); box.dequeue()});
+			box.queue(function(){
+				self._trigger('shown');
+				// self.position();
+				box.dequeue()
+			});
 		},
 		hide: function(){
 			// having a hidden box with a tabindex bothers the browser to no end
