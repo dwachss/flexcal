@@ -241,7 +241,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 					].join('')).data('flexcal.l10n', n)[0];
 			}));
 	},
-	_date2string: date2string, // internal use only; the rel of each <a> is set to this.date2string(d) for the appropriate date. this._createDate(this.date2string(d)) must == d !
+	_date2string: date2string, // internal use only; the rel of each <a> is set to this._date2string(d) for the appropriate date. this._createDate(this._date2string(d)) must == d !
 	_generateCalendar: function(d){
 		// TODO: implement some kind of caching
 		var today = this._date2string(this._createDate(this.element.val())); // compare strings rather than Dates to avoid having the time be part of the comparison
