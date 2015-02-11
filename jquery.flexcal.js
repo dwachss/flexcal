@@ -1,6 +1,6 @@
 // flexcal: a multi-calendar date picker 
-// Version 2.1.2
-// Copyright (c) 2011 Daniel Wachsstock
+// Version 3.0
+// Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
@@ -83,7 +83,7 @@ if ($.support.ULwidth=== undefined){
 	})();
 }
 
-$.ui.ajaxpopup.subclass('ui.flexcal', {
+$.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	options: {
 		url: '/inc/flexcal.html',
 		calendars: ['en'],
@@ -235,8 +235,8 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 					'<li class="ui-corner-top" style="list-style: none"><a>', // odd bug: occasionally I get a list-style-image showing if I don't remove it on each tab
 					self.options.calendarNames[i] ||
 						n.name ||
-						($.ui.flexcal.l10n[n] && $.ui.flexcal.l10n[n].name) ||
-						$.ui.flexcal.prototype.options.l10n.name,
+						($.bililite.flexcal.l10n[n] && $.bililite.flexcal.l10n[n].name) ||
+						$.bililite.flexcal.prototype.options.l10n.name,
 					'</a></li>'
 					].join('')).data('flexcal.l10n', n)[0];
 			}));
@@ -340,9 +340,9 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 	},
 	_setL10n: function(name){
 		this.o.l10n = $.extend(true, {},
-			$.ui.flexcal.prototype.options.l10n,
+			$.bililite.flexcal.prototype.options.l10n,
 			this.options.l10n,
-			$.ui.flexcal.l10n[name] || name // name is either an index to $.ui.flexcal.l10n or the actual localization object
+			$.bililite.flexcal.l10n[name] || name // name is either an index to $.bililite.flexcal.l10n or the actual localization object
 		);
 		this._trigger('l10n', 0, name);
 	},
@@ -414,7 +414,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 function date2string (d) {
 	return [d.getMonth()+1, d.getDate(), d.getFullYear()].join('/');
 }
-$.ui.flexcal.date2string = date2string;
+$.bililite.flexcal.date2string = date2string;
 
 function addDay(d, n){
 	if (n === undefined) n = 1;
@@ -425,7 +425,7 @@ function addDay(d, n){
 // takes a Date object
 // and returns an object with the following fields: first: Date of the first of the month, Last: Date of the last of the month, prev: Date of one month ago,
 // next: one month from now, m: month number (0 indexed), y: year number, dow: day of the week (0 indexed)
-$.ui.flexcal.calendars = {
+$.bililite.flexcal.calendars = {
 	gregorian: function(d){
 		var m = d.getMonth(), y = d.getFullYear(), date = d.getDate(), first = new Date (y, m, 1);
 		var prev = new Date (y, m-1, date), next = new Date (y, m+1, date);
@@ -464,7 +464,7 @@ $.ui.flexcal.calendars = {
 };
 
 // need to add the default after it is defined
-$.ui.flexcal.prototype.options.l10n.calendar = $.ui.flexcal.calendars.gregorian;
+$.bililite.flexcal.prototype.options.l10n.calendar = $.bililite.flexcal.calendars.gregorian;
 
 window.archaicNumbers = function(arr){
 	return function(n){
@@ -518,13 +518,13 @@ var arabic2hebrew = archaicNumbers([
 	[/^(&#\d{4};)$/, "$1&#x05F3;"] // geresh
 ]);
 
-$.ui.flexcal.l10n = {
+$.bililite.flexcal.l10n = {
 	en: {
 		name: 'English'
 	},
 	jewish: {
 		name: 'Jewish',
-		calendar: $.ui.flexcal.calendars.jewish,
+		calendar: $.bililite.flexcal.calendars.jewish,
 		monthNames: ['Nisan', 'Iyar', 'Sivan', 'Tammuz', 'Av', 'Elul',
 			'Tishrei', 'Cheshvan', 'Kislev', 'Tevet', 'Shevat', 'Adar',
 			'Adar I', 'Adar II'],
@@ -532,7 +532,7 @@ $.ui.flexcal.l10n = {
 	},
 	'he-jewish': {
 		name: '&#1506;&#1489;&#1512;&#1497;&#1514;',
-		calendar: $.ui.flexcal.calendars.jewish,
+		calendar: $.bililite.flexcal.calendars.jewish,
 		monthNames:  [
 			"&#1504;&#1497;&#1505;&#1503;",
 			"&#1488;&#1497;&#1497;&#1512;",

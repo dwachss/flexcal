@@ -1,7 +1,7 @@
 ﻿// textpopup and hebrew keyboard widgets
-// Version: 1.4
-// dependencies: jquery.ui.subclass.js (mine), ui.core.js, effects.core.js (from jQuery UI 1.8)
-// Copyright (c) 2010 Daniel Wachsstock
+// Version: 2.0
+// dependencies: jquery.ui.subclass.js (mine), ui.core.js, effects.core.js (from jQuery UI)
+// Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
@@ -24,10 +24,8 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-// Modified: 2010-11-23
-
 (function($){
-	$.ui.widget.subclass('ui.textpopup', {
+	$.widget('bililite.textpopup', {
 		_init: function(){
 			var self = this;
 			this._hideOnOutsideClick(this.options.hideOnOutsideClick);
@@ -162,7 +160,7 @@
 	// a textpopup that loads its HTML from an external (Ajax) , fixed file (it's loaded once when needed at first, then saved)
 	// defaults.url must be defined
 	// includes a hack to allow data: urls even in IE (checks the url for 'data:,' then treats it specially)
-	$.ui.textpopup.subclass('ui.ajaxpopup', {
+	$.widget('bililite.ajaxpopup', $.bililite.textpopup, {
 		_html: undefined, // lazy load the code
 		_fill: function(box){
 			var self = this;
@@ -232,7 +230,7 @@
 	// add the lower cases
 	for (var c in keymap) if (c >= 65 && c <= 90) keymap[parseInt(c)+97-65] = keymap[c];
 
-	$.ui.ajaxpopup.subclass('ui.hebrewKeyboard', {
+	$.widget('bililite.hebrewKeyboard', $.bililite.ajaxpopup, {
 		_capsLock: false,
 		_fill: function(box){
 			var self = this;

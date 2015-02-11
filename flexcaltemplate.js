@@ -1,4 +1,4 @@
-$.ui.flexcal.prototype.options.url = 'data:,' +
+$.bililite.flexcal.prototype.options.url = 'data:,' +
 ['<div class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal">',
 '<style type="text/css">',
 '	.ui-flexcal-container {',

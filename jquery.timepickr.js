@@ -1,12 +1,12 @@
 /*
-  jQuery Ui timepickr
+  jQuery UI timepickr
   (c) Maxime Haineault <haineault@gmail.com> 
   http://haineault.com
 
   MIT License (http://www.opensource.org/licenses/mit-license.php
 Modified under license by Daniel Wachsstock
   
-	Updated 2010-03-25 for jQuery UI 1.8
+	Updated 2015-02-10 for jQuery UI 1.11
 */
 
 (function($) {
@@ -24,7 +24,7 @@ Modified under license by Daniel Wachsstock
 		return s;
 	}
 
-$.widget('ui.timepickr', {
+$.widget('bililite.timepickr', {
 	_init: function() {
 		var ui = this, element = this.element;
 		element.data('timepickr.initialValue', element.val());
@@ -201,7 +201,7 @@ $.widget('ui.timepickr', {
 	}
 });
 
-$.ui.timepickr.prototype.options = {
+$.bililite.timepickr.prototype.options = {
 	top:       6,
 	left:      0,
 	animSpeed: 0,

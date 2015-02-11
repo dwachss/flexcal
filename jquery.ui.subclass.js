@@ -1,4 +1,6 @@
 // Copyright (c) 2013 Daniel Wachsstock
+// Version 2.0
+// documentation at http://github.bililite.com/extending-widgets.html
 // MIT license:
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
@@ -21,11 +23,42 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 (function($){
-// create the master widget
-$.widget("ui.widget",{
-	// Aspect Oriented Programming tools from Justin Palmer's article
+
+// allow _init, _create, and _destroy to automatically call _super
+var oldwidget = $.widget;
+$.widget = function(name, base, prototype){
+	var proto = $.extend({}, prototype); // copy it so it can be reused
+	for (key in proto) if (proto.hasOwnProperty(key)) switch (key){
+		case '_create':
+			var create = proto._create;
+			proto._create = function(){
+				this.super();
+				create.apply(this);
+			};
+		break;
+		case '_init':
+			var init = proto._init;
+			proto._init = function(){
+				this._super();
+				init.apply(this);
+			};
+		break;
+		case '_destroy':
+			var destroy = proto._destroy;
+			proto.destroy = function(){
+				destroy.apply(this);
+				this._super();
+			};
+		break;
+	}
+	return oldwidget.call(this, name, base, proto); // set up the widget as usual
+};
+$.widget.extend = oldwidget.extend;
+$.widget.bridge = oldwidget.bridge;
+
+// implement Aspect-Oriented Programming
+$.extend($.Widget.prototype, {
 	yield: null,
-	version: 1.1,
 	returnValues: { },
 	before: function(method, f) {
 		var original = this[method];
@@ -53,68 +86,4 @@ $.widget("ui.widget",{
 	}
 });
 
-// from http://groups.google.com/group/comp.lang.javascript/msg/e04726a66face2a2 and
-// http://webreflection.blogspot.com/2008/10/big-douglas-begetobject-revisited.html
-var object = (function(F){
-	return (function(o){
-			F.prototype = o;
-			return new F();
-	});
-})(function (){});
-
-// create a widget subclass
-var OVERRIDE = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/; 
-$.ui.widget.subclass = function subclass(name){
-	$.widget(name,{}); // Slightly inefficient to create a widget only to discard its prototype, but it's not too bad
-	name = name.split('.');
-	var widget = $[name[0]][name[1]], superclass = this, superproto = superclass.prototype;
-	
-	
-	var proto = arguments[0] = widget.prototype = object(superproto); // inherit from the superclass
-	$.extend.apply(null, arguments); // and add other add-in methods to the prototype
-	widget.subclass = subclass;
-
-	// Subtle point: we want to call superclass init and destroy if they exist
-	// (otherwise the user of this function would have to keep track of all that)
-	for (key in proto) if (proto.hasOwnProperty(key)) switch (key){
-		case '_create':
-			var create = proto._create;
-			proto._create = function(){
-				superproto._create.apply(this);
-				create.apply(this);
-			};
-		break;
-		case '_init':
-			var init = proto._init;
-			proto._init = function(){
-				superproto._init.apply(this);
-				init.apply(this);
-			};
-		break;
-		case 'destroy':
-			var destroy = proto.destroy;
-			proto.destroy = function(){
-				destroy.apply(this);
-				superproto.destroy.apply(this);
-			};
-		break;
-		case 'options':
-			var options = proto.options;
-			proto.options = $.extend ({}, superproto.options, options);
-		break;
-		default:
-			if ($.isFunction(proto[key]) && $.isFunction(superproto[key]) && OVERRIDE.test(proto[key])){
-				proto[key] = (function(name, fn){
-					return function() {
-						var tmp = this._super;
-						this._super = superproto[name];
-						try { var ret = fn.apply(this, arguments); }   
-						finally { this._super = tmp; }					
-						return ret;
-					};
-				})(key, proto[key]);
-			}
-		break;
-	}
-};
 })(jQuery)
