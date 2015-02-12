@@ -27,6 +27,10 @@
 // allow _init, _create, and _destroy to automatically call _super
 var oldwidget = $.widget;
 $.widget = function(name, base, prototype){
+	if ( !prototype ) {
+		prototype = base;
+		base = $.Widget;
+	}
 	var proto = $.extend({}, prototype); // copy it so it can be reused
 	for (key in proto) if (proto.hasOwnProperty(key)) switch (key){
 		case '_create':
