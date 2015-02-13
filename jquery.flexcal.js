@@ -729,9 +729,9 @@ if (!$.calendarsPicker) $.calendarsPicker = { // allow using the picker localiza
 	setDefaults: $.noop
 }
 $.ui.flexcal.calendarBridge = function (name, language){
+	var fullname = language + ((language && name) ? '-' : '') + name;
 	name = (name || 'gregorian').toLowerCase(); // from Wood's code
 	language = language || '';
-	var fullname = language + ((language && name) ? '-' : '') + name;
 	if ($.ui.flexcal.l10n[fullname]) return $.ui.flexcal.l10n[fullname];
 	if (!$.calendars) return {}; // can't do anything if the plugin doesn't exist
 	if (!$.ui.flexcal.calendars[name] && $.calendars.calendars[name]){
