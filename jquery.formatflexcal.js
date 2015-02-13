@@ -74,7 +74,7 @@ $.ui.flexcal.subclass('bililite.formatflexcal', {
 
 /*
  TODO:
- replace this with my own formatter, more flexible in parsing (http://tedwise.com/2009/05/27/generous-on-input-strict-on-output/)
+ replace this with my own formatter, more flexible in parsing (http://en.wikipedia.org/wiki/Robustness_principle)
 and using my years/dates routines.
 Proposal: similar to http://keith-wood.name/calendars.html#format , using ' to mark literals and '' for a single quote,
 d - day of the month (no leading zero)
