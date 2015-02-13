@@ -271,7 +271,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 		var thisd = this._date2string(this.options.current);
 		var ret = [], l10n = this.o.l10n;
 		var cal = l10n.calendar(d);
-		var daysinweek = l10n.dayNamesMin.length, dow = cal.dow;
+		var daysinweek = l10n.dayNamesMin.length, dow = cal.first.getDay();
 		ret.push (
 			'<a class="go ',
 			l10n.isRTL ? 'ui-datepicker-next ' : 'ui-datepicker-prev ',
@@ -447,7 +447,7 @@ function addDay(d, n){
 // calendar algorithms
 // takes a Date object
 // and returns an object with the following fields: first: Date of the first of the month, Last: Date of the last of the month, prev: Date of one month ago,
-// next: one month from now, m: month number (0 indexed), y: year number, dow: day of the week (0 indexed)
+// next: one month from now, m: month number (0 indexed), y: year number
 $.ui.flexcal.calendars = {
 	gregorian: function(d){
 		var m = d.getMonth(), y = d.getFullYear(), date = d.getDate(), first = new Date (y, m, 1);
@@ -463,8 +463,7 @@ $.ui.flexcal.calendars = {
 			prevYear: new Date (y-1, m, nextYearDate),
 			nextYear: new Date (y+1, m, nextYearDate),
 			m: m,
-			y: y,
-			dow: first.getDay()
+			y: y
 		};
 	},
 	jewish: function(d){
@@ -480,8 +479,7 @@ $.ui.flexcal.calendars = {
 			prevYear: heb2civ($.extend({}, h, {y: h.y-1})),
 			nextYear: heb2civ($.extend({}, h, {y: h.y+1})),
 			m: h.m,
-			y: h.y,
-			dow: roshchodesh.getDay()
+			y: h.y
 		};
 	}
 };
@@ -723,6 +721,42 @@ function heb2civ(h, type){
 	// we won't try to correct an actually invalid date 
 	if (h.d < 30 || civ2heb(d).m == m) return d; // it worked
 	return new Date (h.y-3761, 2, day-1);
+}
+
+// create a localization object from Keith Wood's calendar system (http://keith-wood.name/calendars.html)
+$.ui.flexcal.calendarBridge = function (name, language){
+	var fullname = language + ((language && name) ? '-' : '') + name;
+	if ($.ui.flexcal.l10n[fullname]) return $.ui.flexcal.l10n[fullname];
+	if (!$.calendars) return {}; // can't do anything if the plugin doesn't exist
+	if (!$.ui.flexcal.calendars[name] && $.calendars.calendars[name]){
+		var c = $.calendars.instance(name);
+		$.ui.flexcal.calendars[name] = function (d){
+			var cdate = c.fromJSDate(d), y = cdate.year(), m = cdate.month(), d = cdate.day();
+			var first = c.newDate(y, m, 1).toJSDate();
+			var last = c.newDate(y, m, c.daysInMonth(y,m)).toJSDate();
+			return {
+				first: first,
+				last: last,
+				prev: cdate.newDate().add('m', -1).toJSDate(),
+				next: cdate.newDate().add('m', 1).toJSDate(),
+				prevYear: cdate.newDate().add('y', -1).toJSDate(),
+				nextYear: cdate.newDate().add('y', 1).toJSDate(),
+				y: y,
+				m: m
+			}
+		}
+	}
+	var region = $.calendars.calendars[name].prototype.regionalOptions; // where the details are stored
+	$.ui.flexcal.l10n[fullname] = $.extend({}, region[''], region[language]);
+	// next and prev text are in the date picker, not the language localization
+	if ($.calendarsPicker && $.calendarsPicker.regionalOptions[language]){
+		// jQuery UI standards say don't include the little arrows, which calendarsPicker often does
+		var next = $.calendarsPicker.regionalOptions[language].nextText.replace (/&#x3e;/g,'');
+		var prev = $.calendarsPicker.regionalOptions[language].prevText.replace (/&#x3c;/g,'');
+		if (next) $.ui.flexcal.l10n[fullname].next = next;
+		if (prev) $.ui.flexcal.l10n[fullname].prev = prev;
+	};
+	return $.ui.flexcal.l10n[fullname];
 }
 
 })(jQuery);
