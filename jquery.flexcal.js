@@ -211,11 +211,11 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 				case $.ui.keyCode.PAGE_DOWN: return calendarDate('nextYear');
 				case $.ui.keyCode.RIGHT:
 					self._makeCurrentCalendar((self.options.tab+1)%self.tabs.length);
-					self._setDate(null, true);
+					self._setDate(undefined, true);
 					return false;
 				case $.ui.keyCode.LEFT:
 					self._makeCurrentCalendar((self.options.tab+self.tabs.length-1)%self.tabs.length);
-					self._setDate(null, true);
+					self._setDate(undefined, true);
 					return false;
 			}
 		}).on('wheel', throttle (100, function (e){

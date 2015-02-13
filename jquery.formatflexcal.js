@@ -44,7 +44,7 @@ $.ui.flexcal.subclass('bililite.formatflexcal', {
 		this._resetFormatter();
 	},
 	_setOption: function(key, value){
-		_super(key, value);
+		this._super(key, value);
 		if (/^format/.test(key)){
 			this._resetFormatter();
 			this._setDate(undefined, true);
@@ -53,8 +53,8 @@ $.ui.flexcal.subclass('bililite.formatflexcal', {
 	format: format,
 	_date2string: format,
 	_createDate: function (d, oldd){
-		if (d instanceof String) try{
-			return this.formatCalendar.parseDate (
+		if (typeof d == 'string') try{
+			return this.formatCalendar.parseDate(
 				this.options.formatTemplate,
 				d,
 				this.options.formatSettings
@@ -63,7 +63,6 @@ $.ui.flexcal.subclass('bililite.formatflexcal', {
 			return oldd || new Date;
 		}
 		// not a string. See if Date can handle it.
-		if (d === null) console.error('null date');
 		d = new Date(d);
 		if (isNaN(d.getTime())) return oldd || new Date;
 		return d;
