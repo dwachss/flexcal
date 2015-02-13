@@ -65,7 +65,6 @@
 			self.options.show.apply(box, this._speed);
 			box.queue(function(){
 				self._trigger('shown');
-				// self.position();
 				box.dequeue()
 			});
 		},
