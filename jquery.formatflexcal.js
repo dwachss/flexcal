@@ -72,4 +72,26 @@ $.ui.flexcal.subclass('bililite.formatflexcal', {
 	}
 });
 
+/*
+ TODO:
+ replace this with my own formatter, more flexible in parsing (http://tedwise.com/2009/05/27/generous-on-input-strict-on-output/)
+and using my years/dates routines.
+Proposal: similar to http://keith-wood.name/calendars.html#format , using ' to mark literals and '' for a single quote,
+d - day of the month (no leading zero)
+dd - day of the month (two digit)
+D - day name short (dayNamesShort then dayNames then dayNamesMin)
+DD - day name long  (dayNames then dayNamesShort then dayNamesMin)
+DDDD - day number formatted (result of l10n.dates(d))
+m - month of the year (no leading zero)
+mm - month of the year (two digit)
+M - month name short (monthNamesShort then monthNames)
+MM - month name long (monthNames then monthNamesShort)
+yy - year (two digit)
+yyyy - year (four digit)
+YYYY - formatted year (result of l10n.years(yyyy))
+
+no julian dates or timestamps; no day of the year or week of the year for now.
+No predefined formats for now.
+*/
+
 })(jQuery);
