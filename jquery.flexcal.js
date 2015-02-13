@@ -111,8 +111,11 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 			prevText: 'Previous',
 			nextText: 'Next',
 			isRTL: false,
-			years: function(n) {return n},
-			dates: function(n) {return n}
+			dayOfWeek: 0,
+			years: function(n) {return n.toString()},
+			fromYears: undefined,
+			dates: function(n) {return n.toString()},
+			fromDates: undefined
 		},
 		reposition: true,
 		tab: 0,
@@ -271,7 +274,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 		var thisd = this._date2string(this.options.current);
 		var ret = [], l10n = this.o.l10n;
 		var cal = l10n.calendar(d);
-		var daysinweek = l10n.dayNamesMin.length, dow = cal.first.getDay();
+		var daysinweek = l10n.dayNamesMin.length, dow = cal.dow;
 		ret.push (
 			'<a class="go ',
 			l10n.isRTL ? 'ui-datepicker-next ' : 'ui-datepicker-prev ',
@@ -464,7 +467,10 @@ $.ui.flexcal.calendars = {
 			prevYear: new Date (y-1, m, nextYearDate),
 			nextYear: new Date (y+1, m, nextYearDate),
 			m: m,
-			y: y
+			y: y,
+			d: d,
+			dow: first.getDay(),
+			toDate: function (d) {return new Date (d.y, d.m, d.d)}
 		};
 	},
 	jewish: function(d){
@@ -480,7 +486,10 @@ $.ui.flexcal.calendars = {
 			prevYear: heb2civ($.extend({}, h, {y: h.y-1})),
 			nextYear: heb2civ($.extend({}, h, {y: h.y+1})),
 			m: h.m,
-			y: h.y
+			y: h.y,
+			d: h.d,
+			dow: roshchodesh.getDay(),
+			toDate: heb2civ
 		};
 	}
 };
