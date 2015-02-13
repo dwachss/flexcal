@@ -725,6 +725,8 @@ function heb2civ(h, type){
 
 // create a localization object from Keith Wood's calendar system (http://keith-wood.name/calendars.html)
 $.ui.flexcal.calendarBridge = function (name, language){
+	name = (name || 'gregorian').toLowerCase(); // from Wood's code
+	language = language || '';
 	var fullname = language + ((language && name) ? '-' : '') + name;
 	if ($.ui.flexcal.l10n[fullname]) return $.ui.flexcal.l10n[fullname];
 	if (!$.calendars) return {}; // can't do anything if the plugin doesn't exist
@@ -737,17 +739,18 @@ $.ui.flexcal.calendarBridge = function (name, language){
 			return {
 				first: first,
 				last: last,
-				prev: cdate.newDate().add('m', -1).toJSDate(),
-				next: cdate.newDate().add('m', 1).toJSDate(),
-				prevYear: cdate.newDate().add('y', -1).toJSDate(),
-				nextYear: cdate.newDate().add('y', 1).toJSDate(),
+				prev: cdate.newDate().add(-1, 'm').toJSDate(),
+				next: cdate.newDate().add(+1, 'm').toJSDate(),
+				prevYear: cdate.newDate().add(-1, 'y').toJSDate(),
+				nextYear: cdate.newDate().add(+1, 'y').toJSDate(),
 				y: y,
-				m: m
+				m: m-1 // Wood's code uses 1-based counting
 			}
 		}
 	}
 	var region = $.calendars.calendars[name].prototype.regionalOptions; // where the details are stored
 	$.ui.flexcal.l10n[fullname] = $.extend({}, region[''], region[language]);
+	$.ui.flexcal.l10n[fullname].calendar = $.ui.flexcal.calendars[name];
 	// next and prev text are in the date picker, not the language localization
 	if ($.calendarsPicker && $.calendarsPicker.regionalOptions[language]){
 		// jQuery UI standards say don't include the little arrows, which calendarsPicker often does
