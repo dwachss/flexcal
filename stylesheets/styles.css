@@ -1,19 +1,20 @@
-@import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);
+@import url(http://fonts.googleapis.com/css?family=Average+Sans|Source+Code+Pro|Fjalla+One); /* modified 2015-02-04 DHW */
 
 body {
-  padding:50px;
-  font:14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color:#777;
+  padding:20px; /* modified 2015-02-01 DHW */
+  font:14px/1.5 "Average Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color:#333; /* modified 2015-02-01 DHW */
   font-weight:300;
 }
 
 h1, h2, h3, h4, h5, h6 {
+  font-family: "Fjalla One";
   color:#222;
   margin:0 0 20px;
 }
 
 p, ul, ol, table, pre, dl {
-  margin:0 0 20px;
+  margin: 4px 0; /* modified 2015-02-01 DHW */
 }
 
 h1, h2, h3 {
@@ -46,7 +47,7 @@ a small {
 }
 
 .wrapper {
-  width:860px;
+  width:1060px; /* modified 2015-02-01 DHW */
   margin:0 auto;
 }
 
@@ -58,13 +59,13 @@ blockquote {
 }
 
 code, pre {
-  font-family:Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
+  font-family: "Source Code Pro", Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal; /* modified 2015-02-04 DHW */
   color:#333;
   font-size:12px;
 }
 
 pre {
-  padding:8px 15px;
+  padding:4px;
   background: #f8f8f8;  
   border-radius:5px;
   border:1px solid #e5e5e5;
@@ -160,7 +161,7 @@ header ul a strong {
 }
 
 section {
-  width:500px;
+  width:700px; /* modified 2015-02-01 DHW */
   float:right;
   padding-bottom:50px;
 }
