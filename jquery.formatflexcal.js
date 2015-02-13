@@ -42,11 +42,14 @@ $.ui.flexcal.subclass('bililite.formatflexcal', {
 	},
 	_init: function(){
 		this._resetFormatter();
-	}
+	},
 	_setOption: function(key, value){
 		_super(key, value);
-		if (/^format/.test(key)) this._resetFormatter();
-	}
+		if (/^format/.test(key)){
+			this._resetFormatter();
+			this._setDate(undefined, true);
+		}
+	},
 	format: format,
 	_date2string: format,
 	_createDate: function (d, oldd){
@@ -60,15 +63,14 @@ $.ui.flexcal.subclass('bililite.formatflexcal', {
 			return oldd || new Date;
 		}
 		// not a string. See if Date can handle it.
+		if (d === null) console.error('null date');
 		d = new Date(d);
 		if (isNaN(d.getTime())) return oldd || new Date;
 		return d;
 	},
 	_resetFormatter: function(){
-		// TODO: this
+		this.formatCalendar = $.calendars.instance(this.options.formatCalendar, this.options.formatLanguage);
 	}
-});
-
 });
 
 })(jQuery);

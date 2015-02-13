@@ -179,7 +179,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 				self.commit(self._createDate($target.attr('rel')));
 			}else if ($target.is('.ui-tabs-nav li:not(.ui-tabs-selected) a')){
 				self._makeCurrentCalendar(self.tabs.index($target.parent())); // the click is on the <a> but the data is on the <li>
-				self._setDate(null, true);
+				self._setDate(undefined, true);
 			}
 			return false; // and don't leave the page (or even change to a /# page)
 		}).keydown(function (e){
@@ -344,6 +344,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 		this.options.tab = n;
 	},
 	_setDate: function(d, forceAnimate){
+		// d is the date we want to change to; if undefined just redraws the calendar
 		// forceAnimate is true if we want to animate the transition if d is in the same month (like if changing calendars)
 		var oldd = this.options.current, currCalendar = this.o.elements.eq(this.o.currSlide).find('table');
 		d = this.options.current = this._createDate(d, oldd);
@@ -389,16 +390,16 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 		// _setTabs redraws the tab bar; _setDate redraws the calendar
 		if (key == 'calendars' || key == 'calendarNames' || key == 'hidetabs'){
 			this._setTabs();
-			this._setDate(null, true);
+			this._setDate(undefined, true);
 		}
 		if (key == 'l10n'){
 			this._setL10n(value);
-			this._setDate(null, true);
+			this._setDate(undefined, true);
 		}
 		if (key == 'tab'){
 			this._setTabs();
 			this._makeCurrentCalendar(value);
-			this._setDate(null, true);
+			this._setDate(undefined, true);
 		}
 		if (key == 'transitionOptions') $.extend (this.o, value); // actually change the transition options
 	},
