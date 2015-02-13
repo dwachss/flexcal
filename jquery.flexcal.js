@@ -724,6 +724,10 @@ function heb2civ(h, type){
 }
 
 // create a localization object from Keith Wood's calendar system (http://keith-wood.name/calendars.html)
+if (!$.calendarsPicker) $.calendarsPicker = { // allow using the picker localization without the whole picker
+	regionalOptions: {},
+	setDefaults: $.noop
+}
 $.ui.flexcal.calendarBridge = function (name, language){
 	name = (name || 'gregorian').toLowerCase(); // from Wood's code
 	language = language || '';
@@ -752,12 +756,12 @@ $.ui.flexcal.calendarBridge = function (name, language){
 	$.ui.flexcal.l10n[fullname] = $.extend({}, region[''], region[language]);
 	$.ui.flexcal.l10n[fullname].calendar = $.ui.flexcal.calendars[name];
 	// next and prev text are in the date picker, not the language localization
-	if ($.calendarsPicker && $.calendarsPicker.regionalOptions[language]){
+	if ($.calendarsPicker.regionalOptions[language]){
 		// jQuery UI standards say don't include the little arrows, which calendarsPicker often does
 		var next = $.calendarsPicker.regionalOptions[language].nextText.replace (/&#x3e;/g,'');
 		var prev = $.calendarsPicker.regionalOptions[language].prevText.replace (/&#x3c;/g,'');
-		if (next) $.ui.flexcal.l10n[fullname].next = next;
-		if (prev) $.ui.flexcal.l10n[fullname].prev = prev;
+		if (next) $.ui.flexcal.l10n[fullname].nextText = next;
+		if (prev) $.ui.flexcal.l10n[fullname].prevText = prev;
 	};
 	return $.ui.flexcal.l10n[fullname];
 }
