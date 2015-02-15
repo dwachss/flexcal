@@ -45,7 +45,7 @@ $.ui.flexcal.prototype.options.url = 'data:,' +
 '	}',
 '  .ui-flexcal .go {',
 '    z-index: 1;',
-'    font-size: 0.85em;',
+'    font-size: 0.90em;',
 '  }',
 '	.ui-flexcal .go.ui-state-hover {',
 '		top: 1px;',

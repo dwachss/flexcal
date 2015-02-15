@@ -238,8 +238,9 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 		cal.findandfilter('a:not([href])')['ui-clickable']();
 		cal.filter('a.go').removeClass('ui-state-default') // ui-datepicker has its own styling
 			.each(function(){ this.title = $(this).text() }); // when we use image replacement for the prev/next buttons, leave the text as a tooltip title
-		cal.filter('a.ui-datepicker-prev').find('span.ui-icon').addClass('ui-icon-circle-triangle-w');
-		cal.filter('a.ui-datepicker-next').find('span.ui-icon').addClass('ui-icon-circle-triangle-e');
+		// allow for using either the jQuery UI icons or the FontAwesome icon font
+		cal.filter('a.ui-datepicker-prev').find('span.ui-icon').addClass('ui-icon-circle-triangle-w fa fa-chevron-circle-left');
+		cal.filter('a.ui-datepicker-next').find('span.ui-icon').addClass('ui-icon-circle-triangle-e fa fa-chevron-circle-right');
 		if (this.o.l10n.isRTL) cal.filter('table').css('direction', 'rtl');
 		if (this.o.excludefilter) cal.find('a.commit').filter(this.o.excludefilter).
 		  removeClass('commit')['ui-unclickable']().addClass('ui-state-disabled');
