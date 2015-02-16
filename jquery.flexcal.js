@@ -95,9 +95,18 @@ function throttle (delay,f){
 	};
 }
 
+var defaultURL = 'data:,' +
+['<div class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal">',
+'	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"></ul>',
+'	<div class="ui-flexcal-container">',
+'		<div class="ui-flexcal-pane"></div>',
+'		<div class="ui-flexcal-pane"></div>',
+'	</div>',
+'</div>'].join('\n');
+
 $.ui.ajaxpopup.subclass('ui.flexcal', {
 	options: {
-		url: '/inc/flexcal.html',
+		url: defaultURL,
 		calendars: ['en'],
 		calendarNames: [],
 		current: undefined,
@@ -281,7 +290,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 			l10n.isRTL ? 'ui-datepicker-next ' : 'ui-datepicker-prev ',
 			'ui-corner-all" rel="', this._date2string(cal.prev),'">',
 			'<span class="ui-icon">',
-			l10n.prevText || 'Previous',
+			'<span>'+l10n.prevText || 'Previous'+'</span>', // internal span for icon replacement
 			'</span>',
 			'</a>'
 		);
@@ -290,7 +299,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 			l10n.isRTL ? 'ui-datepicker-prev ' : 'ui-datepicker-next ',
 			'ui-corner-all" rel="', this._date2string(cal.next),'">',
 			'<span class="ui-icon">',
-			l10n.nextText || 'Next',
+			'<span>'+l10n.nextText || 'Next'+'</span>', // internal span for icon replacement
 			'</span>',
 			'</a>'
 		);
@@ -759,7 +768,8 @@ $.ui.flexcal.calendarBridge = function (name, language){
 				prevYear: cdate.newDate().add(-1, 'y').toJSDate(),
 				nextYear: cdate.newDate().add(+1, 'y').toJSDate(),
 				y: y,
-				m: m-1 // Wood's code uses 1-based counting
+				m: m-1, // Wood's code uses 1-based counting
+				dow: first.getDay()
 			}
 		}
 	}
