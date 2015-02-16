@@ -231,6 +231,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 					return false;
 			}
 		}).on('wheel', throttle (100, function (e){
+			e.preventDefault();
 			e = e.originalEvent; // jQuery doesn't automatically copy these over
 			if (e.deltaY > 0){ // scroll down
 				box.trigger({type: 'keydown', keyCode: $.ui.keyCode.PAGE_DOWN, altKey: e.altKey}); // next month/year
@@ -240,10 +241,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 				box.trigger({type: 'keydown', keyCode: $.ui.keyCode.RIGHT, altKey: true}); // next tab
 			}else if (e.deltaX < 0){ // scroll left
 				box.trigger({type: 'keydown', keyCode: $.ui.keyCode.LEFT, altKey: true}); // prev tab
-			}else{
-				return;
 			}
-			e.preventDefault();
 		}));
 	},
 	_adjustHTML: function(cal){
