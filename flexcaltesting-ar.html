@@ -7,7 +7,7 @@
 	
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
 	<!-- cdn.rawgit.com caches after the first access, so we have to use a specific repo. Need to remember to keep this up to date -->
-	<link rel=stylesheet href=https://cdn.rawgit.com/dwachss/flexcal/1b5029f/flexcal.css />
+	<link rel=stylesheet href=https://cdn.rawgit.com/dwachss/flexcal/e5a483a/flexcal.css />
 	<style>
 		body {
 			margin: 2em;
@@ -25,14 +25,15 @@
 	<input type=text />
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/flexcal/1b5029f/jquery.ui.subclass.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/flexcal/1b5029f/jquery.textpopup.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/flexcal/1b5029f/jquery.flexcal.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/flexcal/e5a483a/jquery.calendars.picker-mock.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars-ar.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.islamic.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.islamic-ar.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.picker-ar.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/flexcal/e5a483a/jquery.ui.subclass.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/flexcal/e5a483a/jquery.textpopup.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/flexcal/e5a483a/jquery.flexcal.js"></script>
 	<script>
 		$('input[type=text]').eq(0).flexcal();
 		$('input[type=text]').eq(1).flexcal({
@@ -41,8 +42,10 @@
 		  'class': 'multicalendar fontawesome'
 		});
 		$('input[type=text]').eq(2).flexcal({
-		  calendars: ['en', $.ui.flexcal.calendarBridge('','ar'), $.ui.flexcal.calendarBridge('islamic','ar')],
-		  calendarNames: ['English', 'Arabic'],
+		  // the islamic arabic calendar uses long names (with يوم for each one). Use short names instead
+		  calendars: ['en', ['ar', 'Arabic'], ['ar-islamic', {dayNamesMin: [
+			'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'
+		  ]}]],
 		  'class': 'multicalendar fontawesome',
 		  position: {my: 'left center', at: 'right center', using: function(to) {$(this).animate(to)}},
 		  transition: function(o){
