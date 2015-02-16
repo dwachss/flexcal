@@ -6,6 +6,7 @@
     <title>Flexcal</title>
 
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+ 	<link rel=stylesheet href=https://rawgit.com/dwachss/flexcal/master/flexcal.css />
 	<style>
 		body {
 			margin: 2em;
@@ -23,10 +24,9 @@
 	<input type=text />
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/flexcal/master/jquery.ui.subclass.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/flexcal/master/jquery.textpopup.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/flexcal/master/jquery.flexcal.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/flexcal/master/flexcaltemplate.js"></script>
+	<script src="https://rawgit.com/dwachss/flexcal/master/jquery.ui.subclass.js"></script>
+	<script src="https://rawgit.com/dwachss/flexcal/master/jquery.textpopup.js"></script>
+	<script src="https://rawgit.com/dwachss/flexcal/master/jquery.flexcal.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars-ar.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.islamic.js"></script>
@@ -37,12 +37,12 @@
 		$('input[type=text]').eq(1).flexcal({
 		  position: 'bl',
 		  calendars: ['en', 'jewish', 'he-jewish'],
-		  'class': 'multicalendar'
+		  'class': 'multicalendar fontawesome'
 		});
 		$('input[type=text]').eq(2).flexcal({
 		  calendars: ['en', $.ui.flexcal.calendarBridge('','ar'), $.ui.flexcal.calendarBridge('islamic','ar')],
 		  calendarNames: ['English', 'Arabic'],
-		  'class': 'multicalendar',
+		  'class': 'multicalendar fontawesome',
 		  position: {my: 'left center', at: 'right center', using: function(to) {$(this).animate(to)}},
 		  transition: function(o){
 			o.elements.eq(o.currSlide).fadeOut(o.duration);
