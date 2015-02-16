@@ -83,18 +83,6 @@ if ($.support.ULwidth=== undefined){
 	})();
 }
 
-// simple throttling (for wheel events), based on https://github.com/cowboy/jquery-throttle-debounce/blob/master/jquery.ba-throttle-debounce.js
-function throttle (delay,f){
-	var last_exec = 0;
-	return function(){
-		var elapsed = +new Date - last_exec;
-		if (elapsed > delay){
-			f.apply(this, arguments);
-			last_exec = +new  Date;
-		}
-	};
-}
-
 var defaultURL = 'data:,' +
 ['<div class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal">',
 '	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"></ul>',
@@ -230,9 +218,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 					self._setDate(undefined, true);
 					return false;
 			}
-		}).on('wheel', function (e) {
-			e.preventDefault(); // always prevent default, not just when throttled
-		}).on('wheel', throttle (100, function (e){
+		}).on('wheel', function (e){
 			e = e.originalEvent; // jQuery doesn't automatically copy these over
 			if (e.deltaY > 0){ // scroll down
 				box.trigger({type: 'keydown', keyCode: $.ui.keyCode.PAGE_DOWN, altKey: e.altKey}); // next month/year
@@ -243,7 +229,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 			}else if (e.deltaX < 0){ // scroll left
 				box.trigger({type: 'keydown', keyCode: $.ui.keyCode.LEFT, altKey: true}); // prev tab
 			}
-		}));
+		});
 	},
 	_adjustHTML: function(cal){
 		cal.findandfilter('a:not([href])')['ui-clickable']();
