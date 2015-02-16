@@ -758,7 +758,8 @@ $.ui.flexcal.calendarBridge = function (name, language){
 				prevYear: cdate.newDate().add(-1, 'y').toJSDate(),
 				nextYear: cdate.newDate().add(+1, 'y').toJSDate(),
 				y: y,
-				m: m-1 // Wood's code uses 1-based counting
+				m: m-1, // Wood's code uses 1-based counting
+				dow: first.getDay()
 			}
 		}
 	}
