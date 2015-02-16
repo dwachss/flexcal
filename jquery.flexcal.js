@@ -108,7 +108,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 			prevText: 'Previous',
 			nextText: 'Next',
 			isRTL: false,
-			dayOfWeek: 0,
+			firstDay: 0,
 			years: function(n) {return n.toString()},
 			fromYears: undefined,
 			dates: function(n) {return n.toString()},

@@ -3,6 +3,7 @@
 .fontawesome .ui-icon{
 	background-image:none !important;
 	text-indent: 0 !important;
+	margin-top: -0.5em !important;
 }
 .fontawesome .ui-icon span{
 	text-indent: -99999px; /* move text for icon replacement */
