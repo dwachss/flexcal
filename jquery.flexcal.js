@@ -219,6 +219,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 					return false;
 			}
 		}).on('wheel', function (e){
+			e.preventDefault();
 			e = e.originalEvent; // jQuery doesn't automatically copy these over
 			if (e.deltaY > 0){ // scroll down
 				box.trigger({type: 'keydown', keyCode: $.ui.keyCode.PAGE_DOWN, altKey: e.altKey}); // next month/year
