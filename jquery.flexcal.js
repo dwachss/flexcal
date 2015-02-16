@@ -258,10 +258,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 			.html($.map(this.options.calendars, function(n,i){
 				return $([
 					'<li class="ui-corner-top" style="list-style: none"><a>', // odd bug: occasionally I get a list-style-image showing if I don't remove it on each tab
-					self.options.calendarNames[i] ||
-						n.name ||
-						($.ui.flexcal.l10n[n] && $.ui.flexcal.l10n[n].name) ||
-						$.ui.flexcal.prototype.options.l10n.name,
+					$.ui.flexcal.tol10n(n).name || $.ui.flexcal.prototype.options.l10n.name,
 					'</a></li>'
 					].join('')).data('flexcal.l10n', n)[0];
 			}));
@@ -368,7 +365,7 @@ $.ui.ajaxpopup.subclass('ui.flexcal', {
 		this.o.l10n = $.extend(true, {},
 			$.ui.flexcal.prototype.options.l10n,
 			this.options.l10n,
-			$.ui.flexcal.l10n[name] || name // name is either an index to $.ui.flexcal.l10n or the actual localization object
+			$.ui.flexcal.tol10n(name)
 		);
 		this._trigger('l10n', 0, name);
 	},
@@ -732,20 +729,54 @@ function heb2civ(h, type){
 	return new Date (h.y-3761, 2, day-1);
 }
 
-// create a localization object from Keith Wood's calendar system (http://keith-wood.name/calendars.html)
-if (!$.calendarsPicker) $.calendarsPicker = { // allow using the picker localization without the whole picker
-	regionalOptions: {},
-	setDefaults: $.noop
-}
-$.ui.flexcal.calendarBridge = function (name, language){
-	var fullname = language + ((language && name) ? '-' : '') + name;
-	name = (name || 'gregorian').toLowerCase(); // from Wood's code
-	language = language || '';
-	if ($.ui.flexcal.l10n[fullname]) return $.ui.flexcal.l10n[fullname];
-	if (!$.calendars) return {}; // can't do anything if the plugin doesn't exist
-	if (!$.ui.flexcal.calendars[name] && $.calendars.calendars[name]){
-		var c = $.calendars.instance(name);
-		$.ui.flexcal.calendars[name] = function (d){
+// create a localization object from a description.
+// Allow the use of the standard jquery ui datepicker localization (all gregorian calendars)
+// Allow Keith Wood's calendar system (http://keith-wood.name/calendars.html)
+// TODO: use the jQuery foundation's Globalize tools (https://github.com/jquery/globalize)
+
+$.ui.flexcal.tol10n = function tol10n (name){
+	if (name == null) return {};
+	if ($.isPlainObject(name)) return name;
+	if ($.isArray(name)) return name.reduce( function (previous, current){ // fold all the elements into an empty object
+		return $.extend(previous, tol10n(current));
+	}, {});
+	if ($.ui.flexcal.l10n[name]) return $.ui.flexcal.l10n[name];
+	for (var loc in tol10n.localizers){
+		var ret = tol10n.localizers[loc](name);
+		if (ret){
+			$.ui.flexcal.l10n[name] = ret;
+			return ret;
+		}
+	}
+	// Does not match a localization; assume this is just the name
+	return {name: name.toString()}
+};
+
+$.ui.flexcal.tol10n.localizers = {
+	datepicker: function (name){
+		return $.datepicker.regional[name];
+	}
+};
+
+if ($.calendars) $.ui.flexcal.tol10n.localizers.woodsCalendar = function (name){
+	console.log(name);
+	var calendarSystem, language;
+	if (name in $.calendars.calendars){
+		calendarSystem = name;
+		language = '';
+	}else if (name in $.calendars.calendars.gregorian.prototype.regionalOptions){
+		calendarSystem = 'gregorian';
+		language = name;
+	}else if (name.indexOf('-') > -1){
+		var nameparts = name.split('-');
+		calendarSystem = nameparts.pop();
+		language = nameparts.join('-'); // could have localization with more '-' in it
+	}
+	if (!(calendarSystem in $.calendars.calendars)) return;
+	if (!(calendarSystem in $.ui.flexcal.calendars)){
+		// create a flexcal-specific calendar system
+		var c = $.calendars.instance(calendarSystem);
+		$.ui.flexcal.calendars[calendarSystem] = function (d){
 			var cdate = c.fromJSDate(d), y = cdate.year(), m = cdate.month(), d = cdate.day();
 			var first = c.newDate(y, m, 1).toJSDate();
 			var last = c.newDate(y, m, c.daysInMonth(y,m)).toJSDate();
@@ -758,22 +789,27 @@ $.ui.flexcal.calendarBridge = function (name, language){
 				nextYear: cdate.newDate().add(+1, 'y').toJSDate(),
 				y: y,
 				m: m-1, // Wood's code uses 1-based counting
+				d: d,
 				dow: first.getDay()
 			}
 		}
 	}
-	var region = $.calendars.calendars[name].prototype.regionalOptions; // where the details are stored
-	$.ui.flexcal.l10n[fullname] = $.extend({}, region[''], region[language]);
-	$.ui.flexcal.l10n[fullname].calendar = $.ui.flexcal.calendars[name];
+	var region = $.calendars.calendars[calendarSystem].prototype.regionalOptions; // where the details are stored
+	if (!(language in region)) return;
+	var ret = $.extend({}, region[''], region[language]);
+	ret.calendar = $.ui.flexcal.calendars[calendarSystem];
 	// next and prev text are in the date picker, not the language localization
-	if ($.calendarsPicker.regionalOptions[language]){
+	if (language in $.calendarsPicker.regionalOptions){
 		// jQuery UI standards say don't include the little arrows, which calendarsPicker often does
 		var next = $.calendarsPicker.regionalOptions[language].nextText.replace (/&#x3e;/g,'');
 		var prev = $.calendarsPicker.regionalOptions[language].prevText.replace (/&#x3c;/g,'');
-		if (next) $.ui.flexcal.l10n[fullname].nextText = next;
-		if (prev) $.ui.flexcal.l10n[fullname].prevText = prev;
+		if (next) ret.nextText = next;
+		if (prev) ret.prevText = prev;
 	};
-	return $.ui.flexcal.l10n[fullname];
-}
+	return ret;	
+};
+
+// TODO: the Globalize routines
+	
 
 })(jQuery);
