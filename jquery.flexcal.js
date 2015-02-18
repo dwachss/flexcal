@@ -759,7 +759,6 @@ $.ui.flexcal.tol10n.localizers = {
 };
 
 if ($.calendars) $.ui.flexcal.tol10n.localizers.woodsCalendar = function (name){
-	console.log(name);
 	var calendarSystem, language;
 	if (name in $.calendars.calendars){
 		calendarSystem = name;
