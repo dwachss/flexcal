@@ -25,16 +25,26 @@
 	<input type=text />
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/flexcal/756c1bc/jquery.calendars.picker-mock.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/flexcal/v2.2/jquery.calendars.picker-mock.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars-ar.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.islamic.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.islamic-ar.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.picker-ar.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/flexcal/756c1bc/jquery.ui.subclass.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/flexcal/756c1bc/jquery.textpopup.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/flexcal/756c1bc/jquery.flexcal.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/jquery.repo/v1.1/jquery.repo.js"></script>
+
 	<script>
+	$.ajaxSetup({
+	  cache: true // no reason not to cache scripts
+	});
+	$.repo('dwachss/flexcal').then(function (repo){
+		$('head').append('<link rel=stylesheet href="'+repo+'/flexcal.css" />');
+		return $.getScripts([
+			repo+'/jquery.ui.subclass.js',
+			repo+'/jquery.textpopup.js',
+			repo+'/jquery.flexcal.js'
+		]);
+	}).then(function(){
 		$('input[type=text]').eq(0).flexcal();
 		$('input[type=text]').eq(1).flexcal({
 		  position: 'bl',
@@ -54,6 +64,8 @@
 		  },
 		  transitionOptions: {duration: 'slow'}	
 		});
+	});
 	</script>
   </body>
 </html>
+
