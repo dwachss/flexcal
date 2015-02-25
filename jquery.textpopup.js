@@ -47,7 +47,7 @@
 			}
 			if (this._triggerElement) $(trigger).unbind('.textpopup'); // don't forget to remove the old bindings 
 			// note that for elements that can get focus, self.show will be called twice (but we test for :visible so it doesn't animate twice)
-			if (trigger) this._triggerElement = $(trigger).bind('focus.textpopup click.textpopup', function (){
+			if (trigger) this._triggerElement = $(trigger).bind('focus.textpopup', function (){
 				self.show(); 
 				// allow the default behavior
 			});
@@ -67,7 +67,6 @@
 			self.options.show.apply(box, this._speed);
 			box.queue(function(){
 				self._trigger('shown');
-				// self.position();
 				box.dequeue()
 			});
 		},
