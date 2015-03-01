@@ -85,6 +85,19 @@ if ($.support.ULwidth=== undefined){
 	})();
 }
 
+var oneDay = 86400000; // milliseconds/day
+// for internal use; requires ECMAScript 5 (no IE 8!)
+// must have parseISO(ISOdate(d)).getTime() === d.getTime()
+// Can't just use new Date() for parseISO() because new Date('2015-02-27') assumes UTC, which gets converted to 
+// a local time, which (for those of us in the Western hemisphere) is the day before.
+function ISOdate(d) { return d.toISOString().slice(0,10) } 
+function parseISO(s) {var m = s.match(/(\d+)/g); return new Date(m[0],m[1]-1,m[2]); }
+// from http://stackoverflow.com/a/1268377 . Assumes whole positive numbers; too-long numbers are left as is
+function pad(n, p) {
+	var zeros = Math.max(0, p - n.toString().length );
+	return Math.pow(10,zeros).toString().substr(1) + n;
+}
+
 var defaultURL = 'data:,' +
 ['<div class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal">',
 '	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"></ul>',
@@ -98,7 +111,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	options: {
 		url: defaultURL,
 		calendars: ['en'],
-		calendarNames: [],
+		formatter: undefined,
 		current: undefined,
 		filter: undefined,
 		hidetabs: 'conditional',
@@ -114,7 +127,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			years: function(n) {return n.toString()},
 			fromYears: undefined,
 			dates: function(n) {return n.toString()},
-			fromDates: undefined
+			fromDates: undefined,
+			dateFormat: 'm/d/yyyy' // TODO: use toLocaleDateString
 		},
 		reposition: true,
 		tab: 0,
@@ -124,13 +138,30 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		}
 	},
 	commit: function(d){
+		console.log('committing');
 		this.options.current = d;
 		this.element.val(this.format(d));
 		this._trigger('commit', 0, d);
 		this.element[0].focus(); 
+		console.log('after focus');
 		this.hide();
 	},
-	format: date2string, // external formatting; the this.element.val is set to this.format(d) on commit
+	format: function (d){ // external formatting; the this.element.val is set to this.format(d) on commit
+		var o = this.options;
+		var l10n = tol10n(o.formatter || o.calendars[0], o.l10n); // use the first calendar
+		return $.bililite.flexcal.format(d, l10n);
+	},
+	parse: function (d){ // external string (this.element.val) to a date
+		if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return parseISO(d); // always allow ISO date strings
+		var o = this.options;
+		if (typeof d === 'string'){
+			var l10n = tol10n(o.formatter || o.calendars[0], o.l10n); // use the first calendar
+			d = $.bililite.flexcal.parse (d, l10n);
+		}
+		if (!(d instanceof Date)) d = new Date(d);
+		if (isNaN(d.getTime())) d = this.options.current;
+		return d;
+	}, 
 	show: function(){
 		var $cont = this.box().find('.ui-flexcal-container');
 		this.o.$cont = $cont;
@@ -142,13 +173,13 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	},
 	_init: function(){
 		var self = this;
-		this.options.current = this._createDate(this.options.current);
+		this.options.current = this.parse(this.options.current || new Date);
 		this.o = $.extend({before: [], after: []}, this.options.transitionOptions); // create an "options" object for the cycle plugin
 		this.o.$cont = this.o.elements = this.tabs = $([]); // create dummy elements until AJAX can get the real ones
 		if (this.options.filter){
 			// the filter option returns true for elements to allow, but _adjustHTML expects a filter that returns true for elements to disable
 			this.o.excludefilter = function(){
-				return !(self.options.filter.call(this, self._createDate(this.rel)));
+				return !(self.options.filter.call(this, parseISO(this.rel)));
 			}
 		}
 		this.o.currSlide = 0;
@@ -178,7 +209,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			}else if ($target.is('.go')){
 				self._setDate($target.attr('rel'));
 			}else if ($target.is('.commit')){
-				self.commit(self._createDate($target.attr('rel')));
+				self.commit(parseISO($target.attr('rel')));
 			}else if ($target.is('.ui-tabs-nav li:not(.ui-tabs-selected) a')){
 				self._makeCurrentCalendar(self.tabs.index($target.parent())); // the click is on the <a> but the data is on the <li>
 				self._setDate(undefined, true);
@@ -187,7 +218,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		}).keydown(function (e){
 			// from http://dev.aol.com/dhtml_style_guide#datepicker plus respecting isRTL, and changing control-keys to alt keys (FF uses ctrl-page up/down to switch tabs)
 			// alt-arrow keys switches calendars
-			var oneDay = 86400000, dir = self.o.l10n.isRTL ? -1 : 1;
+			var dir = self.o.l10n.isRTL ? -1 : 1;
 			function offsetDate(d) { self._setDate(new Date (self.options.current.getTime()+d*oneDay)); return false; }
 			function calendarDate(which) { self._setDate(self.o.l10n.calendar(self.options.current)[which], true); return false; }
 			if (!e.ctrlKey && !e.altKey) switch (e.keyCode){
@@ -246,37 +277,28 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		  removeClass('commit')['ui-unclickable']().addClass('ui-state-disabled');
 		return cal;
 	},
-	_createDate: function(d, oldd){
-		// converts d into a valid date
-		oldd = oldd || new Date;
-		if (!d) return oldd;
-		if (!(d instanceof Date)) d = new Date(d);
-		if (isNaN(d.getTime())) return oldd;
-		return d;
-	},
 	_createTabs: function(){
 		var self = this;
 		return this.box().find('ul.ui-tabs-nav')
 			.html($.map(this.options.calendars, function(n,i){
 				return $([
 					'<li class="ui-corner-top" style="list-style: none"><a>', // odd bug: occasionally I get a list-style-image showing if I don't remove it on each tab
-					$.bililite.flexcal.tol10n(n).name || $.bililite.flexcal.prototype.options.l10n.name,
+					tol10n(n, self.options.l10n).name,
 					'</a></li>'
 					].join('')).data('flexcal.l10n', n)[0];
 			}));
 	},
-	_date2string: date2string, // internal use only; the rel of each <a> is set to this._date2string(d) for the appropriate date. this._createDate(this._date2string(d)) must == d !
 	_generateCalendar: function(d){
 		// TODO: implement some kind of caching
-		var today = this._date2string(this._createDate(this.element.val())); // compare strings rather than Dates to avoid having the time be part of the comparison
-		var thisd = this._date2string(this.options.current);
+		var today = ISOdate(this.parse(this.element.val())); // compare strings rather than Dates to avoid having the time be part of the comparison
+		var thisd = ISOdate(this.options.current);
 		var ret = [], l10n = this.o.l10n;
 		var cal = l10n.calendar(d);
 		var daysinweek = l10n.dayNamesMin.length, dow = cal.dow;
 		ret.push (
 			'<a class="go ',
 			l10n.isRTL ? 'ui-datepicker-next ' : 'ui-datepicker-prev ',
-			'ui-corner-all" rel="', this._date2string(cal.prev),'">',
+			'ui-corner-all" rel="', ISOdate(cal.prev) ,'">',
 			'<span class="ui-icon">',
 			'<span>'+l10n.prevText || 'Previous'+'</span>', // internal span for icon replacement
 			'</span>',
@@ -285,7 +307,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		ret.push (
 			'<a class="go ',
 			l10n.isRTL ? 'ui-datepicker-prev ' : 'ui-datepicker-next ',
-			'ui-corner-all" rel="', this._date2string(cal.next),'">',
+			'ui-corner-all" rel="', ISOdate(cal.next),'">',
 			'<span class="ui-icon">',
 			'<span>'+l10n.nextText || 'Next'+'</span>', // internal span for icon replacement
 			'</span>',
@@ -308,7 +330,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		if (dow > 0) ret.push('<tr>');
 		for (var i = 0; i < dow; ++i) ret.push ('<td class="ui-datepicker-other-month ui-state-disabled"></td>');
 		for (i = 1, d = cal.first; d <= cal.last; ++i, ++dow, d.setDate(d.getDate()+1)){
-			var dstring = this._date2string(d);
+			var dstring = ISOdate(d);
 			if (dow == 0) ret.push('<tr>');
 			ret.push(
 				'<td><a class="',
@@ -316,7 +338,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 				'commit" rel="',
 				dstring,
 				'" title="',
-				dstring,
+				dstring, // I think it would take too much time to run every single day through this.format. TODO: check this!
 				'">',
 				l10n.dates(i),
 				'</a></td>'
@@ -347,13 +369,18 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	_setDate: function(d, forceAnimate){
 		// d is the date we want to change to; if undefined just redraws the calendar
 		// forceAnimate is true if we want to animate the transition if d is in the same month (like if changing calendars)
-		var oldd = this.options.current, currCalendar = this.o.elements.eq(this.o.currSlide).find('table');
-		d = this.options.current = this._createDate(d, oldd);
-		if (!forceAnimate && currCalendar.find('a[rel="'+this._date2string(d)+'"]').length > 0){
+		var currCalendar = this.o.elements.eq(this.o.currSlide).find('table');
+		d = this.parse(d);
+		// problem: if we just did an external commit with a different date, as $().flexcal('commit', d),
+		// then if d is not present in the calendar the animation runs, which stops existing animation including 
+		// hiding.
+		// Fix by changing forceAnimate to animate, which is true, false or undefined, and only if undefined do we
+		// do calendar.find
+		if (!forceAnimate && currCalendar.find('a[rel="'+ ISOdate(d) +'"]').length > 0){
 			// the find(..) just looks for a date element with the desired date (stored in the rel attribute). If it's there, then the new date is showing and we can use it
-			currCalendar.find('a').removeClass('ui-state-focus').filter('[rel="'+this._date2string(d)+'"]').addClass('ui-state-focus');
+			currCalendar.find('a').removeClass('ui-state-focus').filter('[rel="'+ISOdate(d)+'"]').addClass('ui-state-focus');
 		}else{
-			if (oldd != d) this.o.rev = oldd > d; // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
+			if (this.options.current.getTime() != d.getTime()) this.o.rev = this.options.current > d; // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
 			var cal = this._generateCalendar(d);
 			var slide = this.o.elements.eq(1-this.o.currSlide).html(cal);
 			this._adjustHTML(cal);
@@ -361,14 +388,11 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			slide.css(size);
 			this._transition(size);
 		}
-		this._trigger('set', 0, [d, oldd]);
+		this._trigger('set', 0, [d, this.options.current]);
+		this.options.current = d;
 	},
 	_setL10n: function(name){
-		this.o.l10n = $.extend(true, {},
-			$.bililite.flexcal.prototype.options.l10n,
-			this.options.l10n,
-			$.bililite.flexcal.tol10n(name)
-		);
+		this.o.l10n = tol10n(name, this.options.l10n);
 		this._trigger('l10n', 0, name);
 	},
 	_setTabs: function(){
@@ -435,11 +459,6 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	}
 });
 
-// a date in m/d/yyyy format
-function date2string (d) {
-	return [d.getMonth()+1, d.getDate(), d.getFullYear()].join('/');
-}
-$.bililite.flexcal.date2string = date2string;
 
 function addDay(d, n){
 	if (n === undefined) n = 1;
@@ -736,11 +755,16 @@ function heb2civ(h, type){
 // Allow Keith Wood's calendar system (http://keith-wood.name/calendars.html)
 // TODO: use the jQuery foundation's Globalize tools (https://github.com/jquery/globalize)
 
-$.bililite.flexcal.tol10n = function tol10n (name){
+function tol10n (name, defaultL10n){
+	return $.extend(true, {}, defaultL10n || $.bililite.flexcal.prototype.options.l10n, partialL10n(name));
+};
+$.bililite.flexcal.tol10n = tol10n;
+
+function partialL10n (name){
 	if (name == null) return {};
 	if ($.isPlainObject(name)) return name;
 	if ($.isArray(name)) return name.reduce( function (previous, current){ // fold all the elements into an empty object
-		return $.extend(previous, tol10n(current));
+		return $.extend(previous, partialL10n(current));
 	}, {});
 	if ($.bililite.flexcal.l10n[name]) return $.bililite.flexcal.l10n[name];
 	for (var loc in tol10n.localizers){
@@ -812,5 +836,25 @@ if ($.calendars) $.bililite.flexcal.tol10n.localizers.woodsCalendar = function (
 
 // TODO: the Globalize routines
 	
+$.bililite.flexcal.format = function (d, l10n){
+	return l10n.dateFormat.
+		replace (/dd/g, pad(d.getDate(), 2)).
+		replace (/d/g, d.getDate()).
+		replace (/mm/g, pad(d.getMonth()+1, 2)).
+		replace (/m/g, d.getMonth()+1).
+		replace (/yyyy/g, d.getFullYear());
+};
+
+$.bililite.flexcal.parse = function (d, l10n){
+	// I want to accept as many inputs as possible; we just look for 3 numbers in the right order
+	var ymd = l10n.dateFormat. // determine the order of year-month-day
+		replace(/[^ymd]/g,'').
+		replace(/y+/g,'y').
+		replace(/m+/g,'m').
+		replace(/d+/g,'d');
+	var match = d.match(/(\d+)/g); // get the numbers
+	if (!match) return new Date(NaN); // invalid Date
+	return new Date(match[ymd.indexOf('y')], match[ymd.indexOf('m')]-1, match[ymd.indexOf('d')]);
+};
 
 })(jQuery);

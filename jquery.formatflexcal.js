@@ -94,4 +94,6 @@ no julian dates or timestamps; no day of the year or week of the year for now.
 No predefined formats for now.
 */
 
+// note http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.4.2 for localestring
+
 })(jQuery);
