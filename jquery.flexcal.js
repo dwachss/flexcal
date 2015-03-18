@@ -1,6 +1,6 @@
 // flexcal: a multi-calendar date picker 
 
-// Version 3.0.1
+// Version 3.1
 
 // Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
