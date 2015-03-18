@@ -2,7 +2,9 @@ QUnit.test( "parse", function( assert ) {
 	var p = $.bililite.flexcal.parse;
 	var d = new Date(2015,1,12);
 	assert.equal(p('2/12/2015', {dateFormat: 'm/d/yyyy'}).getTime(), d.getTime(), "parse 'm/d/yyyy'" );
+	assert.equal(p('02/12/2015', {dateFormat: 'm/d/yyyy'}).getTime(), d.getTime(), "parse 'm/d/yyyy' liberally" );
 	assert.equal(p('12.02.2015', {dateFormat: 'dd.mm.yyyy'}).getTime(), d.getTime(), "parse 'dd.mm.yyyy'" );
+	assert.equal(p('12/2/2015', {dateFormat: 'dd.mm.yyyy'}).getTime(), d.getTime(), "parse 'dd.mm.yyyy' liberally" );
 });
 
 QUnit.test( "format", function( assert ) {

@@ -1,6 +1,6 @@
 // flexcal: a multi-calendar date picker 
 
-// Version 3.0
+// Version 3.0.1
 
 // Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
@@ -142,6 +142,10 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		this.options.current = d;
 		this.element.val(this.format(d));
 		this._trigger('commit', 0, d);
+	},
+	_commit: function(d){
+		// commit to the date, then close the calendar
+		this.commit(d);
 		this.element[0].focus(); 
 		console.log('after focus');
 		this.hide();
@@ -209,7 +213,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			}else if ($target.is('.go')){
 				self._setDate($target.attr('rel'));
 			}else if ($target.is('.commit')){
-				self.commit(parseISO($target.attr('rel')));
+				self._commit(parseISO($target.attr('rel')));
 			}else if ($target.is('.ui-tabs-nav li:not(.ui-tabs-selected) a')){
 				self._makeCurrentCalendar(self.tabs.index($target.parent())); // the click is on the <a> but the data is on the <li>
 				self._setDate(undefined, true);
@@ -222,7 +226,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			function offsetDate(d) { self._setDate(new Date (self.options.current.getTime()+d*oneDay)); return false; }
 			function calendarDate(which) { self._setDate(self.o.l10n.calendar(self.options.current)[which], true); return false; }
 			if (!e.ctrlKey && !e.altKey) switch (e.keyCode){
-				case $.ui.keyCode.ENTER: self.commit(self.options.current); return false;
+				case $.ui.keyCode.ENTER: self._commit(self.options.current); return false;
 				case $.ui.keyCode.RIGHT: return offsetDate(dir);
 				case $.ui.keyCode.LEFT: return offsetDate(-dir);
 				case $.ui.keyCode.UP: return offsetDate(-self.o.l10n.dayNamesMin.length);
@@ -233,8 +237,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 				case $.ui.keyCode.END: return calendarDate('last');
 				case $.ui.keyCode.TAB: 
 					if (self.options.hideOnOutsideClick){ // if we hide when losing focus, tabbing out should also hide. Otherwise, just do the default tabbing
-						if (self._triggerElement) self._triggerElement[0].focus(); // $().focus() does not actually set the focus; have to call the method of the DOM element
 						self.hide();
+						if (self._triggerElement) self._triggerElement[0].focus(); // $().focus() does not actually set the focus; have to call the method of the DOM element
 						return false; // tabbing out hides the element and still tabs out
 					}
 					return; // if not hideOnOutsideClick, just do the default.
@@ -366,18 +370,15 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		this.o.rev = (n < this.options.tab) ^ !!this.o.l10n.isRTL; // true if the transition should indicate backwards
 		this.options.tab = n;
 	},
-	_setDate: function(d, forceAnimate){
+	_setDate: function(d, animate){
 		// d is the date we want to change to; if undefined just redraws the calendar
-		// forceAnimate is true if we want to animate the transition if d is in the same month (like if changing calendars)
+		// set animate == true to force the animated transition, false to prevent it.
+		// if undefined, only animate if the new date is not on the currently visible calendar
 		var currCalendar = this.o.elements.eq(this.o.currSlide).find('table');
 		d = this.parse(d);
-		// problem: if we just did an external commit with a different date, as $().flexcal('commit', d),
-		// then if d is not present in the calendar the animation runs, which stops existing animation including 
-		// hiding.
-		// Fix by changing forceAnimate to animate, which is true, false or undefined, and only if undefined do we
-		// do calendar.find
-		if (!forceAnimate && currCalendar.find('a[rel="'+ ISOdate(d) +'"]').length > 0){
-			// the find(..) just looks for a date element with the desired date (stored in the rel attribute). If it's there, then the new date is showing and we can use it
+		// the find(..) looks for a date element with the desired date (stored in the rel attribute). If it's there, then the new date is showing and we can use it
+		if (animate == null) animate = currCalendar.find('a[rel="'+ISOdate(d)+'"]').length == 0;
+		if (!animate){
 			currCalendar.find('a').removeClass('ui-state-focus').filter('[rel="'+ISOdate(d)+'"]').addClass('ui-state-focus');
 		}else{
 			if (this.options.current.getTime() != d.getTime()) this.o.rev = this.options.current > d; // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
