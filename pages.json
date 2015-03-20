@@ -4,5 +4,6 @@
   "Localization": "l10n.html",
   "Transitions": "transition.html",
   "Customization": "customization.html",
-  "Textpopup": "textpopup.html"
+  "Textpopup": "textpopup.html",
+  "Timepickr": "timepickr.html"
 }

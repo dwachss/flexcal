@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Timepickr by dwachss</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <link rel="stylesheet" href="stylesheets/prism-dw.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Timepickr</h1>
+        <p>jQuery UI time selecting widget</p>
+
+        <p class="view"><a href="https://github.com/dwachss/flexcal">View the Project on GitHub <small>dwachss/flexcal</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/dwachss/flexcal/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/dwachss/flexcal/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/dwachss/flexcal">View On <strong>GitHub</strong></a></li>
+        </ul>
+		<nav>
+		</nav>
+      </header>
+      <section>
+<script src="javascripts/scale.fix.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<script src="https://cdn.rawgit.com/dwachss/prism/gh-pages/prism.js"></script>
+<script src="javascripts/prism.linenumber.js"></script>
+<script src="http://cdn.rawgit.com/dwachss/flexcal/3.0/jquery.timepickr.js"></script>
+<script src="http://cdn.rawgit.com/briancherne/jquery-hoverIntent/v1.8.1/jquery.hoverIntent.js"></script>
+<script src="http://cdn.rawgit.com/harborhoffer/Super-Theme-Switcher/master/jquery.themeswitcher.min.js"></script>
+<p><a href="http://bililite.com/blog/2009/06/29/dont-reinvent-the-wheel/">I like</a> Maxime Haineault's <a href="http://haineault.com/media/jquery/ui-timepickr/page/">timepickr</a>. But I found it was written for jQuery 1.2, and didn't trigger events correctly with the current jQuery. It also had more dependencies than I wanted, to the extent that the minified version is 49k large, and had some CSS quirks in Internet Explorer that I couldn't figure out without dissecting the whole thing. So I dissected it and rebuilt it smaller, updated for jQuery 1.3. I didn't put back a lot of the options that I didn't need, so it's not exactly an improvement. But it works for me.</p>
+
+<p><input /></p><script>$('input:last').timepickr()</script>
+<p>Download <a href="/inc/jquery.timepickr.js">the code</a>.</p>
+<p>I also added the ability to use <a href="http://cherne.net/brian/resources/jquery.hoverIntent.html">hoverIntent</a> so you can roll the mouse over the intervening buttons without triggering them:</p>
+<p><input /></p><script>$('input:last').timepickr({hoverIntent: true})</script>
+
+<h2>Examples</h3>
+<div id="themeswitcher" ></div>
+<script>$('#themeswitcher').themeswitcher({ imgpath: 'https://cdn.rawgit.com/harborhoffer/Super-Theme-Switcher/master/images/' });</script>
+<pre><code class="language-javascript demo">
+$('.timepickr-example:eq(0)').timepickr();
+</code></pre>
+<pre><code class="language-markup language-html demo">
+&lt;input class="timepickr-example" /&gt;
+</code></pre>
+<pre><code class="language-javascript demo">
+$('.timepickr-example:eq(1)').timepickr({
+  convention: 24,
+  format: '{h}{m} hours',
+  hoverIntent: true,
+  rangeMin:    ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55']
+});
+</code></pre>
+<pre><code class="language-html demo">
+&lt;input class="timepickr-example" /&gt;
+</code></pre>
+<pre><code class="language-javascript demo">
+$('.timepickr-example:eq(2)').timepickr({
+  trigger: 'nothing',
+  handle: $('#clock')
+});
+</code></pre>
+<pre><code class="language-html demo">
+&lt;input class="timepickr-example" /&gt; &lt;img id="clock" src="http://bililite.com/images/silk/clock.png" /&gt;
+</code></pre>
+<pre><code class="language-javascript demo">
+$('.timepickr-example:eq(3)').timepickr({
+  select: function(){
+    alert('Time is '+this.value);
+  }
+});
+</code></pre>
+<pre><code class="language-html demo">
+&lt;input class="timepickr-example" /&gt;
+</code></pre>
+<h2>Options</h2>
+<pre><code><dl>
+<dt>top {Number}</dt>
+<dd>Pixel offset of the top left button. Default: 6.</dd>
+<dt>left {Number}</dt>
+<dd>Pixel offset of the top left button. Default: 0.</dd>
+<dt>animSpeed {Number|slow|normal|fast}</dt>
+<dd>Speed to animate showing/hiding the buttons. Default: 0.</dd>
+<dt>trigger {String}</dt>
+<dd>Event to trigger showing the buttons. Default: 'click'.</dd>
+<dt>convention {12|24}</dt>
+<dd>Whether to use a 12-hour or 24-hour clock. Default:  12.</dd>
+<dt>format {String}</dt>
+<dd>String that determines how to display the time. Uses simple formatting: '{h}' is replaced by the hour;
+'{m}' is replaced by the minutes; '{suffix}' is replaced by the suffix (used in the 12-hour clock); '{prefix}' is
+replaced by the prefix (used in the 24-hour clock). Default: '{h}:{m} {suffix}'</dd>
+<dt>handle {false|String|jQuery object}</dt>
+<dd>Other element that will trigger showing the buttons when clicked. If handle is not false, then
+$(handle).click() shows the buttons. Default: false.</dd>
+<dt>prefix {Array(String)}</dt>
+<dd>Strings to use as labels for the 24-hour clock. Displaying all 24 hours is too long to be usable, so we
+split them into two halves. Default: ['00-11', '12-23'].</dd>
+<dt>suffix {Array(String)}</dt>
+<dd>Strings to use as AM/PM labels for the 12-hour clock. Default: ['am', 'pm'].</dd>
+<dt>rangeMin {Array(String)}</dt>
+<dd>Values to use for the minutes list. Default: ['00', '15', '30', '45']. Use strings rather than numbers to make sure they are formatted correctly (12:00, not 12:0).</dd>
+<dt>resetOnBlur {Boolean}</dt>
+<dd>True to reset the element to its original value if nothing is clicked; false to keep the value generated
+by the mouseover even if not clicked. Default: true.</dd>
+<dt>val {false|String}</dt>
+<dd>If not false, value to assign to the element when the buttons are shown. Default: false.</dd>
+<dt>hoverIntent {Boolean}</dt>
+<dd>True to use the hoverIntent plugin if available. Note that timepickr does not provide any way to
+adjust the hoverIntent paramenters. Default: false.</dd>
+<dt>select {undefined|function}</dt>
+<dd>Callback function, called when the time buttons are clicked. Also available as an event
+'timepickrselect'</dd>
+</dl></code></pre>      </section>
+      <footer>
+		<p>Comments? Questions? Create an <a href=https://github.com/dwachss/flexcal/issues>issue</a>!</p>
+		<p><small><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"></a> This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 License</a>.</small></p>
+        <p><small>Hosted on GitHub Pages&mdash;Theme Based on Minimalist by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+<script src="loadflexcal.js"></script>
+  </body>
+</html>

@@ -25,11 +25,25 @@
           <li><a href="https://github.com/dwachss/flexcal">View On <strong>GitHub</strong></a></li>
         </ul>
 		<nav>
-			<p><a href="flexcaltesting-ar.html">Flexcal Example</a></p>
 		</nav>
       </header>
       <section>
-		<img src=stylesheets/UNDERCONSTRUCTION.GIF alt="Under Construction" title="Under Construction"/>
+<h4>Just what the world needs&mdash;another date picker</h4>
+<p>The current incarnation of the <a href="http://jqueryui.com/demos/datepicker/">jQuery UI datepicker</a> works fine, but I needed something that could handle the <a href="http://en.wikipedia.org/wiki/Jewish_calendar">Jewish calendar</a>. This is not the same as localizing <code>datepicker</code> to use Hebrew;that just translates the month and day names but uses the same <a href="http://en.wikipedia.org/wiki/Gregorian_calendar">Gregorian calendar</a> as everyone uses. I needed a calendar that could switch between multiple, completely different calendar systems.</p>
+<p>The algorithms for converting dates from Jewish to Gregorian are readily available <a href="http://sourceforge.net/projects/hebcal/">open-source</a>, and the calendar is just a table, and so was born <code>flexcal</code>. In its simplest form, it looks like <code>datepicker</code>:</p>
+<pre><code class="language-html demo">&lt;span&gt;Using &lt;code&gt;datepicker&lt;/code&gt;: &lt;/span&gt;&lt;input id=&quot;date1&quot;/&gt;
+&lt;br/&gt;
+&lt;span&gt;Using &lt;code&gt;flexcal&lt;/code&gt;: &lt;/span&gt;&lt;input id=&quot;date2&quot;/&gt;</code></pre>
+<pre><code class="language-javascript demo">$('#date1').datepicker();$('#date2').flexcal();</code></pre>
+<p>But it can show multiple calendars and allows localization to different calendar systems:</p>
+<pre><code class="language-html demo">&lt;span&gt;Jewish/civil calendar: &lt;/span&gt;&lt;input id=&quot;date3&quot;/&gt;</code></pre>
+<pre><code class="language-javascript demo">$('#date3').flexcal({
+  position: 'bl',
+  calendars: ['en', 'jewish', 'he-jewish'],
+  'class': 'multicalendar'
+});</code></pre>
+
+<p>Using it requires four files: the styles in 
       </section>
       <footer>
 		<p>Comments? Questions? Create an <a href=https://github.com/dwachss/flexcal/issues>issue</a>!</p>
