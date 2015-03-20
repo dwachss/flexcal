@@ -26,7 +26,7 @@ $.getScript('https://cdn.rawgit.com/dwachss/jquery.repo/v1.1.1/jquery.repo.js').
 }).then(function(){
 	return $.getScript ('javascripts/bililitedemo.js');
 });
-$.get('test.json', 'text').then(function(pages){
+$.get('pages.json').then(function(pages){
 	console.log(pages);
 	for (page in pages){
 		$('<p>').append($('<a>').text(page).attr('href', pages[page])).appendTo('nav');
