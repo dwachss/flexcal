@@ -29,7 +29,61 @@
       </header>
       <section>
 <h1>Options</h1>
+<p>There are a lot a options, more than I think a widget ought to have. I may want to simplify things in the future, and move some of these options to subclasses.</p>
 
+<h2>Localization</h2>
+<p>These are the meat of the widget.</p>
+<h3><code>calendars</code></h3>
+<div class=definition>
+<p><code>{Array(String || Object || Array)}</code></p>
+<p>Array of calendars to display. Each item is a <a href=l10n.html>localization object or string</a>, or an array of those that are to be joined together with <a href=http://api.jquery.com/jQuery.extend/ ><code>$.extend</code></a> to create the final localization object, which is then <code>$.extend</code>ed with the <code>l10n</code> option below, and the default <code>$.bililite.flexcal.prototype.options.l10n</code>.</p>
+<p>See the complete documentation on <a href=l10n.html>localization objects</a>.</p>
+<p>Of note, the <code>dateFormat</code> for the <em>first</em> calendar (<code class="language-javascript">calendars[0]</code>) will be used to read and write to the attached input element.</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">['en']</code></p>
+<h4>Examples</h4>
+<p><code class="language-javascript">['en', 'fr']</code>: two calendar tabs, English and French, with their default names displayed('English' for the first, 'flexcal' for the second if we are using the jQuery UI datepicker localization, since it does not define a name).</p>
+<p><code class="language-javascript">['en', ['fr', 'French'] ]</code>: two calendar tabs, English and French, with the second name set to 'French' (if a string does not correspond to a localization, it is assumed to be a calendar name).</p>
+<p><code class="language-javascript">[ ['en', {dateFormat: 'yyyy-mm-dd', dayNamesMin: ['S','M','T','W','T','F','S']} ]]</code>: one calendar, using the ISO notation for dates and one-letter abbreviations for days of the week.</p>
+</div>
+<h3><code>l10n</code></h3>
+
+<h2>Calendar</h2>
+<h3><code>current</code></h3>
+<h3><code>filter</code></h3>
+
+<h2>Appearance</h2>
+<h3><code>'class'</code></h3>
+<h3><code>hidetabs</code></h3>
+<h3><code>position</code></h3>
+<h3><code>tab</code></h3>
+
+<h2>Animation</h2>
+<h3><code>busy</code></h3>
+<h3><code>hide</code></h3>
+<h3><code>hideOnOutsideClick</code></h3>
+<h3><code>resposition</code></h3>
+<h3><code>show</code></h3>
+<h3><code>speed</code></h3>
+<h3><code>transition</code></h3>
+<h3><code>transitionOptions</code></h3>
+
+<h2>Structure</h2>
+<h3><code>trigger</code></h3>
+<h3><code>url</code></h3>
+
+<h2>API&mdash;getters</h2>
+<h3><code>box</code></h3>
+<h3><code>format</code></h3>
+<h3><code>parse</code></h3>
+
+<h2>API&mdash;setters</h2>
+<h3><code>commit</code></h3>
+<h3><code>hide</code></h3>
+<h3><code>position</code></h3>
+<h3><code>show</code></h3>
+
+<p>Plus, setting the options with <code>option</code> changes the calendar on the fly (except for <code>url</code>, which is evaluated only at creation; if you need to reset the HTML of the calendar, destroy it and instantiate a new one). Thus, <code class=" language-javascript"> $('input.date').flexcal('option', 'current', '1/1/2011')</code> sets the highlighted date (displaying the appropriate month).</p>
       </section>
       <footer>
 		<p>Comments? Questions? Create an <a href=https://github.com/dwachss/flexcal/issues>issue</a>!</p>

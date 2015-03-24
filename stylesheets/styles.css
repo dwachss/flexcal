@@ -10,7 +10,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: "Fjalla One";
   color:#222;
-  margin:0 0 20px;
+  margin: 20px 0 0; /* modified 2015-03-23 DHW */
 }
 
 p, ul, ol, table, pre, dl {
@@ -164,6 +164,10 @@ section {
   width:700px; /* modified 2015-02-01 DHW */
   float:right;
   padding-bottom:50px;
+}
+
+div.definition {
+	padding-left: 1em;
 }
 
 small {
