@@ -43,7 +43,38 @@
   'class': 'multicalendar'
 });</code></pre>
 
-<p>Using it requires four files: the styles in 
+<p>Using it requires four files: the styles in <a href="https://github.com/dwachss/flexcal/blob/master/flexcal.css">flexcal.css</a>, and the javascript in <a href="https://github.com/dwachss/flexcal/blob/master/jquery.ui.subclass.js">jquery.ui.subclass.js</a>, <a href="https://github.com/dwachss/flexcal/blob/master/jquery.textpopup.js">jquery.textpopup.js</a>, and <a href="https://github.com/dwachss/flexcal/blob/master/jquery.flexcal.js">jquery.flexcal.js</a>.</p>
+
+<p>It comes with localization for the Jewish calendar system, and a Hebrew localization of that (since that is what I needed), but it can use the jQuery UI datepicker localizations if the appropriate file is included:</p>
+<pre><code class="language-html demo">&lt;span&gt;English/French calendar: &lt;/span&gt;&lt;input id=&quot;date4&quot;/&gt;</code></pre>
+<pre><code class="language-javascript demo">$.getScript('https://rawgit.com/jquery/jquery-ui/master/ui/i18n/datepicker-fr.js').then(function(){
+	$('#date4').flexcal({
+		position: 'rt',
+		calendars: [['fr', 'Français'], ['en','Anglais']]
+	});
+});</code></pre>
+
+<p>It can also use <a href=http://keith-wood.name/calendars.html>Keith Wood's calendar systems</a> (the <code>picker-mock.js</code> is a stub that allows using the localization from his datepicker without loading the whole datepicker file):</p>
+<pre><code class="language-html">
+&lt;script src="https://cdn.rawgit.com/dwachss/flexcal/v2.2/jquery.calendars.picker-mock.js"&gt;&lt;/script&gt;
+&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.js">&lt;/script&gt;
+&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars-ar.js">&lt;/script&gt;
+&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.islamic.js">&lt;/script&gt;
+&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.islamic-ar.js"&gt;&lt;/script&gt;
+&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.picker-ar.js"&gt;&lt;/script&gt;
+</code></pre> 	
+<pre><code class="language-html demo">&lt;span&gt;Islamic calendar: &lt;/span&gt;&lt;input id=&quot;date5&quot;/&gt;</code></pre>
+<pre><code class="language-javascript demo">$('#date5').flexcal({
+		// the islamic arabic calendar uses long names (with يوم for each one). Use short names instead
+	calendars: [
+		'en',
+		['ar', 'Arabic'],
+		['ar-islamic', {dayNamesMin: [
+			'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'
+		]}]],
+	'class': 'multicalendar'
+});</code></pre>
+
       </section>
       <footer>
 		<p>Comments? Questions? Create an <a href=https://github.com/dwachss/flexcal/issues>issue</a>!</p>
@@ -55,6 +86,12 @@
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/prism/gh-pages/prism.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/flexcal/v2.2/jquery.calendars.picker-mock.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars-ar.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.islamic.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.islamic-ar.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.picker-ar.js"></script>
     <script src="javascripts/prism.linenumber.js"></script>
 	<script src="loadflexcal.js"></script>
 
