@@ -111,7 +111,6 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	options: {
 		url: defaultURL,
 		calendars: ['en'],
-		formatter: undefined,
 		current: undefined,
 		filter: undefined,
 		hidetabs: 'conditional',
@@ -152,14 +151,14 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	},
 	format: function (d){ // external formatting; the this.element.val is set to this.format(d) on commit
 		var o = this.options;
-		var l10n = tol10n(o.formatter || o.calendars[0], o.l10n); // use the first calendar
+		var l10n = tol10n(o.calendars[0], o.l10n); // use the first calendar
 		return $.bililite.flexcal.format(d, l10n);
 	},
 	parse: function (d){ // external string (this.element.val) to a date
 		if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return parseISO(d); // always allow ISO date strings
 		var o = this.options;
 		if (typeof d === 'string'){
-			var l10n = tol10n(o.formatter || o.calendars[0], o.l10n); // use the first calendar
+			var l10n = tol10n(o.calendars[0], o.l10n); // use the first calendar
 			d = $.bililite.flexcal.parse (d, l10n);
 		}
 		if (!(d instanceof Date)) d = new Date(d);

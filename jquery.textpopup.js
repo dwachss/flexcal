@@ -138,6 +138,7 @@
 			return false;
 		},
 		options: {
+			box: undefined,
 			show: $.fn.show,
 			hide: $.fn.hide,
 			speed: 'slow',
@@ -191,6 +192,7 @@
 			}
 		},
 		options: {
+			url: '<div>',
 			busy: '<img src="http://bililite.com/images/busy/wait22.gif" />'
 		}
 	});
