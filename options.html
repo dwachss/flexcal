@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Flexcal by dwachss</title>
+    <title>Flexcal Options</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -28,7 +28,7 @@
 		</nav>
       </header>
       <section>
-<h1>Options</h1>
+<h1>Options and API</h1>
 <p>There are a lot a options, more than I think a widget ought to have. I may want to simplify things in the future, and move some of these options to subclasses.</p>
 
 <h2>Localization</h2>
@@ -131,6 +131,15 @@
 }</code></pre></p>
 </div>
 <h3><code>tab</code></h3>
+<div class=definition>
+<p><code>{Number}</code></p>
+<p>Index of the calendar to show.</p>
+<h4>Default value</h4>
+<pre><code class="language-javascript">0</code></pre>
+<h4>Examples</h4>
+<p><code class="language-javascript">$(element).flexcal({calendars: ['First', 'Second'], tab: 1})</code>:  the calendar 'Second' should be active when initially shown.</p>
+<p><code class="language-javascript">$(element).flexcal('option', 'tab', 1)</code>:  switch to the second calendar.</p>
+</div>
 
 <h2>Animation</h2>
 <h3><code>busy</code></h3>

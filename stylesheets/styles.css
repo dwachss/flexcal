@@ -64,6 +64,10 @@ code, pre {
   font-size:12px;
 }
 
+h3 code {
+	font-size: 1.2em;
+}
+
 pre {
   padding:4px;
   background: #f8f8f8;  

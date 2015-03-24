@@ -1,9 +1,9 @@
 {
   "Introduction": "index.html",
-  "Options": "options.html",
+  "Options and API": "options.html",
   "Localization": "l10n.html",
   "Transitions": "transition.html",
   "Customization": "customization.html",
-  "Textpopup": "textpopup.html",
-  "Timepickr": "timepickr.html"
+  "textpopup, ajaxpopup and hebrewKeyboard": "textpopup.html",
+  "timepickr": "timepickr.html"
 }
