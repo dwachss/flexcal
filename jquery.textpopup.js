@@ -31,15 +31,11 @@
 			if (this.options.box) this.options.hideOnOutsideClick = false; // never auto-hide for inline boxes
 			this._hideOnOutsideClick(this.options.hideOnOutsideClick);
 			// if options.position is an object suitable for passing to $.fn.position (field 'my' is defined) then use it; otherwise use the string shortcuts
-			// if we use the string shortcuts, make sure we make a copy rather than changing the original
-			this._position = this.options.position.my ? this.options.position : $.extend({},position[this.options.position]);
-			// the position should usually be relative to the containing box or the element, but the user can override that.
-			if (!this._position.of) this._position.of = this.options.box || this.element;
-			// from the jQuery UI demo, to animate the repositioning
-			if (!this._position.using) this._position.using = function(to) {
-				$( this ).stop( true, false ).animate( to );
-			};
-			if (!this._position.collision) this._position.collision = 'none';
+			this._position = $.extend({
+				of: this.element, // the input element that flexcal was called on
+				collision: 'none',
+				using: function(to) { $(this).stop(true, false).animate(to) } // animate the repositioning	
+			}, this.options.position.my ? this.options.position : position[this.options.position]);
 			// turn the speed into an array to be used with Function.apply
 			this._speed = $.isArray(this.options.speed) ? this.options.speed : [this.options.speed];
 			var trigger = this.options.trigger;
