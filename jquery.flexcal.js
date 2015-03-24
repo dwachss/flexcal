@@ -1,6 +1,6 @@
 // flexcal: a multi-calendar date picker 
 
-// Version 3.1.1
+// Version 3.2
 
 // Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
@@ -137,7 +137,6 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		}
 	},
 	commit: function(d){
-		console.log('committing');
 		this.options.current = d;
 		this.element.val(this.format(d));
 		this._trigger('commit', 0, d);
@@ -146,8 +145,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		// commit to the date, then close the calendar
 		this.commit(d);
 		this.element[0].focus(); 
-		console.log('after focus');
-		this.hide();
+		if (!this.options.box) this.hide();
 	},
 	format: function (d){ // external formatting; the this.element.val is set to this.format(d) on commit
 		var o = this.options;

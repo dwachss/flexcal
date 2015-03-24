@@ -1,5 +1,5 @@
 ﻿// textpopup and hebrew keyboard widgets
-// Version: 2.0
+// Version: 2.1
 // dependencies: jquery.ui.subclass.js (mine), ui.core.js, effects.core.js (from jQuery UI)
 // Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
@@ -28,6 +28,7 @@
 	$.widget('bililite.textpopup', {
 		_init: function(){
 			var self = this;
+			if (this.options.box) this.options.hideOnOutsideClick = false; // never auto-hide for inline boxes
 			this._hideOnOutsideClick(this.options.hideOnOutsideClick);
 			// if options.position is an object suitable for passing to $.fn.position (field 'my' is defined) then use it; otherwise use the string shortcuts
 			// if we use the string shortcuts, make sure we make a copy rather than changing the original
@@ -54,6 +55,7 @@
 			// bug inducing note: this._trigger is the function, this._triggerElement is the element
 		},
 		position: function(){
+			if (this.options.box) return; // don't change position for inline boxes
 			var display = this.box().css('display');
 			this.box().css({display: 'block', visibility: 'hidden'}).
 				position(this._position).
@@ -83,11 +85,10 @@
 		},
 		_createBox: function(){
 			var self = this;
-			var css = this.options.box ? {display: 'inline-block'} : {position: 'absolute', display: 'none'};
-			var box = $('<div/>').
-				appendTo(this.options.box || 'body').
-				css(css).
-				addClass(this.options['class']).
+			var box = this.options.box ?
+				$(this.options.box) :
+				$('<div/>').appendTo('body').css({position: 'absolute', display: 'none'});
+			box.addClass(this.options['class']).
 				keydown(function(e) {
 					if (e.keyCode == $.ui.keyCode.ESCAPE) {
 						self.element.focus();
@@ -192,7 +193,7 @@
 			}
 		},
 		options: {
-			url: '<div>',
+			url: '<div/>',
 			busy: '<img src="http://bililite.com/images/busy/wait22.gif" />'
 		}
 	});
