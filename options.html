@@ -35,7 +35,7 @@
 <p>These are the meat of the widget.</p>
 <h3><code>calendars</code></h3>
 <div class=definition>
-<p><code>{Array(String || Object || Array)}</code></p>
+<p><code>{Array (String|Object|Array)}</code></p>
 <p>Array of calendars to display. Each item is a <a href=l10n.html>localization object or string</a>, or an array of those that are to be joined together with <a href=http://api.jquery.com/jQuery.extend/ ><code>$.extend</code></a> to create the final localization object, which is then <code>$.extend</code>ed with the <code>l10n</code> option below, and the default <code>$.bililite.flexcal.prototype.options.l10n</code>.</p>
 <p>See the complete documentation on <a href=l10n.html>localization objects</a>.</p>
 <p>Of note, the <code>dateFormat</code> for the <em>first</em> calendar (<code class="language-javascript">calendars[0]</code>) will be used to read and write to the attached input element.</p>
@@ -47,22 +47,96 @@
 <p><code class="language-javascript">[ ['en', {dateFormat: 'yyyy-mm-dd', dayNamesMin: ['S','M','T','W','T','F','S']} ]]</code>: one calendar, using the ISO notation for dates and one-letter abbreviations for days of the week.</p>
 </div>
 <h3><code>l10n</code></h3>
+<div class=definition>
+<p><code>{Object}</code></p>
+<p>The default localization, to be used if any of the elements of <code>calendars</code> are missing. Again, see the <a href=l10n.html>localization documentation</a> for the meaning of these items.</p>
+<h4>Default value</h4>
+<pre><code class="language-javascript">
+{
+	name: 'flexcal',
+	monthNames: ['January','February','March','April','May','June',
+		'July','August','September','October','November','December'],
+	dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','Sa'],
+	prevText: 'Previous',
+	nextText: 'Next',
+	isRTL: false,
+	firstDay: 0,
+	years: function(n) {return n.toString()},
+	fromYears: undefined,
+	dates: function(n) {return n.toString()},
+	fromDates: undefined,
+	dateFormat: 'm/d/yyyy'
+}</code></pre>
+</div>
 
 <h2>Calendar</h2>
 <h3><code>current</code></h3>
+<div class=definition>
+<p><code>{Date|String}</code></p>
+<p>The date to display on the calendar. The attached element's value will override this when the calendar is first shown, if it represents a valid date. If <code class="language-javascript">undefined</code>, use today's date. Strings are interpreted according to <code class="language-javascript">calendars[0].dateFormat</code>.</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">undefined</code></p>
+<h4>Examples</h4>
+<p><code class="language-javascript">$(element).flexcal({current: new Date('Dec 25 2015')})</code>: start the calendar on Christmas.</p>
+<p><code class="language-javascript">$(element).flexcal('option', 'current', new Date('Dec 25 2015'))</code>: change the displayed date on an existing calendar.</p>
+<p><code class="language-javascript">var d = $(element).flexcal('option', 'current')</code>: get the displayed date.</p>
+</div>
 <h3><code>filter</code></h3>
+<div class=definition>
+<p><code>{undefined|Function}</code></p>
+<p>Function to filter dates. Function is of the form <code class="language-javascript">f(d)</code> where d is a Date object; it should return <code class="language-javascript">true</code> to enable that date or <code class="language-javascript">false</code> to disable it. <code class="language-javascript">this</code> is set to the <code class="language-html">&lt;a&gt;</code> element that contains the date number. That allows <code>filter</code> to modify the appearance of the calendar.</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">undefined</code></p>
+<h4>Examples</h4>
+<p><code class="language-javascript">function(d){ return d.getDay() != 0 && d.getDay() != 6; }</code>: disable weekends.</p>
+<p><pre><code class="language-javascript">function(d){
+	// is it Thursday and is it an even numbered week since the epoch?
+	if (d.getDay() == 4 && Math.floor(d.getTime()/(1000*60*60*24*7)) %2 == 0){
+		$(this).css('border', '2px solid purple'); // put a nice border on it
+	}
+	return true; // don't disable anything
+}</code></pre> highlight every other Thursday (it's payday!).</p>
+</div>
 
 <h2>Appearance</h2>
 <h3><code>'class'</code></h3>
+<div class=definition>
+<p><code>{undefined|String}</code></p>
+<p>Class name[s] to be applied to the calendar container. Two classes are defined in the <code>flexcal.css</code> file: <code>multicalendar</code> makes the calendar wider, accommodating more tabs; <code>fontawesome</code> uses <a href=http://fortawesome.github.io/Font-Awesome/>FontAwesome</a> icons instead of the jQuery UI images for the next/previous chevrons.</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">undefined</code></p>
+</div>
 <h3><code>hidetabs</code></h3>
+<div class=definition>
+<p>{true|false|'conditional'}</p>
+<p>Whether to show the tab bar to select calendars. <code class="language-javascript">true</code> to always show, <code class="language-javascript">false</code> to never show, and <code class="language-javascript">'conditional'</code> to only show it if there is more than one calendar (<code class="language-javascript">calendars.length &gt; 1</code>).</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">'conditional'</code></p>
+</div>
 <h3><code>position</code></h3>
+<div class=definition>
+<p><code>{'tl'|'lt|'bl'|'lb'|'tr'|'rt'|'br'|'rb'|Object}</code></p>
+<p>String that indicates where to position the calendar
+  relative to the textbox. 'tl' means on top of the input box, aligned to the left edge;
+  'lt' means on the left of the input box aligned to the top edge; similarly 'b' for bottom
+ and 'r' for right. If an object is passed, it will be passed to <a href=http://jqueryui.com/position/><code>position</code></a> (after <code>$.extend</code>ing with the defaults).<p>
+<h4>Default value</h4>
+<p><code class="language-javascript">'tl'</code>, which means:
+<pre><code class="language-javascript">{
+	my: 'left bottom',
+	at: 'left top',
+	of: this.element, // the input element that flexcal was called on
+	collision: 'none',
+	using: function(to) { $(this).stop(true, false).animate(to) } // animate the repositioning	
+}</code></pre></p>
+</div>
 <h3><code>tab</code></h3>
 
 <h2>Animation</h2>
 <h3><code>busy</code></h3>
 <h3><code>hide</code></h3>
 <h3><code>hideOnOutsideClick</code></h3>
-<h3><code>resposition</code></h3>
+<h3><code>reposition</code></h3>
 <h3><code>show</code></h3>
 <h3><code>speed</code></h3>
 <h3><code>transition</code></h3>
