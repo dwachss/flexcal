@@ -1,6 +1,6 @@
 // flexcal: a multi-calendar date picker 
 
-// Version 3.1
+// Version 3.1.1
 
 // Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
@@ -757,7 +757,7 @@ function heb2civ(h, type){
 // TODO: use the jQuery foundation's Globalize tools (https://github.com/jquery/globalize)
 
 function tol10n (name, defaultL10n){
-	return $.extend(true, {}, defaultL10n || $.bililite.flexcal.prototype.options.l10n, partialL10n(name));
+	return $.extend(true, {}, $.bililite.flexcal.prototype.options.l10n, defaultL10n, partialL10n(name));
 };
 $.bililite.flexcal.tol10n = tol10n;
 
