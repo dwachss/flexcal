@@ -60,7 +60,7 @@ blockquote {
 
 code, pre {
   font-family: "Source Code Pro", Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal; /* modified 2015-02-04 DHW */
-  color:#333;
+  /* color:#333; removed 2015-03-24 DHW */
   font-size:12px;
 }
 
