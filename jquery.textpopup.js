@@ -1,5 +1,5 @@
 ﻿// textpopup and hebrew keyboard widgets
-// Version: 2.1
+// Version: 2.2
 // dependencies: jquery.ui.subclass.js (mine), ui.core.js, effects.core.js (from jQuery UI)
 // Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
@@ -36,8 +36,8 @@
 				collision: 'none',
 				using: function(to) { $(this).stop(true, false).animate(to) } // animate the repositioning	
 			}, this.options.position.my ? this.options.position : position[this.options.position]);
-			// turn the speed into an array to be used with Function.apply
-			this._speed = $.isArray(this.options.speed) ? this.options.speed : [this.options.speed];
+			// turn the duration into an array to be used with Function.apply
+			this._duration = $.isArray(this.options.duration) ? this.options.duration : [this.options.duration];
 			var trigger = this.options.trigger;
 			if (trigger == 'self'){
 				trigger = this.element;
@@ -62,7 +62,7 @@
 			var self = this, box = self.box().attr('tabindex', 0);
 			if (box.is(':visible, :animated')) return;
 			self.position();
-			self.options.show.apply(box, this._speed);
+			self.options.show.apply(box, this._duration);
 			box.queue(function(){
 				self._trigger('shown');
 				box.dequeue()
@@ -72,7 +72,7 @@
 			// having a hidden box with a tabindex bothers the browser to no end
 			var self = this, box = self.box().removeAttr('tabindex');
 			if (box.is(':hidden')) return;
-			self.options.hide.apply(box, this._speed);
+			self.options.hide.apply(box, this._duration);
 			box.queue(function(){self._trigger('hidden'); box.dequeue()});
 		},
 		box: function(){
@@ -126,7 +126,7 @@
 		// returns true if the event e is a click inside the box , the original element or the triggering elements
 		_setOption: function(key, value) {
 			this._super(key, value);
-			if (key == 'trigger' || 'hideOnOutsideClick' || 'position' || 'speed') this._init;
+			if (key == 'trigger' || 'hideOnOutsideClick' || 'position' || 'duration') this._init;
 			if (key == 'class') this.box().attr('class', value);
 		},
 		_isClickInside: function(e){
@@ -138,7 +138,7 @@
 			box: undefined,
 			show: $.fn.show,
 			hide: $.fn.hide,
-			speed: 'slow',
+			duration: 'slow',
 			hideOnOutsideClick: true,
 			position: 'tl',
 			trigger: 'self',
