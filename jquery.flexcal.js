@@ -1,6 +1,6 @@
 // flexcal: a multi-calendar date picker 
 
-// Version 3.2
+// Version 3.2.1
 
 // Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
@@ -90,7 +90,13 @@ var oneDay = 86400000; // milliseconds/day
 // must have parseISO(ISOdate(d)).getTime() === d.getTime()
 // Can't just use new Date() for parseISO() because new Date('2015-02-27') assumes UTC, which gets converted to 
 // a local time, which (for those of us in the Western hemisphere) is the day before.
-function ISOdate(d) { return d.toISOString().slice(0,10) } 
+function ISOdate(d) {
+	try {
+		return d.toISOString().slice(0,10);
+	}catch(e){
+		return 'Invalid   ';
+	}
+} 
 function parseISO(s) {var m = s.match(/(\d+)/g); return new Date(m[0],m[1]-1,m[2]); }
 // from http://stackoverflow.com/a/1268377 . Assumes whole positive numbers; too-long numbers are left as is
 function pad(n, p) {
@@ -137,8 +143,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		}
 	},
 	commit: function(d){
-		this.options.current = d;
 		this.element.val(this.format(d));
+		this._setDate(d, false);
 		this._trigger('commit', 0, d);
 	},
 	_commit: function(d){
@@ -160,7 +166,6 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			d = $.bililite.flexcal.parse (d, l10n);
 		}
 		if (!(d instanceof Date)) d = new Date(d);
-		if (isNaN(d.getTime())) d = this.options.current;
 		return d;
 	}, 
 	show: function(){
@@ -174,7 +179,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	},
 	_init: function(){
 		var self = this;
-		this.options.current = this.parse(this.options.current || new Date);
+		this.options.current = this.parse(this.options.current);
+		if (isNaN(this.options.current.getDate())) this.options.current = new Date;
 		this.o = $.extend({before: [], after: []}, this.options.transitionOptions); // create an "options" object for the cycle plugin
 		this.o.$cont = this.o.elements = this.tabs = $([]); // create dummy elements until AJAX can get the real ones
 		if (this.options.filter){
@@ -185,6 +191,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		}
 		this.o.currSlide = 0;
 		this._setL10n(); // create a default localization
+		if (this.options.box) this.show(); // inline calendars get shown right away
 	},
 	_fill: function(box){
 		var self = this;
@@ -267,6 +274,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		});
 	},
 	_adjustHTML: function(cal){
+		cal.find('a').removeClass('ui-state-focus').filter('[rel="'+ISOdate(this.options.current)+'"]').addClass('ui-state-focus');
+		cal.find('a').removeClass('ui-state-active').filter('[rel="'+ISOdate(this.parse(this.element.val()))+'"]').addClass('ui-state-active');
 		cal.findandfilter('a:not([href])')['ui-clickable']();
 		cal.filter('a.go').removeClass('ui-state-default') // ui-datepicker has its own styling
 			.each(function(){ this.title = $(this).text() }); // when we use image replacement for the prev/next buttons, leave the text as a tooltip title
@@ -291,8 +300,6 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	},
 	_generateCalendar: function(d){
 		// TODO: implement some kind of caching
-		var today = ISOdate(this.parse(this.element.val())); // compare strings rather than Dates to avoid having the time be part of the comparison
-		var thisd = ISOdate(this.options.current);
 		var ret = [], l10n = this.o.l10n;
 		var cal = l10n.calendar(d);
 		var daysinweek = l10n.dayNamesMin.length, dow = cal.dow;
@@ -335,7 +342,6 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			if (dow == 0) ret.push('<tr>');
 			ret.push(
 				'<td><a class="',
-				dstring == today ? 'ui-state-active ' : (dstring == thisd ? 'ui-state-focus ' : ''),
 				'commit" rel="',
 				dstring,
 				'" title="',
@@ -372,11 +378,15 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		// set animate == true to force the animated transition, false to prevent it.
 		// if undefined, only animate if the new date is not on the currently visible calendar
 		var currCalendar = this.o.elements.eq(this.o.currSlide).find('table');
+		var oldd = this.options.current;
 		d = this.parse(d);
+		if (isNaN(d.getTime())) d = oldd;
+		this._trigger('set', 0, [d, oldd]);
+		this.options.current = d;
 		// the find(..) looks for a date element with the desired date (stored in the rel attribute). If it's there, then the new date is showing and we can use it
 		if (animate == null) animate = currCalendar.find('a[rel="'+ISOdate(d)+'"]').length == 0;
 		if (!animate){
-			currCalendar.find('a').removeClass('ui-state-focus').filter('[rel="'+ISOdate(d)+'"]').addClass('ui-state-focus');
+			this._adjustHTML(currCalendar);
 		}else{
 			if (this.options.current.getTime() != d.getTime()) this.o.rev = this.options.current > d; // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
 			var cal = this._generateCalendar(d);
@@ -386,8 +396,6 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			slide.css(size);
 			this._transition(size);
 		}
-		this._trigger('set', 0, [d, this.options.current]);
-		this.options.current = d;
 	},
 	_setL10n: function(name){
 		this.o.l10n = tol10n(name, this.options.l10n);
