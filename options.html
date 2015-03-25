@@ -6,7 +6,6 @@
     <title>Flexcal Options</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" href="stylesheets/prism-dw.css" />
   </head>
@@ -173,8 +172,17 @@
 <p><code class="language-javascript">$.fn.slideUp</code>: hide the calendar with jQuery's <a href=http://api.jquery.com/slideUp/><code>slideUp</code></a> function.</p>
 <p><code class="language-javascript">function () { this.find('table a').css('background', 'green'); $.fn.hide.apply(this, arguments) }</code>: turn the calendar days green before hiding.</p>
 </div>
-<h3><code>hideOnOutsideClick</code></h3>
-<h3><code>reposition</code></h3>
+<h3 id=hideOnOutsideClick><code>hideOnOutsideClick</code></h3>
+<div class=definition>
+<p>{true|false}</p>
+<p>If <code class="language-javascript">true</code>, attaches a click event handler to automatically hide the calendar if the mouse is clicked outside the calendar or the attached textbox. If the <a href=#box><code>box</code> option</a> is set, then this is an inline calendar, and <code>hideOnOutsideClick</code> is always set to <code class="language-javascript">false</code> during initialization.</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">true</code> (but reset to <code class="language-javascript">false</code> for inline calendars)</p>
+<h3 id=reposition><code>reposition</code></h3>
+<p>{true|false}</p>
+<p>If <code class="language-javascript">true</code>, repositions the calendar with every transition; useful if the calendar is above the text element and transitions to months with more weeks obscures the box. Some may find the constant repositioning distracting.</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">true</code></p>
 <h3 id=show><code>show</code></h3>
 <div class=definition>
 <p><code>{Function}</code></p>
@@ -193,8 +201,16 @@
 <h3><code>trigger</code></h3>
 <h3><code>url</code></h3>
 
+<h2>Events</h2>
+<p>As with all widgets, event handlers can be attached with callbacks when flexcal is created: <code class="language-javascript">$(element).flexcal({ shown: function() {console.log('calendar shown')} })</code>, or with real event attachment: <code class="language-javascript">$(element).on('flexcalshown', function() {console.log('calendar shown')})</code>. Note the difference in naming.</p>
+<h3><code>commit</code></h3>
+<h3><code>created</code></h3>
+<h3><code>hidden</code></h3>
+<h3><code>l10n</code></h3>
+<h3><code>set</code></h3>
+<h3><code>shown</code></h3>
+
 <h2>API&mdash;getters</h2>
-<h3><code>box</code></h3>
 <h3><code>format</code></h3>
 <h3><code>parse</code></h3>
 
