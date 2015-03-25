@@ -840,7 +840,8 @@ $.bililite.flexcal.format = function (d, l10n){
 		replace (/d/g, d.getDate()).
 		replace (/mm/g, pad(d.getMonth()+1, 2)).
 		replace (/m/g, d.getMonth()+1).
-		replace (/yyyy/g, d.getFullYear());
+		replace (/yyyy/g, d.getFullYear()).
+		replace (/yy/g, d.getFullYear()); // jQuery UI datepicker uses yy for the 4-digit year
 };
 
 $.bililite.flexcal.parse = function (d, l10n){
