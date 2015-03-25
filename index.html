@@ -46,7 +46,7 @@
 
 <p>It comes with localization for the Jewish calendar system, and a Hebrew localization of that (since that is what I needed), but it can use the jQuery UI datepicker localizations if the appropriate file is included:</p>
 <pre><code class="language-html demo">&lt;span&gt;English/French calendar: &lt;/span&gt;&lt;input id=&quot;date4&quot;/&gt;</code></pre>
-<pre><code class="language-javascript demo">$.getScript('https://rawgit.com/jquery/jquery-ui/master/ui/i18n/datepicker-fr.js').then(function(){
+<pre><code class="language-javascript demo">$.getScript('https://cdn.rawgit.com/jquery/jquery-ui/master/ui/i18n/datepicker-fr.js').then(function(){
 	$('#date4').flexcal({
 		position: 'rt',
 		calendars: [['fr', 'Français'], ['en','Anglais']]

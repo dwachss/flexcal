@@ -12,7 +12,7 @@
 $.ajaxSetup({
   cache: true // no reason not to cache scripts
 });
-$.getScript('https://cdn.rawgit.com/dwachss/jquery.repo/v1.1.1/jquery.repo.js').then(function(){
+var flexcalReady = $.getScript('https://cdn.rawgit.com/dwachss/jquery.repo/v1.1.1/jquery.repo.js').then(function(){
 	return $.repo('dwachss/flexcal');
 }).then(function (repo){
 	$('head').append('<link rel=stylesheet href="'+repo+'/flexcal.css" />');

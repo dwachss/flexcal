@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" href="stylesheets/prism-dw.css" />
+ 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/prism/gh-pages/prism.js"></script>
+    <script src="javascripts/prism.linenumber.js"></script>
+	<script src="loadflexcal.js"></script>
   </head>
   <body>
     <div class="wrapper">
@@ -42,8 +47,40 @@
 <p><code class="language-javascript">['en']</code></p>
 <h4>Examples</h4>
 <p><code class="language-javascript">['en', 'fr']</code>: two calendar tabs, English and French, with their default names displayed('English' for the first, 'flexcal' for the second if we are using the jQuery UI datepicker localization, since it does not define a name).</p>
+<input id=1 />
+<script>
+flexcalReady.then(function(){
+	return $.getScript('https://cdn.rawgit.com/jquery/jquery-ui/master/ui/i18n/datepicker-fr.js');
+}).then(function(){
+	$('#1').flexcal({
+		position: 'rt',
+		calendars: ['en','fr']
+	});
+});
+
+</script>
 <p><code class="language-javascript">['en', ['fr', 'French'] ]</code>: two calendar tabs, English and French, with the second name set to 'French' (if a string does not correspond to a localization, it is assumed to be a calendar name).</p>
+<input id=2 />
+<script>
+flexcalReady.then(function(){
+	return $.getScript('https://cdn.rawgit.com/jquery/jquery-ui/master/ui/i18n/datepicker-fr.js');
+}).then(function(){
+	$('#2').flexcal({
+		position: 'rt',
+		calendars: ['en', ['fr', 'French'] ]
+	});
+});
+</script>
 <p><code class="language-javascript">[ ['en', {dateFormat: 'yyyy-mm-dd', dayNamesMin: ['S','M','T','W','T','F','S']} ]]</code>: one calendar, using the ISO notation for dates and one-letter abbreviations for days of the week.</p>
+<input id=3 />
+<script>
+flexcalReady.then(function(){
+	$('#3').flexcal({
+		position: 'rt',
+		calendars: [ ['en', {dateFormat: 'yyyy-mm-dd', dayNamesMin: ['S','M','T','W','T','F','S']} ]]
+	});
+});
+</script>
 </div>
 <h3 id=l10n><code>l10n</code></h3>
 <div class=definition>
@@ -53,6 +90,7 @@
 <pre><code class="language-javascript">
 {
 	name: 'flexcal',
+	calendar: gregorian,
 	monthNames: ['January','February','March','April','May','June',
 		'July','August','September','October','November','December'],
 	monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -80,7 +118,26 @@
 <p><code class="language-javascript">undefined</code></p>
 <h4>Examples</h4>
 <p><code class="language-javascript">$(element).flexcal({current: new Date('Dec 25 2015')})</code>: start the calendar on Christmas.</p>
-<p><code class="language-javascript">$(element).flexcal('option', 'current', new Date('Dec 25 2015'))</code>: change the displayed date on an existing calendar.</p>
+<input id=4 />
+<script>
+flexcalReady.then(function(){
+	$('#4').flexcal({
+		position: 'rt',
+		current: new Date('Dec 25 2015')
+	});
+});
+</script>
+<p><code class="language-javascript">$(element).flexcal('option', 'current', new Date('Jan 01 2015'))</code>: change the displayed date on an existing calendar. Note that it does not set the date in the text box; use <a href=#commit><code>commit</code></a> for that.</p>
+<input id=5 />
+<script>
+flexcalReady.then(function(){
+	$('#5').flexcal({position: 'rt'}).flexcal('box').append(
+		$('<input type=button>').val('Happy New Year').click(function(){
+			$('#5').flexcal('option', 'current', new Date('Jan 01 2015'));
+		})
+	);
+});
+</script>
 <p><code class="language-javascript">var d = $(element).flexcal('option', 'current')</code>: get the displayed date.</p>
 </div>
 <h3 id=filter><code>filter</code></h3>
@@ -91,6 +148,15 @@
 <p><code class="language-javascript">undefined</code></p>
 <h4>Examples</h4>
 <p><code class="language-javascript">function(d){ return d.getDay() != 0 && d.getDay() != 6; }</code>: disable weekends.</p>
+<input id=6 />
+<script>
+flexcalReady.then(function(){
+	$('#6').flexcal({
+		position: 'rt',
+		filter: function(d){ return d.getDay() != 0 && d.getDay() != 6; }
+	});
+});
+</script>
 <p><pre><code class="language-javascript">function(d){
 	// is it Thursday and is it an even numbered week since the epoch?
 	if (d.getDay() == 4 && Math.floor(d.getTime()/(1000*60*60*24*7)) %2 == 0){
@@ -98,6 +164,21 @@
 	}
 	return true; // don't disable anything
 }</code></pre> highlight every other Thursday (it's payday!).</p>
+<input id=7 />
+<script>
+flexcalReady.then(function(){
+	$('#7').flexcal({
+		position: 'rt',
+		filter: function(d){
+			// is it Thursday and is it an even numbered week since the epoch?
+			if (d.getDay() == 4 && Math.floor(d.getTime()/(1000*60*60*24*7)) %2 == 0){
+				$(this).css('border', '2px solid purple'); // put a nice border on it
+			}
+			return true; // don't disable anything
+		}
+	});
+});
+</script>
 </div>
 
 <h2>Appearance</h2>
@@ -107,6 +188,26 @@
 <p>Class name[s] to be applied to the calendar container. Two classes are defined in the <code>flexcal.css</code> file: <code>multicalendar</code> makes the calendar wider, accommodating more tabs; <code>fontawesome</code> uses <a href=http://fortawesome.github.io/Font-Awesome/>FontAwesome</a> icons instead of the jQuery UI images for the next/previous chevrons.</p>
 <h4>Default value</h4>
 <p><code class="language-javascript">undefined</code></p>
+<h4>Example</h4>
+<p>Changing the <code>multicalendar</code> class does not immediately change the size of the calendar, since the table size is set by calculation, not by CSS directly. Try changing calendar tabs or months.</p>
+<div>
+	<label><input type=checkbox name=multicalendar> Multicalendar</label>
+	<label><input type=checkbox name=fontawesome> FontAwesome</label>
+</div>
+<div id=8 style="display: inline-block"></div>
+<script>
+flexcalReady.then(function(){
+	var flexcal = $('<input>').flexcal({
+		calendars: ['First', 'Second', 'Third'],
+		box: '#8',
+		duration: 0
+	}).flexcal('show').flexcal('instance');
+	$('#8').prev().find('input').on('change', function(){
+		var classes = $('#8').prev().find('input:checked');
+		flexcal.option('class', classes.map(function () { return this.name }).get().join(' '));
+	});
+});
+</script>
 </div>
 <h3 id=hidetabs><code>hidetabs</code></h3>
 <div class=definition>
@@ -114,6 +215,34 @@
 <p>Whether to show the tab bar to select calendars. <code class="language-javascript">true</code> to always show, <code class="language-javascript">false</code> to never show, and <code class="language-javascript">'conditional'</code> to only show it if there is more than one calendar (<code class="language-javascript">calendars.length &gt; 1</code>).</p>
 <h4>Default value</h4>
 <p><code class="language-javascript">'conditional'</code></p>
+<h4>Example</h4>
+<label><input type="checkbox" name="check9"/> Hide Tabs</label><br/>
+<label><input type="radio" name="radio9" checked="checked"/> English</label>
+<label><input type="radio" name="radio9"/> Jewish</label>
+<label><input type="radio" name="radio9"/> &#1506;&#1489;&#1512;&#1497;&#1514;</label><br />
+<div id="9" style="display: inline-block"></div>
+<script>
+flexcalReady.then(function(){
+	var flexcal = $('<input>').flexcal({
+	  calendars: ['en', 'jewish', 'he-jewish'],
+	  'class': 'multicalendar',
+	  box: '#9',
+	  duration: 0
+	}).flexcal('show').flexcal('instance');
+	flexcal.widget().on('flexcalset', function() {
+		$('[name=radio9]').eq(flexcal.option('tab')).prop("checked", true);
+	});
+	flexcal.widget().on('flexcalcommit', function(e, d) {
+		flexcal._setDate(d, true); // little trick to make sure the calendar is redrawn
+	});
+	$('[name=check9]').change(function(){
+		flexcal.option('hidetabs', $(this).prop('checked'));
+	});
+	$('[name=radio9]').change(function() {
+		flexcal.option('tab', $('[name=radio9]').index(this));
+	});
+});
+</script>
 </div>
 <h3 id=position><code>position</code></h3>
 <div class=definition>
@@ -131,6 +260,23 @@
 	collision: 'none',
 	using: function(to) { $(this).stop(true, false).animate(to) } // animate the repositioning	
 }</code></pre></p>
+<h4>Examples</h4>
+<div id="10">
+<div><strong>tl</strong> <input/></div>
+<div><strong>lt</strong> <input/></div>
+<div><strong>br</strong> <input/></div>
+<div><strong>rb</strong> <input/></div>
+<div><strong>lb</strong> <input/></div>
+</div>
+<script>
+flexcalReady.then(function(){
+	$('#10 input').each(function(){
+	  $(this).css({height: '50px'}).flexcal({position: $(this).prev().text()});
+	});
+
+$('#example2 div, #example2 span').css({margin:'2px'});
+});
+</script>
 </div>
 <h3 id=tab><code>tab</code></h3>
 <div class=definition>
@@ -140,7 +286,13 @@
 <pre><code class="language-javascript">0</code></pre>
 <h4>Examples</h4>
 <p><code class="language-javascript">$(element).flexcal({calendars: ['First', 'Second'], tab: 1})</code>:  the calendar 'Second' should be active when initially shown.</p>
-<p><code class="language-javascript">$(element).flexcal('option', 'tab', 1)</code>:  switch to the second calendar.</p>
+<input id=11 />
+<script>
+flexcalReady.then(function(){
+	$('#11').flexcal({calendars: ['First', 'Second'], tab: 1});
+});
+</script>
+<p><code class="language-javascript">$(element).flexcal('option', 'tab', 1)</code>:  switch to the second calendar. See the example for <a href=#hidetabs><code>hidetabs</code></a>.</p>
 </div>
 
 <h2>Animation</h2>
@@ -159,7 +311,19 @@
 <p><code class="language-javascript">'slow'</code> (I like drama)</p>
 <h4>Examples</h4>
 <p><code class="language-javascript">0</code>: just show and hide with no animation.</p>
+<input id=12 />
+<script>
+flexcalReady.then(function(){
+	$('#12').flexcal({duration: 0});
+});
+</script>
 <p><code class="language-javascript">['clip', {direction: 'vertical'}, 'slow']</code>: use <a href=http://api.jqueryui.com/clip-effect/ >jQuery UI effects</a>.</p>
+<input id=13 />
+<script>
+flexcalReady.then(function(){
+	$('#13').flexcal({duration: ['clip', {direction: 'vertical'}, 'slow']});
+});
+</script>
 </div>
 <h3 id=hide><code>hide</code></h3>
 <div class=definition>
@@ -170,7 +334,27 @@
 <p><code class="language-javascript">$.fn.hide</code></p>
 <h4>Examples</h4>
 <p><code class="language-javascript">$.fn.slideUp</code>: hide the calendar with jQuery's <a href=http://api.jquery.com/slideUp/><code>slideUp</code></a> function.</p>
-<p><code class="language-javascript">function () { this.find('table a').css('background', 'green'); $.fn.hide.apply(this, arguments) }</code>: turn the calendar days green before hiding.</p>
+<input id=14 />
+<script>
+flexcalReady.then(function(){
+	$('#14').flexcal({hide: $.fn.slideUp});
+});
+</script>
+<p><pre><code class="language-javascript">function () {
+	this.find('table a').css('background', 'green');
+	$.fn.hide.apply(this, arguments);
+}</code></pre> turn the calendar days green before hiding (no, I don't know why you would want to do that).</p>
+<input id=15 />
+<script>
+flexcalReady.then(function(){
+	$('#15').flexcal({hide: 
+		function () {
+			this.find('table a').css('background', 'green');
+			$.fn.hide.apply(this, arguments);
+		}
+	});
+});
+</script>
 </div>
 <h3 id=hideOnOutsideClick><code>hideOnOutsideClick</code></h3>
 <div class=definition>
@@ -178,11 +362,16 @@
 <p>If <code class="language-javascript">true</code>, attaches a click event handler to automatically hide the calendar if the mouse is clicked outside the calendar or the attached textbox. If the <a href=#box><code>box</code> option</a> is set, then this is an inline calendar, and <code>hideOnOutsideClick</code> is always set to <code class="language-javascript">false</code> during initialization.</p>
 <h4>Default value</h4>
 <p><code class="language-javascript">true</code> (but reset to <code class="language-javascript">false</code> for inline calendars)</p>
+</div>
 <h3 id=reposition><code>reposition</code></h3>
+<div class=definition>
 <p>{true|false}</p>
 <p>If <code class="language-javascript">true</code>, repositions the calendar with every transition; useful if the calendar is above the text element and transitions to months with more weeks obscures the box. Some may find the constant repositioning distracting.</p>
 <h4>Default value</h4>
 <p><code class="language-javascript">true</code></p>
+<h4>Example</h4>
+<p>See the example for <a href=#transitionOptions><code>transitionOptions</code></a>.</p>
+</div>
 <h3 id=show><code>show</code></h3>
 <div class=definition>
 <p><code>{Function}</code></p>
@@ -193,8 +382,90 @@
 <h4>Examples</h4>
 <p>See <a href=#hide><code>hide</code></a>.</p>
 </div>
-<h3><code>transition</code></h3>
+<h3 id=transition><code>transition</code></h3>
+<div class=definition>
+<p><code>{Function}</code></p>
+<p>Function to animate the transition between months or between calendars. The sole argument is <code>transitionOptions</code>, copied from the <a href=#transitionOptions>option of that name</a>, with the following extra fields:</p>
+<dl>
+	<dt><code>transitionOptions.$cont</code></dt>
+	<dd>jQuery object that is the container for the calendars</dd>
+	<dt><code>transitionOptions.elements</code></dt>
+	<dd>jQuery object that has two elements, each an absolutely-positioned &lt;div&gt; one on top of the other, that are the calendars to be transitioned</dd>
+	<dt><code>transitionOptions.currSlide</code></dt>
+	<dd>The index of the current calendar in <code>transitionOptions.elements</code>. Thus, <code class="language-javascript">transitionOptions.elements.eq(transitionOptions.currSlide)</code> is the currently-showing calendar and <code class="language-javascript">transitionOptions.elements.eq(1-transitionOptions.currSlide)</code> is the currently hidden calendar that needs to be shown</dd>
+	<dt><code>transitionOptions.rev</code></dt>
+	Boolean to indicate that the animation should show a "reverse" transition, going to a previous month.
+	<dt><code>transitionOptions.l10n</code></dt>
+	<dd>Localization object for the calendar to be displayed (<code class="language-javascript">transitionOptions.elements.eq(1-transitionOptions.currSlide)</code>). The transition function can use <code class="language-javascript">transitionOptions.l10n.isRTL</code> to determine if "next month" should be animated right-to-left or left-to-right</dd>
+</dl>
+<p>The options object that is passed to the transition function was designed to allow drop-in use of Mike Alsup's excellent <a href="http://www.malsup.com/jquery/cycle/">cycle plugin</a>, but it turned out to be <a href=transition.html>more complicated than that</a>. Nonetheless, the terminology remains.</p>
+<h4>Default Value</h4>
+<pre><code class="language-javascript">function(o){
+	o.elements.eq(o.currSlide).hide();
+	o.elements.eq(1-o.currSlide).show();
+}</code></pre>
+<h4>Examples</h4>
+<p>Sliding transition</p>
+<pre><code class="language-javascript">$(element).flexcal({
+	transition: function(o){
+		var dir = (o.rev != o.l10n.isRTL) ? 'right' : 'left';
+		var first = o.elements.eq(o.currSlide), second = o.elements.eq(1-o.currSlide);
+		first.hide('blind', {direction: dir}, function(){
+			second.show('blind', {direction: dir});
+		});
+	}
+});</code></pre>
+<input id=16 />
+<script>
+flexcalReady.then(function(){
+	$('#16').flexcal({
+		transition: function(o){
+			var dir = (o.rev != o.l10n.isRTL) ? 'right' : 'left';
+			var first = o.elements.eq(o.currSlide), second = o.elements.eq(1-o.currSlide);
+			first.hide('blind', {direction: dir}, function(){
+				second.show('blind', {direction: dir});
+			});
+		}
+	});
+});
+</script>
+</div>
 <h3><code>transitionOptions</code></h3>
+<div class=definition>
+<p><code>{undefined|Object}</code></p>
+<p>Options passed to <a href=#transition><code>transition</code></a>.</p>
+<h4>Default Value</h4>
+<p><code class="language-javascript">undefined</code></p>
+<h4>Example</h4>
+<p>slow transition</p>
+<pre><code class="language-javascript">$(element).flexcal({
+	position: 'rt',
+	transition: function(o){
+		var first = o.elements.eq(o.currSlide), second = o.elements.eq(1-o.currSlide);
+		first.fadeOut(o.duration);
+		second.fadeIn(o.duration);
+	},
+	transitionOptions: {duration: 1000}	// very slow fade
+});</code></pre>
+<input id=17 />
+<label><input type="checkbox" name="check17" checked /> Reposition</label><br/>
+<script>
+flexcalReady.then(function(){
+	$('#17').flexcal({
+	transition: function(o){
+		var first = o.elements.eq(o.currSlide), second = o.elements.eq(1-o.currSlide);
+		first.fadeOut(o.duration);
+		second.fadeIn(o.duration);
+	},
+	transitionOptions: {duration: 1000}	
+	});
+	$('[name=check17]').change(function(){
+		console.log($(this).is(':checked'));
+		$('#17').flexcal('option', 'reposition', $(this).is(':checked'));
+	});
+});
+</script>
+</div>
 
 <h2>Structure</h2>
 <h3><code>box</code></h3>
@@ -229,11 +500,6 @@
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
- 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/prism/gh-pages/prism.js"></script>
-    <script src="javascripts/prism.linenumber.js"></script>
-	<script src="loadflexcal.js"></script>
 
   </body>
 </html>
