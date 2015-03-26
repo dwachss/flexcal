@@ -762,7 +762,7 @@ function heb2civ(h, type){
 // TODO: use the jQuery foundation's Globalize tools (https://github.com/jquery/globalize)
 
 function tol10n (name, defaultL10n){
-	return $.extend(true, {}, $.bililite.flexcal.prototype.options.l10n, defaultL10n, partialL10n(name));
+	return $.extend(true, {}, defaultL10n || $.bililite.flexcal.prototype.options.l10n, partialL10n(name));
 };
 $.bililite.flexcal.tol10n = tol10n;
 
