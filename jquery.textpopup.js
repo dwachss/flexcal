@@ -95,7 +95,7 @@
 			this.theBox = box;
 			box.data('textpopup', this);
 			this._fill(box);
-			this._trigger('created', 0, box);
+			this._trigger('create', 0, box);
 			return box;
 		},
 		_fill: function(box){
