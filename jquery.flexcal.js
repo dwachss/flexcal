@@ -370,7 +370,11 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		var tab = this.tabs.eq(n).addClass('ui-tabs-selected ui-state-active') // mark the tab as current
 			.children()['ui-unclickable']().end(); // and remove the clickable indication
 		this._setL10n(tab.data('flexcal.l10n'));
-		this.o.rev = n < this.options.tab; // true if the transition should indicate backwards
+		this.o.rev = (n < this.options.tab) != this.o.l10n.isRTL; // true if the transition should indicate backwards.
+		// The XOR with isRTL is because the actual transition doesn't know whether we are transitioning 
+		// to a new date in the same calendar (in which isRTL is relevant and the code should do the XOR)
+		// or to a new tab (which is always in the browser's default direction). Using an XOR here allows
+		// the transition code to "overcorrect" back to the right result with its XOR
 		this.options.tab = n;
 	},
 	_setDate: function(d, animate){
