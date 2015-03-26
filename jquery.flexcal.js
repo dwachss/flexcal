@@ -392,7 +392,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		if (!animate){
 			this._adjustHTML(currCalendar);
 		}else{
-			if (ISOdate(oldd) != ISOdate(d)) this.o.rev = oldd > d; // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
+			if (ISOdate(oldd) != ISOdate(d)) this.o.rev = (oldd > d); // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
 			var cal = this._generateCalendar(d);
 			var slide = this.o.elements.eq(1-this.o.currSlide).html(cal);
 			this._adjustHTML(cal);
