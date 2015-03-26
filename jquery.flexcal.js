@@ -370,7 +370,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		var tab = this.tabs.eq(n).addClass('ui-tabs-selected ui-state-active') // mark the tab as current
 			.children()['ui-unclickable']().end(); // and remove the clickable indication
 		this._setL10n(tab.data('flexcal.l10n'));
-		this.o.rev = (n < this.options.tab) ^ !!this.o.l10n.isRTL; // true if the transition should indicate backwards
+		this.o.rev = n < this.options.tab; // true if the transition should indicate backwards
 		this.options.tab = n;
 	},
 	_setDate: function(d, animate){
@@ -388,7 +388,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		if (!animate){
 			this._adjustHTML(currCalendar);
 		}else{
-			if (this.options.current.getTime() != d.getTime()) this.o.rev = this.options.current > d; // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
+			if (ISOdate(oldd) != ISOdate(d) this.o.rev = oldd > d; // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
 			var cal = this._generateCalendar(d);
 			var slide = this.o.elements.eq(1-this.o.currSlide).html(cal);
 			this._adjustHTML(cal);
