@@ -474,12 +474,17 @@ flexcalReady.then(function(){
 
 <h2>Events</h2>
 <p>As with all widgets, event handlers can be attached with callbacks when flexcal is created: <code class="language-javascript">$(element).flexcal({ shown: function() {console.log('calendar shown')} })</code>, or with real event attachment: <code class="language-javascript">$(element).on('flexcalshown', function() {console.log('calendar shown')})</code>. Note the difference in naming.</p>
+<p>Note that the naming here is inconsistent. Events should be named as the verb in the present (<code>click</code>, <code>submit</code>), but I already have options named <code>show</code> and <code>hide</code> so I named the corresponding events <code>shown</code> and <code>hidden</code>.</p>
 <h3><code>commit</code></h3>
-<h3><code>created</code></h3>
+<h3><code>create</code></h3>
 <h3><code>hidden</code></h3>
 <h3><code>l10n</code></h3>
 <h3><code>set</code></h3>
 <h3><code>shown</code></h3>
+
+<h2>API</h2>
+<p>Methods listed here can be called in two ways, as with any jQuery widget. The usual way is with <code class=language-javascript>$(element).flexcal(methodname, arguments ...)</code>. You can also get the widget instance and call the method directly: <code class=language-javascript>var instance = $(element).flexcal('instance'); instance.methodname(arguments);</code>.</p>
+<p>The usual widget methods are available, <code>option</code> to set and get options, <code>widget</code> to get the associated element (for flexcal, the <code class=language-html>&lt;input&gt;</code> element), <code>instance</code> to get the widget instance itself, and <code>destroy</code> to remove the widget from the element. <code>enable</code> and <code>disable</code> are not implemented.</p>
 
 <h2>API&mdash;getters</h2>
 <h3><code>format</code></h3>
