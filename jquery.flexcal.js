@@ -416,6 +416,10 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			this._makeCurrentCalendar(this.options.tab);
 		}
 	},
+	option: function (key, value){
+		if (key === 'box' && arguments.length === 1) return this.box();
+		return this._super(key, value);
+	},
 	_setOption: function(key, value) {
 		if (key == 'current'){
 			this._setDate(value);
