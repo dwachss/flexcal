@@ -169,7 +169,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		return d;
 	}, 
 	show: function(){
-		var $cont = this.box().find('.ui-flexcal-container');
+		var $cont = this._box().find('.ui-flexcal-container');
 		this.o.$cont = $cont;
 		this.o.elements = this.o.$cont.children();
 		this._setTabs();
@@ -289,7 +289,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	},
 	_createTabs: function(){
 		var self = this;
-		return this.box().find('ul.ui-tabs-nav')
+		return this._box().find('ul.ui-tabs-nav')
 			.html($.map(this.options.calendars, function(n,i){
 				return $([
 					'<li class="ui-corner-top" style="list-style: none"><a>', // odd bug: occasionally I get a list-style-image showing if I don't remove it on each tab
@@ -396,7 +396,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			var cal = this._generateCalendar(d);
 			var slide = this.o.elements.eq(1-this.o.currSlide).html(cal);
 			this._adjustHTML(cal);
-			var size = slide.find('table').tableSize(this.box().parent()[0]);
+			var size = slide.find('table').tableSize(this._box().parent()[0]);
 			slide.css(size);
 			this._transition(size);
 		}
@@ -415,10 +415,6 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			this.tabs.parent().show();
 			this._makeCurrentCalendar(this.options.tab);
 		}
-	},
-	option: function (key, value){
-		if (key === 'box' && arguments.length === 1) return this.box();
-		return this._super(key, value);
 	},
 	_setOption: function(key, value) {
 		if (key == 'current'){
@@ -455,7 +451,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 				tabbar.width(width);
 			}
 		}
-		if (this.box().is(':hidden')){
+		if (this._box().is(':hidden')){
 			// if box is hidden, then we don't need to animate anything
 			first.hide();
 			second.css({top: 0, left: 0, opacity: 1}).show(); // make sure we correct any leftover css from the transition effects

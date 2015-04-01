@@ -53,14 +53,14 @@
 		},
 		position: function(){
 			if (this.options.box) return; // don't change position for inline boxes
-			var display = this.box().css('display');
-			this.box().css({display: 'block', visibility: 'hidden'}).
+			var display = this._box().css('display');
+			this._box().css({display: 'block', visibility: 'hidden'}).
 				position(this._position).
 				css({display: display, visibility: 'visible'});
 		},
 		show: function(){
 			// See http://wiki.codetalks.org/wiki/index.php/Docs/Keyboard_navigable_JS_widgets for manipulating tabindex
-			var self = this, box = self.box().attr('tabindex', 0);
+			var self = this, box = self._box().attr('tabindex', 0);
 			if (box.is(':visible, :animated')) return;
 			self.position();
 			self.options.show.apply(box, this._duration);
@@ -71,12 +71,12 @@
 		},
 		hide: function(){
 			// having a hidden box with a tabindex bothers the browser to no end
-			var self = this, box = self.box().removeAttr('tabindex');
+			var self = this, box = self._box().removeAttr('tabindex');
 			if (box.is(':hidden')) return;
 			self.options.hide.apply(box, this._duration);
 			box.queue(function(){self._trigger('hidden'); box.dequeue()});
 		},
-		box: function(){
+		_box: function(){
 			// lazy create
 			return this.theBox || this._createBox();
 		},
@@ -119,19 +119,23 @@
 			}
 		},
 		destroy: function() {
-			this.box().remove();
+			if (!this.options.box) this._box().remove();
 			if (this._triggerElement) this._triggerElement.unbind ('.textpopup');
 			$('body').unbind('.textpopup');
 			this.theBox = undefined;
 		},
-		// returns true if the event e is a click inside the box , the original element or the triggering elements
+		option: function (key, value){
+			if (key === 'box' && arguments.length === 1) return this._box();
+			return this._super(key, value);
+		},
 		_setOption: function(key, value) {
 			this._super(key, value);
 			if (key == 'trigger' || 'hideOnOutsideClick' || 'position' || 'duration') this._init;
-			if (key == 'class') this.box().attr('class', value);
+			if (key == 'class') this._box().attr('class', value);
 		},
+		// returns true if the event e is a click inside the box , the original element or the triggering elements
 		_isClickInside: function(e){
-			var keepers = $([]).add(this._triggerElement).add(this.box()).add(this.element);
+			var keepers = $([]).add(this._triggerElement).add(this._box()).add(this.element);
 			for (var elem = e.target; elem; elem = elem.parentNode) if (keepers.index(elem) > -1) return true;
 			return false;
 		},
@@ -252,14 +256,14 @@
 			}).keyup(function(evt){
 				if (evt.which == $.ui.keyCode.CAPS_LOCK){
 					self._capsLock = !self._capsLock;
-					self.box().find('.capsLock').text(self._capsLock ? self.options.capslockOn : self.options.capslockOff);
+					self._box().find('.capsLock').text(self._capsLock ? self.options.capslockOn : self.options.capslockOff);
 				}
 				if (self._capsLock){
-					self.box().find('.k'+evt.which).removeClass('hover');
+					self._box().find('.k'+evt.which).removeClass('hover');
 				}
 			}).keydown(function(evt){
 				if (self._capsLock){
-					self.box().find('.k'+evt.which).addClass('hover');
+					self._box().find('.k'+evt.which).addClass('hover');
 				}
 			});
 		},
