@@ -126,7 +126,7 @@
 		},
 		option: function (key, value){
 			if (key === 'box' && arguments.length === 1) return this._box();
-			return this._super(key, value);
+			return this._super.apply(this, arguments);
 		},
 		_setOption: function(key, value) {
 			this._super(key, value);

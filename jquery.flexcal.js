@@ -421,7 +421,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			this._setDate(value);
 			return; // _setDate records the new date in options.current; we want a valid date, not whatever the user passed in
 		}
-		this._super(key, value);
+		this._super.apply(this, arguments);
 		// _setTabs redraws the tab bar; _setDate redraws the calendar
 		if (key == 'calendars' || key == 'calendarNames' || key == 'hidetabs'){
 			this._setTabs();
