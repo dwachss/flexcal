@@ -197,14 +197,14 @@ flexcalReady.then(function(){
 <div id=8 style="display: inline-block"></div>
 <script>
 flexcalReady.then(function(){
-	var flexcal = $('<input>').flexcal({
+	var flexcalContainer = $('<input>').flexcal({ // an inline calendar
 		calendars: ['First', 'Second', 'Third'],
 		box: '#8',
 		duration: 0
-	}).flexcal('show').flexcal('instance');
+	});
 	$('#8').prev().find('input').on('change', function(){
 		var classes = $('#8').prev().find('input:checked');
-		flexcal.option('class', classes.map(function () { return this.name }).get().join(' '));
+		flexcalContainer.flexcal('option', 'class', classes.map(function () { return this.name }).get().join(' '));
 	});
 });
 </script>
@@ -223,23 +223,20 @@ flexcalReady.then(function(){
 <div id="9" style="display: inline-block"></div>
 <script>
 flexcalReady.then(function(){
-	var flexcal = $('<input>').flexcal({
+	var flexcalContainer = $('<input>').flexcal({ // an inline calendar
 	  calendars: ['en', 'jewish', 'he-jewish'],
 	  'class': 'multicalendar',
 	  box: '#9',
 	  duration: 0
-	}).flexcal('show').flexcal('instance');
-	flexcal.widget().on('flexcalset', function() {
-		$('[name=radio9]').eq(flexcal.option('tab')).prop("checked", true);
 	});
-	flexcal.widget().on('flexcalcommit', function(e, d) {
-		flexcal._setDate(d, true); // little trick to make sure the calendar is redrawn
+	flexcalContainer.on('flexcalset', function() {
+		$('[name=radio9]').eq(flexcalContainer.flexcal('option', 'tab')).prop("checked", true);
 	});
 	$('[name=check9]').change(function(){
-		flexcal.option('hidetabs', $(this).prop('checked'));
+		flexcalContainer.flexcal('option', 'hidetabs', $(this).prop('checked'));
 	});
 	$('[name=radio9]').change(function() {
-		flexcal.option('tab', $('[name=radio9]').index(this));
+		flexcalContainer.flexcal('option', 'tab', $('[name=radio9]').index(this));
 	});
 });
 </script>
@@ -251,6 +248,7 @@ flexcalReady.then(function(){
   relative to the textbox. 'tl' means on top of the input box, aligned to the left edge;
   'lt' means on the left of the input box aligned to the top edge; similarly 'b' for bottom
  and 'r' for right. If an object is passed, it will be passed to <a href=http://jqueryui.com/position/><code>position</code></a> (after <code>$.extend</code>ing with the defaults).<p>
+<p>For an inline calendar (using the <a href=#box><code>box</code></a> option) this option is ignored. Just position the <code>box</code> where you want it.</p>
 <h4>Default value</h4>
 <p><code class="language-javascript">'tl'</code>, which means:
 <pre><code class="language-javascript">{
@@ -367,6 +365,7 @@ flexcalReady.then(function(){
 <div class=definition>
 <p>{true|false}</p>
 <p>If <code class="language-javascript">true</code>, repositions the calendar with every transition; useful if the calendar is above the text element and transitions to months with more weeks obscures the box. Some may find the constant repositioning distracting.</p>
+<p>For an inline calendar (using the <a href=#box><code>box</code></a> option) this option is ignored. If the calendar height changes are distracting, give the <a href=#box><code>box</code></a> and absolute height.</p>
 <h4>Default value</h4>
 <p><code class="language-javascript">true</code></p>
 <h4>Example</h4>
@@ -430,7 +429,7 @@ flexcalReady.then(function(){
 });
 </script>
 </div>
-<h3><code>transitionOptions</code></h3>
+<h3 id=transitionOptions><code>transitionOptions</code></h3>
 <div class=definition>
 <p><code>{undefined|Object}</code></p>
 <p>Options passed to <a href=#transition><code>transition</code></a>.</p>
@@ -468,7 +467,24 @@ flexcalReady.then(function(){
 </div>
 
 <h2>Structure</h2>
-<h3><code>box</code></h3>
+<h3 id=box><code>box</code></h3>
+<div class=definition>
+<p><code>{undefined|jQuery object|DOM object|String}</code></p>
+<p>The element to contain the calendar. If <code class="language-javascript">undefined</code>, then the a new, absolutely-positioned &lt;div&gt; is created and the calendar is a pop-up calendar. Otherwise, the calendar is contained in <code class="language-javascript">$(this.options.box)</code>. This container should <a href="http://stackoverflow.com/questions/450903/make-div-width-equal-to-child-contents">shrink to fit its contents</a>, so it should use <code class="language-css">display: inline-block</code> or <code class="language-css">float: left/right</code> or <a href="https://css-tricks.com/almanac/properties/w/width/">other techniques</a>.</p>
+<p>When getting the value of this option, a jQuery object containing the actual DOM element is returned, no matter what the original value passed in was.</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">undefined</code></p>
+<h4>Examples</h4>
+<p>For inline calendars, see the <a href=#class><code>'class'</code></a> and <a href=#hidetabs><code>hidetabs</code></a> examples.</p>
+<p><code class="language-javascript">$(element).flexcal('option', 'box').draggable()</code>: Using the value of <code>box</code> to get the calendar container to make it <a href="http://jqueryui.com/draggable/">draggable</a>.</p>
+<input id=18 />
+<script>
+flexcalReady.then(function(){
+	$('#18').flexcal();
+	$('#18').flexcal('option', 'box').css({border: '10px solid #abcdef', cursor: 'move'}).draggable();
+});
+</script>
+</div>
 <h3><code>trigger</code></h3>
 <h3><code>url</code></h3>
 
