@@ -48,7 +48,7 @@
 <h4>Examples</h4>
 <p><code class="language-javascript">['en', 'fr']</code>: two calendar tabs, English and French, with their default names displayed('English' for the first, 'flexcal' for the second if we are using the jQuery UI datepicker localization, since it does not define a name).</p>
 <input id=1 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	return $.getScript('https://cdn.rawgit.com/jquery/jquery-ui/1-11-stable/ui/i18n/datepicker-fr.js');
 }).then(function(){
@@ -61,7 +61,7 @@ flexcalReady.then(function(){
 </script>
 <p><code class="language-javascript">['en', ['fr', 'French'] ]</code>: two calendar tabs, English and French, with the second name set to 'French' (if a string does not correspond to a localization, it is assumed to be a calendar name).</p>
 <input id=2 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	return $.getScript('https://cdn.rawgit.com/jquery/jquery-ui/1-11-stable/ui/i18n/datepicker-fr.js');
 }).then(function(){
@@ -73,7 +73,7 @@ flexcalReady.then(function(){
 </script>
 <p><code class="language-javascript">[ ['en', {dateFormat: 'yyyy-mm-dd', dayNamesMin: ['S','M','T','W','T','F','S']} ]]</code>: one calendar, using the ISO notation for dates and one-letter abbreviations for days of the week.</p>
 <input id=3 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#3').flexcal({
 		position: 'rt',
@@ -119,7 +119,7 @@ flexcalReady.then(function(){
 <h4>Examples</h4>
 <p><code class="language-javascript">$(element).flexcal({current: new Date('Dec 25 2015')})</code>: start the calendar on Christmas.</p>
 <input id=4 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#4').flexcal({
 		position: 'rt',
@@ -129,9 +129,9 @@ flexcalReady.then(function(){
 </script>
 <p><code class="language-javascript">$(element).flexcal('option', 'current', new Date('Jan 01 2015'))</code>: change the displayed date on an existing calendar. Note that it does not set the date in the text box; use <a href=#commit><code>commit</code></a> for that.</p>
 <input id=5 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
-	$('#5').flexcal({position: 'rt'}).flexcal('box').append(
+	$('#5').flexcal({position: 'rt'}).flexcal('option', 'box').append(
 		$('<input type=button>').val('Happy New Year').click(function(){
 			$('#5').flexcal('option', 'current', new Date('Jan 01 2015'));
 		})
@@ -149,7 +149,7 @@ flexcalReady.then(function(){
 <h4>Examples</h4>
 <p><code class="language-javascript">function(d){ return d.getDay() != 0 && d.getDay() != 6; }</code>: disable weekends.</p>
 <input id=6 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#6').flexcal({
 		position: 'rt',
@@ -165,7 +165,7 @@ flexcalReady.then(function(){
 	return true; // don't disable anything
 }</code></pre> highlight every other Thursday (it's payday!).</p>
 <input id=7 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#7').flexcal({
 		position: 'rt',
@@ -195,7 +195,7 @@ flexcalReady.then(function(){
 	<label><input type=checkbox name=fontawesome> FontAwesome</label>
 </div>
 <div id=8 style="display: inline-block"></div>
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	var flexcalContainer = $('<input>').flexcal({ // an inline calendar
 		calendars: ['First', 'Second', 'Third'],
@@ -221,7 +221,7 @@ flexcalReady.then(function(){
 <label><input type="radio" name="radio9"/> Jewish</label>
 <label><input type="radio" name="radio9"/> &#1506;&#1489;&#1512;&#1497;&#1514;</label><br />
 <div id="9" style="display: inline-block"></div>
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	var flexcalContainer = $('<input>').flexcal({ // an inline calendar
 	  calendars: ['en', 'jewish', 'he-jewish'],
@@ -266,7 +266,7 @@ flexcalReady.then(function(){
 <div><strong>rb</strong> <input/></div>
 <div><strong>lb</strong> <input/></div>
 </div>
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#10 input').each(function(){
 	  $(this).css({height: '50px'}).flexcal({position: $(this).prev().text()});
@@ -285,7 +285,7 @@ $('#example2 div, #example2 span').css({margin:'2px'});
 <h4>Examples</h4>
 <p><code class="language-javascript">$(element).flexcal({calendars: ['First', 'Second'], tab: 1})</code>:  the calendar 'Second' should be active when initially shown.</p>
 <input id=11 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#11').flexcal({calendars: ['First', 'Second'], tab: 1});
 });
@@ -310,14 +310,14 @@ flexcalReady.then(function(){
 <h4>Examples</h4>
 <p><code class="language-javascript">0</code>: just show and hide with no animation.</p>
 <input id=12 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#12').flexcal({duration: 0});
 });
 </script>
 <p><code class="language-javascript">['clip', {direction: 'vertical'}, 'slow']</code>: use <a href=http://api.jqueryui.com/clip-effect/ >jQuery UI effects</a>.</p>
 <input id=13 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#13').flexcal({duration: ['clip', {direction: 'vertical'}, 'slow']});
 });
@@ -333,7 +333,7 @@ flexcalReady.then(function(){
 <h4>Examples</h4>
 <p><code class="language-javascript">$.fn.slideUp</code>: hide the calendar with jQuery's <a href=http://api.jquery.com/slideUp/><code>slideUp</code></a> function.</p>
 <input id=14 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#14').flexcal({hide: $.fn.slideUp});
 });
@@ -343,7 +343,7 @@ flexcalReady.then(function(){
 	$.fn.hide.apply(this, arguments);
 }</code></pre> turn the calendar days green before hiding (no, I don't know why you would want to do that).</p>
 <input id=15 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#15').flexcal({hide: 
 		function () {
@@ -415,7 +415,7 @@ flexcalReady.then(function(){
 	}
 });</code></pre>
 <input id=16 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#16').flexcal({
 		transition: function(o){
@@ -448,7 +448,7 @@ flexcalReady.then(function(){
 });</code></pre>
 <input id=17 />
 <label><input type="checkbox" name="check17" checked /> Reposition</label><br/>
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#17').flexcal({
 	transition: function(o){
@@ -478,7 +478,7 @@ flexcalReady.then(function(){
 <p>For inline calendars, see the <a href=#class><code>'class'</code></a> and <a href=#hidetabs><code>hidetabs</code></a> examples.</p>
 <p><code class="language-javascript">$(element).flexcal('option', 'box').draggable()</code>: Using the value of <code>box</code> to get the calendar container to make it <a href="http://jqueryui.com/draggable/">draggable</a>.</p>
 <input id=18 />
-<script>
+<script class=demo>
 flexcalReady.then(function(){
 	$('#18').flexcal();
 	$('#18').flexcal('option', 'box').css({border: '10px solid #abcdef', cursor: 'move'}).draggable();
@@ -486,7 +486,40 @@ flexcalReady.then(function(){
 </script>
 </div>
 <h3><code>trigger</code></h3>
+<div class=definition>
+<p><code>{'self'|null|String|jQuery object|DOM element}</code></p>
+<p>Element(s) to use as the trigger to show the
+  popup. basically uses the code
+    <pre><code class="language-javascript">if (trigger == 'self') trigger = self.element;
+if (trigger) $(trigger).click(self.show)</code></pre>
+</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">'self'</code></p>
+<h4>Example</h4>
+<input id=19 /> <img src=http://bililite.com/images/silk/clock.png alt="Show Calendar" />
+<script class=demo>
+flexcalReady.then(function(){
+	$('#19').flexcal({
+		trigger: $('#19').next()
+	});
+});
+</script>
+</div>
+
 <h3><code>url</code></h3>
+<div class=definition>
+<p><code>{String}</code></p>
+<p>URL of the underlying structure of the calendar. It is a URL, so it can be loaded with AJAX. Includes a special case to recognize <code>data</code> URL's to load them immediately.</p>
+<h4>Default value</h4>
+<pre><code class=language-html>data:,&lt;div class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal"&gt;
+	&lt;ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"&gt;&lt;/ul&gt;
+	&lt;div class="ui-flexcal-container"&gt;
+		&lt;div class="ui-flexcal-pane"&gt;&lt;/div&gt;
+		&lt;div class="ui-flexcal-pane"&gt;&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p>The two <code class=language-html>&lt;div&gt;</code>s with <code class=language-html>class="ui-flexcal-pane"</code> will contain the calendar; one is shown and the other is hidden to allow <a href=#transition>animated transitions.</p>
+</div>
 
 <h2>Events</h2>
 <p>As with all widgets, event handlers can be attached with callbacks when flexcal is created: <code class="language-javascript">$(element).flexcal({ shown: function() {console.log('calendar shown')} })</code>, or with real event attachment: <code class="language-javascript">$(element).on('flexcalshown', function() {console.log('calendar shown')})</code>. Note the difference in naming.</p>

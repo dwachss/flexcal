@@ -26,4 +26,15 @@ $(document).ready(function(){
 	});
 	Prism.highlightAll();
 	
+	// set up the "Show code" demos
+	$('script.demo').each (function(){
+		var code = $('<code>').addClass('language-javascript').text(this.text);
+		var pre = $('<pre>').append(code).hide();
+		var button = $('<input type=button>').val('Show Code').click(function(){
+			pre.toggle();
+		});
+		$(this).after(pre).after(button);
+		Prism.highlightElement(code[0]);
+	});
+	
 });
