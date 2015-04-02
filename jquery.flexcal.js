@@ -167,7 +167,11 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		}
 		if (!(d instanceof Date)) d = new Date(d);
 		return d;
-	}, 
+	},
+	option: function (key, value){
+		if (arguments.length === 1 && key === 'l10n') return this.o.l10n; // return the current localization object, not the default
+		return this._super.apply(this, arguments);
+	},
 	show: function(){
 		var $cont = this._box().find('.ui-flexcal-container');
 		this.o.$cont = $cont;
@@ -385,8 +389,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		var oldd = this.options.current;
 		d = this.parse(d);
 		if (isNaN(d.getTime())) d = oldd;
-		this._trigger('set', 0, [d, oldd]);
 		this.options.current = d;
+		this._trigger('set', 0, [d, oldd]);
 		// the find(..) looks for a date element with the desired date (stored in the rel attribute). If it's there, then the new date is showing and we can use it
 		if (animate == null) animate = currCalendar.find('a[rel="'+ISOdate(d)+'"]').length == 0;
 		if (!animate){
@@ -403,7 +407,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	},
 	_setL10n: function(name){
 		this.o.l10n = tol10n(name, this.options.l10n);
-		this._trigger('l10n', 0, this.o.l10n);
+		this._trigger('setL10n', 0, this.o.l10n);
 	},
 	_setTabs: function(){
 		this.tabs = this._createTabs().children();
