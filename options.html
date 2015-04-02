@@ -35,6 +35,50 @@
 <h1>Options and API</h1>
 <p>There are a lot a options, more than I think a widget ought to have. I may want to simplify things in the future, and move some of these options to subclasses.</p>
 
+<h2>Summary</h2>
+<h3>Options</h3>
+<ul>
+<li><a href=#box><code>box</code></a></li>
+<li><a href=#busy><code>busy</code></a></li>
+<li><a href=#calendars><code>calendars</code></a></li>
+<li><a href=#class><code>'class'</code></a></li>
+<li><a href=#current><code>current</code></a></li>
+<li><a href=#duration><code>duration</code></a></li>
+<li><a href=#filter><code>filter</code></a></li>
+<li><a href=#hide><code>hide</code></a></li>
+<li><a href=#hideOnOutsideClick><code>hideOnOutsideClick</code></a></li>
+<li><a href=#hidetabs><code>hidetabs</code></a></li>
+<li><a href=#l10n><code>l10n</code></a></li>
+<li><a href=#position><code>position</code></a></li>
+<li><a href=#reposition><code>reposition</code></a></li>
+<li><a href=#show><code>show</code></a></li>
+<li><a href=#tab><code>tab</code></a></li>
+<li><a href=#transition><code>transition</code></a></li>
+<li><a href=#transitionOptions><code>transitionOptions</code></a></li>
+<li><a href=#trigger><code>trigger</code></a></li>
+<li><a href=#url><code>url</code></a></li>
+</ul>
+
+<h3>Events</h3>
+<ul>
+<li><a href=#commitevent><code>commit</code></a></li>
+<li><a href=#create><code>create</code></a></li>
+<li><a href=#hidden><code>hidden</code></a></li>
+<li><a href=#set><code>set</code></a></li>
+<li><a href=#setL10n><code>setL10n</code></a></li>
+<li><a href=#shown><code>shown</code></a></li>
+</ul>
+
+<h3>Methods</h3>
+<ul>
+<li><a href=#commit><code>commit</code></a></li>
+<li><a href=#format><code>format</code></a></li>
+<li><a href=#hidemethod><code>hide</code></a></li>
+<li><a href=#parse><code>parse</code></a></li>
+<li><a href=#positionmethod><code>position</code></a></li>
+<li><a href=#showmethod><code>show</code></a></li>
+</ul>
+
 <h2>Localization</h2>
 <p>These are the meat of the widget.</p>
 <h3 id=calendars><code>calendars</code></h3>
@@ -573,17 +617,17 @@ flexcalReady.then(function(){
 	<h4>Example</h4>
 	<p>See <a href=#hide><code>hide</code></a>.</p>
 </div>
-<h3 id=l10nevent><code>l10n</code></h3>
-<div class=definition>
-	<p>Event handler: <code class=language-javascript>function (Event e, Object l10n)</code>.</p>
-	<p>Triggered when the localization object is changed; usually when a tab is clicked but can be from programmatically changing the calendars.</p>
-	<h4>Example</h4>
-	<p>See <a href=#current><code>current</code></a>.</p>
-</div>
 <h3 id=set><code>set</code></h3>
 <div class=definition>
 	<p>Event handler: <code class=language-javascript>function (Event e, Date d, Date oldd)</code>.</p>
 	<p>Triggered when the focused date changes (when changing months, or using the arrow keys). This is the "current" date. Note that this is different from the commit event, which happens with a click or enter key. The committed date is reflected in the attached text box, and gets the <code>ui-state-active</code> class. It may not be showing on the current calendar. The current date gets the <code>ui-state-focus</code> class and determines which month is showing.</p>
+	<h4>Example</h4>
+	<p>See <a href=#current><code>current</code></a>.</p>
+</div>
+<h3 id=setL10n><code>setL10n</code></h3>
+<div class=definition>
+	<p>Event handler: <code class=language-javascript>function (Event e, Object l10n)</code>.</p>
+	<p>Triggered when the localization object is changed; usually when a tab is clicked but can be from programmatically changing the calendars.</p>
 	<h4>Example</h4>
 	<p>See <a href=#current><code>current</code></a>.</p>
 </div>
