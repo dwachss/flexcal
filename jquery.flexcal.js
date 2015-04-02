@@ -403,7 +403,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	},
 	_setL10n: function(name){
 		this.o.l10n = tol10n(name, this.options.l10n);
-		this._trigger('l10n', 0, name);
+		this._trigger('l10n', 0, this.o.l10n);
 	},
 	_setTabs: function(){
 		this.tabs = this._createTabs().children();
