@@ -86,6 +86,7 @@ flexcalReady.then(function(){
 <div class=definition>
 <p><code>{Object}</code></p>
 <p>The default localization, to be used if any of the elements of <a href=#calendars><code>calendars</code></a> are missing. Again, see the <a href=l10n.html>localization documentation</a> for the meaning of these items.</p>
+<p>When used with <code>option</code> to get the value, returns the actual current localization object, not the default object that was passed in.</p>
 <h4>Default value</h4>
 <pre><code class="language-javascript">
 {
@@ -107,6 +108,9 @@ flexcalReady.then(function(){
 	fromDates: undefined,
 	dateFormat: 'm/d/yyyy'
 }</code></pre>
+<h4>Examples</h4>
+<p>See the <a href=l10n.html>localization documentation</a>.</p>
+<p>See <a href=#current><code>current</code></a> for use of <code>l10n</code> with <code>option</code>; i.e. <code class=language-javascript>$(element).flexcal('option', 'l10n')</code>.</p>
 </div>
 
 <h2>Calendar</h2>
@@ -128,7 +132,7 @@ flexcalReady.then(function(){
 });
 </script>
 <p><code class="language-javascript">$(element).flexcal('option', 'current', new Date('Jan 01 2015'))</code>: change the displayed date on an existing calendar. Note that it does not set the date in the text box; use <a href=#commit><code>commit</code></a> for that.</p>
-<input id=5 />
+<p><input id=5 /></p>
 <script class=demo>
 flexcalReady.then(function(){
 	$('#5').flexcal({position: 'rt'}).flexcal('option', 'box').append(
@@ -138,7 +142,31 @@ flexcalReady.then(function(){
 	);
 });
 </script>
-<p><code class="language-javascript">var d = $(element).flexcal('option', 'current')</code>: get the displayed date.</p>
+<p><code class="language-javascript">var d = $(element).flexcal('option', 'current')</code>: get the displayed date and listen to the <a href=#set><code>set</code></a> event to keep the text updated:</p>
+<p><input id=5a /> <span></span></p>
+<script class=demo>
+flexcalReady.then(function(){
+	function showCurrent(){
+		var current = $('#5a').flexcal('option', 'current');
+		var l10n = $('#5a').flexcal('option', 'l10n');
+		var formattedDate = $.bililite.flexcal.format(current, l10n);
+		$('#5a').next().text(formattedDate);
+	}
+	$('#5a').flexcal({
+		calendars: [
+			{name: 'US', dateFormat: 'm/d/yyyy'},
+			{name: 'UK', dateFormat: 'dd/mm/yyyy'},
+			{name: 'ISO 8601', dateFormat: 'yyyy-mm-dd'}
+		],
+		'class': 'multicalendar',
+		position: 'bl',
+		set: showCurrent, // event handlers
+		setL10n: showCurrent
+	});
+});
+</script>
+
+
 </div>
 <h3 id=filter><code>filter</code></h3>
 <div class=definition>
@@ -356,10 +384,12 @@ flexcalReady.then(function(){
 </div>
 <h3 id=hideOnOutsideClick><code>hideOnOutsideClick</code></h3>
 <div class=definition>
-<p>{true|false}</p>
-<p>If <code class="language-javascript">true</code>, attaches a click event handler to automatically hide the calendar if the mouse is clicked outside the calendar or the attached textbox. If the <a href=#box><code>box</code> option</a> is set, then this is an inline calendar, and <code>hideOnOutsideClick</code> is always set to <code class="language-javascript">false</code> during initialization.</p>
-<h4>Default value</h4>
-<p><code class="language-javascript">true</code> (but reset to <code class="language-javascript">false</code> for inline calendars)</p>
+	<p>{true|false}</p>
+	<p>If <code class="language-javascript">true</code>, attaches a click event handler to automatically hide the calendar if the mouse is clicked outside the calendar or the attached textbox. If the <a href=#box><code>box</code> option</a> is set, then this is an inline calendar, and <code>hideOnOutsideClick</code> is always set to <code class="language-javascript">false</code> during initialization.</p>
+	<h4>Default value</h4>
+	<p><code class="language-javascript">true</code> (but reset to <code class="language-javascript">false</code> for inline calendars)</p>
+	<h4>Example</h4>
+	<p>See <a href=#hide><code>hide</code></a>.</p>
 </div>
 <h3 id=reposition><code>reposition</code></h3>
 <div class=definition>
@@ -485,7 +515,7 @@ flexcalReady.then(function(){
 });
 </script>
 </div>
-<h3><code>trigger</code></h3>
+<h3 id=trigger><code>trigger</code></h3>
 <div class=definition>
 <p><code>{'self'|null|String|jQuery object|DOM element}</code></p>
 <p>Element(s) to use as the trigger to show the
@@ -506,7 +536,7 @@ flexcalReady.then(function(){
 </script>
 </div>
 
-<h3><code>url</code></h3>
+<h3 id=url><code>url</code></h3>
 <div class=definition>
 <p><code>{String}</code></p>
 <p>URL of the underlying structure of the calendar. It is a URL, so it can be loaded with AJAX. Includes a special case to recognize <code>data</code> URL's to load them immediately.</p>
@@ -518,32 +548,159 @@ flexcalReady.then(function(){
 		&lt;div class="ui-flexcal-pane"&gt;&lt;/div&gt;
 	&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-<p>The two <code class=language-html>&lt;div&gt;</code>s with <code class=language-html>class="ui-flexcal-pane"</code> will contain the calendar; one is shown and the other is hidden to allow <a href=#transition>animated transitions.</p>
+<p>The two <code class=language-html>&lt;div&gt;</code>s with <code class=language-html>class="ui-flexcal-pane"</code> will contain the calendar; one is shown and the other is hidden to allow <a href=#transition>animated transitions</a>.</p>
 </div>
 
 <h2>Events</h2>
 <p>As with all widgets, event handlers can be attached with callbacks when flexcal is created: <code class="language-javascript">$(element).flexcal({ shown: function() {console.log('calendar shown')} })</code>, or with real event attachment: <code class="language-javascript">$(element).on('flexcalshown', function() {console.log('calendar shown')})</code>. Note the difference in naming.</p>
 <p>Note that the naming here is inconsistent. Events should be named as the verb in the present (<code>click</code>, <code>submit</code>), but I already have options named <code>show</code> and <code>hide</code> so I named the corresponding events <code>shown</code> and <code>hidden</code>.</p>
-<h3><code>commit</code></h3>
-<h3><code>create</code></h3>
-<h3><code>hidden</code></h3>
-<h3><code>l10n</code></h3>
-<h3><code>set</code></h3>
-<h3><code>shown</code></h3>
+<h3 id=commitevent><code>commit</code></h3>
+<div class=definition>
+	<p>Event handler: <code class=language-javascript>function (Event e, Date d)</code>.</p>
+	<p>Triggered when a date is committed (clicked on and copied to the attached text box). <code>d</code> is the new date.</p>
+	<h4>Example</h4>
+	<p>See <a href=#format><code>format</code></a>.</p>
+</div>
+<h3 id=create><code>create</code></h3>
+<div class=definition>
+	<p>Triggered after the calendar is created.</p>
+	<h4>Example</h4>
+	<p>See <a href=#hide><code>hide</code></a>.</p>
+</div>
+<h3 id=hidden><code>hidden</code></h3>
+<div class=definition>
+	<p>Triggered after the calendar is hidden. The event is queued with the animation, so it is triggered after the animation is complete.</p>
+	<h4>Example</h4>
+	<p>See <a href=#hide><code>hide</code></a>.</p>
+</div>
+<h3 id=l10nevent><code>l10n</code></h3>
+<div class=definition>
+	<p>Event handler: <code class=language-javascript>function (Event e, Object l10n)</code>.</p>
+	<p>Triggered when the localization object is changed; usually when a tab is clicked but can be from programmatically changing the calendars.</p>
+	<h4>Example</h4>
+	<p>See <a href=#current><code>current</code></a>.</p>
+</div>
+<h3 id=set><code>set</code></h3>
+<div class=definition>
+	<p>Event handler: <code class=language-javascript>function (Event e, Date d, Date oldd)</code>.</p>
+	<p>Triggered when the focused date changes (when changing months, or using the arrow keys). This is the "current" date. Note that this is different from the commit event, which happens with a click or enter key. The committed date is reflected in the attached text box, and gets the <code>ui-state-active</code> class. It may not be showing on the current calendar. The current date gets the <code>ui-state-focus</code> class and determines which month is showing.</p>
+	<h4>Example</h4>
+	<p>See <a href=#current><code>current</code></a>.</p>
+</div>
+<h3 id=shown><code>shown</code></h3>
+<div class=definition>
+	<p>Triggered after the calendar is shown. The event is queued with the animation, so it is triggered after the animation is complete.</p>
+	<h4>Example</h4>
+	<p>See <a href=#hide><code>hide</code></a>.</p>
+</div>
 
 <h2>API</h2>
 <p>Methods listed here can be called in two ways, as with any jQuery widget. The usual way is with <code class=language-javascript>$(element).flexcal(methodname, arguments ...)</code>. You can also get the widget instance and call the method directly: <code class=language-javascript>var instance = $(element).flexcal('instance'); instance.methodname(arguments);</code>.</p>
 <p>The usual widget methods are available, <code>option</code> to set and get options, <code>widget</code> to get the associated element (for flexcal, the <code class=language-html>&lt;input&gt;</code> element), <code>instance</code> to get the widget instance itself, and <code>destroy</code> to remove the widget from the element. <code>enable</code> and <code>disable</code> are not implemented.</p>
 
 <h2>API&mdash;getters</h2>
-<h3><code>format</code></h3>
-<h3><code>parse</code></h3>
+<h3 id=format><code>format</code></h3>
+<div class=definition>
+	<p><code>function (Date d)</code></p>
+	<p>Returns a string with <code>d</code> formatted according to the <code>dateFormat</code> field of the first calendar (<code>options.calendars[0].dateFormat</code>), with the default being <code>options.l10n.dateFormat</code>. Uses <a href=l10n.html#format><code>$.bililite.flexcal.format</code></a>. If <code>d</code> is an invalid <code>Date</code>, the result is undefined (but probably involves a lot of <code class=language-javascript>'NaN'</code>s).</p>
+	<h4>Example</h4>
+	<p><input id=20 /> <span></span></p>
+	<script class=demo>
+	flexcalReady.then(function(){
+		$('#20').flexcal({
+			position: 'br',
+			commit: function(e, d){
+				var formattedDate = $('#20').flexcal('format', d);
+				$('#20').next().text(formattedDate);
+			}
+		});
+	});
+	</script>
+</div>
+<h3 id=parse><code>parse</code></h3>
+<div class=definition>
+	<p><code>function (String s)</code></p>
+	<p>Returns the date parsed from <code>s</code> formatted according to the <code>dateFormat</code> field of the first calendar (<code>options.calendars[0].dateFormat</code>), with the default being <code>options.l10n.dateFormat</code>. Uses <a href=l10n.html#parse><code>$.bililite.flexcal.parse</code></a>.
+	If <code>s</code> does not represent a valid date, then <code>parse</code> returns an invalid <code>Date</code>; test it with <code class=language-javascript>isNaN(parseDate.getTime())</code>.</p>
+	<p>Note that no matter what <code>dateFormat</code> is, <a href=http://en.wikipedia.org/wiki/ISO_8601>ISO 8601 dates</a> ('yyyy-mm-dd') are  always parsed, since that is used internally.</p>
+	<h4>Example</h4>
+	<p><input id=21 /> <input type=button value=Parse /> <span></span></p>
+	<script class=demo>
+	flexcalReady.then(function(){
+		var cal = $('<input>').flexcal(); // create an invisible calendar
+		$('#21').next().click(function(){
+			var parsedDate = cal.flexcal('parse', $('#21').val());
+			$(this).next().text(parsedDate.toString());
+		});
+	});
+	</script>
+</div>
 
 <h2>API&mdash;setters</h2>
-<h3><code>commit</code></h3>
-<h3><code>hide</code></h3>
-<h3><code>position</code></h3>
-<h3><code>show</code></h3>
+<h3 id=commit><code>commit</code></h3>
+<div class=definition>
+	<p><code>function (Date d)</code></p>
+	<p>Sets the calendar and the attached text box to <code>d</code>, and triggers the <a href=#commitevent><code>commit</code></a> event.</p>
+	<p>Note the difference to setting the <a href=#current><code>current</code></a> option, which only sets the visible date.</p>
+	<h4>Example</h4>
+	<div style="display: inline-block"></div>
+	<input id=22a /> <input type=button value="Commit(New Year)" /> <input type=button value="Current (New Year)" />
+	<script class=demo>
+	flexcalReady.then(function(){
+		var newyears = new Date (2016, 0, 1);
+		$('#22a').flexcal( {box: $('#22a').prev()} );
+		$('#22a').next().click(function(){
+			$('#22a').flexcal('commit', newyears);
+		});
+		$('#22a').next().next().click(function(){
+			$('#22a').flexcal('option', 'current', newyears);
+		});
+	});
+	</script>
+</div>
+<h3 id=hidemethod><code>hide</code></h3>
+<div class=definition>
+	<p>Hide the calendar without setting the date (<a href=#commit><code>commit</code></a> does that). Takes no parameters.</p>
+	<h4>Example</h4>
+	<input id=23 /> <input type=button />
+	<script class=demo>
+	flexcalReady.then(function(){
+		function setShowButton(){
+			$('#23').next().val('Show').
+				off('click'). // remove the old handler
+				on('click', function(){
+					$('#23').flexcal('show');
+				});
+		}
+		function setHideButton(){
+			$('#23').next().val('Hide').
+				off('click'). // remove the old handler
+				on('click', function(){
+					$('#23').flexcal('hide');
+				});
+		}
+		$('#23').flexcal({
+			hideOnOutsideClick: false,
+			duration: 1000, // make it slow so we can see when the events are triggered
+			trigger: null, // no built-in trigger
+			create: setShowButton,
+			hidden: setShowButton,
+			shown: setHideButton
+		});
+	});
+	</script>
+</div>
+<h3 id=positionmethod><code>position</code></h3>
+<div class=definition>
+	<p>Restore the calendar to the position described by the <a href=#position><code>position</code></a> parameter. Does nothing for inline calendars.</p>
+</div>
+<h3 id=showmethod><code>show</code></h3>
+<div class=definition>
+	<p>Shows the calendar and sets the active date to the date represented by the value of the attached text box. Takes no parameters.</p>
+	<h4>Example</h4>
+	<p>See <a href=#hide><code>hide</code></a>.</p>
+</div>
+
 
 <p>Plus, setting the options with <code>option</code> changes the calendar on the fly (except for <a href=#url><code>url</code></a> and <a href=#box><code>box</code></a>, which are evaluated only at creation; if you need to reset the HTML or container of the calendar, destroy it and instantiate a new one). Thus, <code class=" language-javascript"> $('input.date').flexcal('option', 'current', '1/1/2011')</code> sets the highlighted date (displaying the appropriate month).</p>
       </section>
