@@ -137,26 +137,27 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		},
 		reposition: true,
 		tab: 0,
-		transition: function(o){
-			o.elements.eq(o.currSlide).hide();
-			o.elements.eq(1-o.currSlide).show();
+		transition: function(oldCalendar, newCalendar, rev, l10n){
+			oldCalendar.hide();
+			newCalendar.show();
 		}
 	},
+	/**************
+	 * Public methods
+	 **************/
 	commit: function(d){
 		this.element.val(this.format(d));
 		this._setDate(d, false);
 		this._trigger('commit', 0, d);
 	},
-	_commit: function(d){
-		// commit to the date, then close the calendar
-		this.commit(d);
-		this.element[0].focus(); 
-		if (!this.options.box) this.hide();
-	},
 	format: function (d){ // external formatting; the this.element.val is set to this.format(d) on commit
 		var o = this.options;
 		var l10n = tol10n(o.calendars[0], o.l10n); // use the first calendar
 		return $.bililite.flexcal.format(d, l10n);
+	},
+	option: function (key, value){
+		if (arguments.length === 1 && key === 'l10n') return this._l10n; // return the current localization object, not the default
+		return this._super.apply(this, arguments);
 	},
 	parse: function (d){ // external string (this.element.val) to a date
 		if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return parseISO(d); // always allow ISO date strings
@@ -168,32 +169,75 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		if (!(d instanceof Date)) d = new Date(d);
 		return d;
 	},
-	option: function (key, value){
-		if (arguments.length === 1 && key === 'l10n') return this.o.l10n; // return the current localization object, not the default
-		return this._super.apply(this, arguments);
-	},
 	show: function(){
-		var $cont = this._box().find('.ui-flexcal-container');
-		this.o.$cont = $cont;
-		this.o.elements = this.o.$cont.children();
+		if (this._oldCalendar.length == 0){ // have not shown any calendars yet
+			this._oldCalendar = this._box().find('.ui-flexcal-pane').eq(0);
+			this._newCalendar = this._oldCalendar.next('.ui-flexcal-pane');
+		}
+		//%%this.o.$cont = $cont;
+		//%%this.o.elements = this.o.$cont.children();
 		this._setTabs();
 		this._makeCurrentCalendar(this.options.tab);
 		this._setDate(this.element.val());
 		this._super();
 	},
+	/**************
+	 * Protected fields (public ones are in the options object)
+	 **************/
+	 _excludefilter: undefined, // function to disable specified dates
+	 _l10n: {}, // the localization object of the currently showing calendar
+	 _oldCalendar: $(), // the currently showing calendar
+	 _newCalendar: $(), // the calendar to show next
+	 _rev: false, // true if the transition between calendars is to be reversed (to a previous month)
+	 _tabs: $(), // the calendar-selection tabs
+	 // there is also _duration, _html, _position, _triggerElement from textpopup and ajaxpopup
+	/**************
+	 * Protected methods
+	 **************/
+	_adjustHTML: function(cal){
+		cal.find('a').removeClass('ui-state-focus').filter('[rel="'+ISOdate(this.options.current)+'"]').addClass('ui-state-focus');
+		cal.find('a').removeClass('ui-state-active').filter('[rel="'+ISOdate(this.parse(this.element.val()))+'"]').addClass('ui-state-active');
+		cal.findandfilter('a:not([href])')['ui-clickable']();
+		cal.filter('a.go').removeClass('ui-state-default') // ui-datepicker has its own styling
+			.each(function(){ this.title = $(this).text() }); // when we use image replacement for the prev/next buttons, leave the text as a tooltip title
+		// allow for using either the jQuery UI icons or the FontAwesome icon font
+		cal.filter('a.ui-datepicker-prev').find('span.ui-icon').addClass('ui-icon-circle-triangle-w fa fa-chevron-circle-left');
+		cal.filter('a.ui-datepicker-next').find('span.ui-icon').addClass('ui-icon-circle-triangle-e fa fa-chevron-circle-right');
+		if (this._l10n.isRTL) cal.filter('table').css('direction', 'rtl');
+		cal.find('a.commit').filter(this.excludefilter).
+		  removeClass('commit')['ui-unclickable']().addClass('ui-state-disabled');
+		return cal;
+	},
+	_commit: function(d){
+		// commit to the date, then close the calendar
+		this.commit(d);
+		this.element[0].focus(); 
+		if (!this.options.box) this.hide();
+	},
+	_createTabs: function(){
+		var self = this;
+		return this._box().find('ul.ui-tabs-nav')
+			.html($.map(this.options.calendars, function(n,i){
+				return $([
+					'<li class="ui-corner-top" style="list-style: none"><a>', // odd bug: occasionally I get a list-style-image showing if I don't remove it on each tab
+					tol10n(n, self.options.l10n).name,
+					'</a></li>'
+					].join('')).data('flexcal.l10n', n)[0];
+			}));
+	},
 	_init: function(){
 		var self = this;
 		this.options.current = this.parse(this.options.current);
 		if (isNaN(this.options.current.getDate())) this.options.current = new Date;
-		this.o = $.extend({before: [], after: []}, this.options.transitionOptions); // create an "options" object for the cycle plugin
-		this.o.$cont = this.o.elements = this.tabs = $([]); // create dummy elements until AJAX can get the real ones
+		//%%this.o = $.extend({before: [], after: []}, this.options.transitionOptions); // create an "options" object for the cycle plugin
+		//%% this.o.$cont = this.o.elements =
 		if (this.options.filter){
 			// the filter option returns true for elements to allow, but _adjustHTML expects a filter that returns true for elements to disable
-			this.o.excludefilter = function(){
+			this._excludefilter = function(){
 				return !(self.options.filter.call(this, parseISO(this.rel)));
 			}
 		}
-		this.o.currSlide = 0;
+		//%%this.o.currSlide = 0;
 		this._setL10n(); // create a default localization
 		if (this.options.box) this.show(); // inline calendars get shown right away
 	},
@@ -224,22 +268,22 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			}else if ($target.is('.commit')){
 				self._commit(parseISO($target.attr('rel')));
 			}else if ($target.is('.ui-tabs-nav li:not(.ui-tabs-selected) a')){
-				self._makeCurrentCalendar(self.tabs.index($target.parent())); // the click is on the <a> but the data is on the <li>
+				self._makeCurrentCalendar(self._tabs.index($target.parent())); // the click is on the <a> but the data is on the <li>
 				self._setDate(undefined, true);
 			}
 			return false; // and don't leave the page (or even change to a /# page)
 		}).keydown(function (e){
 			// from http://dev.aol.com/dhtml_style_guide#datepicker plus respecting isRTL, and changing control-keys to alt keys (FF uses ctrl-page up/down to switch tabs)
 			// alt-arrow keys switches calendars
-			var dir = self.o.l10n.isRTL ? -1 : 1;
+			var dir = self._l10n.isRTL ? -1 : 1;
 			function offsetDate(d) { self._setDate(new Date (self.options.current.getTime()+d*oneDay)); return false; }
-			function calendarDate(which) { self._setDate(self.o.l10n.calendar(self.options.current)[which], true); return false; }
+			function calendarDate(which) { self._setDate(self._l10n.calendar(self.options.current)[which], true); return false; }
 			if (!e.ctrlKey && !e.altKey) switch (e.keyCode){
 				case $.ui.keyCode.ENTER: self._commit(self.options.current); return false;
 				case $.ui.keyCode.RIGHT: return offsetDate(dir);
 				case $.ui.keyCode.LEFT: return offsetDate(-dir);
-				case $.ui.keyCode.UP: return offsetDate(-self.o.l10n.dayNamesMin.length);
-				case $.ui.keyCode.DOWN: return offsetDate(self.o.l10n.dayNamesMin.length);
+				case $.ui.keyCode.UP: return offsetDate(-self._l10n.dayNamesMin.length);
+				case $.ui.keyCode.DOWN: return offsetDate(self._l10n.dayNamesMin.length);
 				case $.ui.keyCode.PAGE_UP: return calendarDate('prev');
 				case $.ui.keyCode.PAGE_DOWN: return calendarDate('next');
 				case $.ui.keyCode.HOME: return calendarDate('first');
@@ -278,34 +322,9 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			}
 		});
 	},
-	_adjustHTML: function(cal){
-		cal.find('a').removeClass('ui-state-focus').filter('[rel="'+ISOdate(this.options.current)+'"]').addClass('ui-state-focus');
-		cal.find('a').removeClass('ui-state-active').filter('[rel="'+ISOdate(this.parse(this.element.val()))+'"]').addClass('ui-state-active');
-		cal.findandfilter('a:not([href])')['ui-clickable']();
-		cal.filter('a.go').removeClass('ui-state-default') // ui-datepicker has its own styling
-			.each(function(){ this.title = $(this).text() }); // when we use image replacement for the prev/next buttons, leave the text as a tooltip title
-		// allow for using either the jQuery UI icons or the FontAwesome icon font
-		cal.filter('a.ui-datepicker-prev').find('span.ui-icon').addClass('ui-icon-circle-triangle-w fa fa-chevron-circle-left');
-		cal.filter('a.ui-datepicker-next').find('span.ui-icon').addClass('ui-icon-circle-triangle-e fa fa-chevron-circle-right');
-		if (this.o.l10n.isRTL) cal.filter('table').css('direction', 'rtl');
-		if (this.o.excludefilter) cal.find('a.commit').filter(this.o.excludefilter).
-		  removeClass('commit')['ui-unclickable']().addClass('ui-state-disabled');
-		return cal;
-	},
-	_createTabs: function(){
-		var self = this;
-		return this._box().find('ul.ui-tabs-nav')
-			.html($.map(this.options.calendars, function(n,i){
-				return $([
-					'<li class="ui-corner-top" style="list-style: none"><a>', // odd bug: occasionally I get a list-style-image showing if I don't remove it on each tab
-					tol10n(n, self.options.l10n).name,
-					'</a></li>'
-					].join('')).data('flexcal.l10n', n)[0];
-			}));
-	},
 	_generateCalendar: function(d){
 		// TODO: implement some kind of caching
-		var ret = [], l10n = this.o.l10n;
+		var ret = [], l10n = this._l10n;
 		var cal = l10n.calendar(d);
 		var daysinweek = l10n.dayNamesMin.length;
 		var dow = (cal.dow - l10n.firstDay + daysinweek) % daysinweek; // mod operator (% fails for negative dividends)
@@ -372,13 +391,13 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		return $(ret.join(''));
 	},
 	_makeCurrentCalendar: function (n){
-		this.tabs.eq(this.options.tab).removeClass('ui-tabs-selected ui-state-active')
+		this._tabs.eq(this.options.tab).removeClass('ui-tabs-selected ui-state-active')
 			.children()['ui-clickable']();
-		n = Math.min(this.tabs.length-1, Math.max (0, n)) || 0; // correct the parameters
-		var tab = this.tabs.eq(n).addClass('ui-tabs-selected ui-state-active') // mark the tab as current
+		n = Math.min(this._tabs.length-1, Math.max (0, n)) || 0; // correct the parameters
+		var tab = this._tabs.eq(n).addClass('ui-tabs-selected ui-state-active') // mark the tab as current
 			.children()['ui-unclickable']().end(); // and remove the clickable indication
 		this._setL10n(tab.data('flexcal.l10n'));
-		this.o.rev = (n < this.options.tab) != this.o.l10n.isRTL; // true if the transition should indicate backwards.
+		this._rev = (n < this.options.tab) != this._l10n.isRTL; // true if the transition should indicate backwards.
 		// The XOR with isRTL is because the actual transition doesn't know whether we are transitioning 
 		// to a new date in the same calendar (in which isRTL is relevant and the code should do the XOR)
 		// or to a new tab (which is always in the browser's default direction). Using an XOR here allows
@@ -389,7 +408,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		// d is the date we want to change to; if undefined just redraws the calendar
 		// set animate == true to force the animated transition, false to prevent it.
 		// if undefined, only animate if the new date is not on the currently visible calendar
-		var currCalendar = this.o.elements.eq(this.o.currSlide).find('table');
+		var currCalendar = this._oldCalendar.find('table');
 		var oldd = this.options.current;
 		d = this.parse(d);
 		if (isNaN(d.getTime())) d = oldd;
@@ -400,9 +419,9 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		if (!animate){
 			this._adjustHTML(currCalendar);
 		}else{
-			if (ISOdate(oldd) != ISOdate(d)) this.o.rev = (oldd > d); // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
+			if (ISOdate(oldd) != ISOdate(d)) this._rev = (oldd > d); // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
 			var cal = this._generateCalendar(d);
-			var slide = this.o.elements.eq(1-this.o.currSlide).html(cal);
+			var slide = this._newCalendar.html(cal);
 			this._adjustHTML(cal);
 			var size = slide.find('table').tableSize(this._box().parent()[0]);
 			slide.css(size);
@@ -410,19 +429,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		}
 	},
 	_setL10n: function(name){
-		this.o.l10n = tol10n(name, this.options.l10n);
-		this._trigger('setL10n', 0, this.o.l10n);
-	},
-	_setTabs: function(){
-		this.tabs = this._createTabs().children();
-		var hidetabs = this.options.hidetabs;
-		this.tabs.children()['ui-clickable'](); // the <a>'s are the clickable elements
-		if (hidetabs === true || (hidetabs =='conditional' && this.options.calendars.length == 1)){
-			this.tabs.parent().hide();
-		}else{
-			this.tabs.parent().show();
-			this._makeCurrentCalendar(this.options.tab);
-		}
+		this._l10n = tol10n(name, this.options.l10n);
+		this._trigger('setL10n', 0, this._l10n);
 	},
 	_setOption: function(key, value) {
 		if (key == 'current'){
@@ -446,10 +454,22 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		}
 		if (key == 'transitionOptions') $.extend (this.o, value); // actually change the transition options
 	},
+	_setTabs: function(){
+		this._tabs = this._createTabs().children();
+		var hidetabs = this.options.hidetabs;
+		this._tabs.children()['ui-clickable'](); // the <a>'s are the clickable elements
+		if (hidetabs === true || (hidetabs =='conditional' && this.options.calendars.length == 1)){
+			this._tabs.parent().hide();
+		}else{
+			this._tabs.parent().show();
+			this._makeCurrentCalendar(this.options.tab);
+		}
+	},
 	_transition: function(size){
-		var next = 1-this.o.currSlide, first = this.o.elements.eq(this.o.currSlide), second = this.o.elements.eq(next), self = this;
+		var first = this._oldCalendar, second = this._newCalendar, self = this;
 		function nextSlide(){
-			self.o.currSlide = next;
+			self._oldCalendar = second;
+			self._newCalendar = first;
 			// IE won't set the tab size correctly, so we do it by hand. 
 			if (!$.support.ULwidth){
 				var tabbar = self.tabs.parent();
@@ -463,13 +483,13 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			// if box is hidden, then we don't need to animate anything
 			first.hide();
 			second.css({top: 0, left: 0, opacity: 1}).show(); // make sure we correct any leftover css from the transition effects
-			self.o.$cont.css(size);
+			second.parent().css(size);
 			nextSlide();
 		}else{
 			// Make the parent sized correctly then animate to the larger size before and to the smaller size after the transition
-			this.o.$cont.animate(size, 100, function(){
-				self.o.elements.stop (true, true); // make sure that the new calendar is available to show
-				self.options.transition(self.o);
+			second.parent().animate(size, 100, function(){
+				first.add(second).stop (true, true); // make sure that the new calendar is available to show
+				self.options.transition(first, second, self._rev, self._l10n);
 				nextSlide();
 				if (self.options.reposition) self.position(); // adjust position for new size (this will jump rather than animate, but I'm not sure what to do about that.
 			});
