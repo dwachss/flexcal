@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Flexcal Options</title>
+    <title>Flexcal Localization</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
@@ -33,6 +33,283 @@
       </header>
       <section>
 <h1>Localization</h1>
+<p>Each calendar in the <a href=options.html#calendars><code>calendars</code></a> array is a <em>localization object</em> or a string that determines a localization object. Each localization object specifies a <a href=http://en.wikipedia.org/wiki/Calendar#Calendar_systems>calendar system</a>; the most common is the <a href=http://en.wikipedia.org/wiki/Gregorian_calendar>Gregorian calendar</a>, though I created <code>flexcal</code> to be able to use the <a href=http://en.wikipedia.org/wiki/Hebrew_calendar>Jewish calendar</a>. Note that Wikipiedia calls it the "Hebrew calendar", and that seems to be the <a href=http://www.unicode.org/cldr/charts/27/by_type/date_&amp;_time.hebrew.html>Unicode standard</a> as well. I am convinced that is wrong; <em>Hebrew</em> is the language, <em>Jewish</em> is the calendar. It would be inappropriate to call the Islamic calendar, for instance, the Arabic calendar.</p>
+<p>Be that as it may, the localization object also specifies the names of the months and the days of the week, and the way to format date and year numbers. It is assumed that there are a limited number of months and days in a week (a seven-day week is <em>not</em> assumed) so an array of names is appropriate. Dates in a month and years are assumed to be numeric, but can use numbering systems other than Latin numerals.</p>
+<h2>Elements</h2>
+<p>Each localization object contains the elements that are locale-specific; anything not included is taken from the<a href=options.html#l10n><code>l10n</code></a> option and its defaults. Most of the items and their names are taken from the <a href=http://api.jqueryui.com/datepicker/>jQuery UI datepicker</a>.</p>
+
+<h3 id=name><code>name</code></h3>
+<div class=definition>
+	<p>Name of the calendar to display in the tab bar.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>'flexcal'</code></p>
+</div>
+<h3 id=calendar><code>calendar</code></h3>
+<div class=definition>
+	<p>Function that represents the <a href=#calendarsystem>calendar system</a>.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>$.bililite.flexcal.calendars.gregorian</code></p>
+</div>
+<h3 id=monthnames><code>monthNames</code></h3>
+<div class=definition>
+	<p>Array of month names that are displayed on the calendar.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>['January','February','March','April','May','June', 'July','August','September','October','November','December']</code></p>
+</div>
+<h3 id=monthnamesshort><code>monthNamesShort</code></h3>
+<div class=definition>
+	<p>Array of abbreviated month names. Not used in displaying the calendar, or in the simplest version of <code>flexcal</code> at all. I plan to expand the <a href=#format>format method</a> to allow using these.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']</code></p>
+</div>
+<h3 id=daynamesmin><code>dayNamesMin</code></h3>
+<div class=definition>
+	<p>Array of minimized names of the days of the week. This is what is displayed on the calendar.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>['Su','Mo','Tu','We','Th','Fr','Sa']</code></p>
+</div>
+<h3 id=daynames><code>dayNames</code></h3>
+<div class=definition>
+	<p>Array of names of the days of the week. Not used in displaying the calendar, or in the simplest version of <code>flexcal</code> at all. I plan to expand the <a href=#format>format method</a> to allow using these.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']</code></p>
+</div>
+<h3 id=daynamesshort><code>dayNamesShort</code></h3>
+<div class=definition>
+	<p>Array of abbreviated names of the days of the week. Not used in displaying the calendar, or in the simplest version of <code>flexcal</code> at all. I plan to expand the <a href=#format>format method</a> to allow using these.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']</code></p>
+</div>
+<h3 id=prevtext><code>prevText</code></h3>
+<div class=definition>
+	<p>Text to display on the "previous month" button. The stylesheet for the calendar replaces this with an icon and uses this text as the tooltip. Per the jQuery UI guidelines, it should not contain any arrows or chevrons.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>'Previous'</code></p>
+</div>
+<h3 id=nexttext><code>nextText</code></h3>
+<div class=definition>
+	<p>Text to display on the "next month" button. The stylesheet for the calendar replaces this with an icon and uses this text as the tooltip. Per the jQuery UI guidelines, it should not contain any arrows or chevrons.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>'Next'</code></p>
+</div>
+<h3 id=isrtl><code>isRTL</code></h3>
+<div class=definition>
+	<p>Boolean that should be true to display the calendar right-to-left.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>false</code></p>
+</div>
+<h3 id=firstday><code>firstDay</code></h3>
+<div class=definition>
+	<p>Number of the day of the week (0-indexed) that the calendar should start. Not currently implemented (<a href="https://github.com/dwachss/flexcal/issues/5">Issue #5</a>), always assumes 0.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>0</code></p>
+</div>
+<h3 id=years><code>years</code></h3>
+<div class=definition>
+	<p>Function to convert a year number into a string to display. The caption of the calendar is <code class=language-javascript>monthNames[month]+' '+years(year)</code></p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>function(n) {return n.toString()}</code></p>
+</div>
+<h3 id=fromyears><code>fromYears</code></h3>
+<div class=definition>
+	<p>Function to convert a string into a year number. If undefined, then only numbers can be parsed as years. Meant to be the inverse of <a href=#years><code>years</code>. Not used in displaying the calendar, or in the simplest version of <code>flexcal</code> at all. I plan to expand the <a href=#parse>parse method</a> to allow using this.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>undefined</code></p>
+</div>
+<h3 id=dates><code>dates</code></h3>
+<div class=definition>
+	<p>Function to convert a date number into a string to display. Each <code class=language-html>&lt;td&gt;</code> in the calendar has the text <code class=language-javascript>dates(date)</code></p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>function(n) {return n.toString()}</code></p>
+</div>
+<h3 id=fromdates><code>fromdates</code></h3>
+<div class=definition>
+	<p>Function to convert a string into a date number. If undefined, then only numbers can be parsed as dates. Meant to be the inverse of <a href=#dates><code>dates</code>. Not used in displaying the calendar, or in the simplest version of <code>flexcal</code> at all. I plan to expand the <a href=#parse>parse method</a> to allow using this.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>undefined</code></p>
+</div>
+<h3 id=dateformat><code>dateFormat</code></h3>
+<div class=definition>
+	<p>String that represents the format to use for converting from a string (the value of the attached text box) to a <code>Date</code> object. See the <a href=#formatspec>full description below</a>.</p>
+	<h4>Default value</h4>
+	<p><code class=language-javascript>'m/d/yyyy'</code></p>
+</div>
+
+<h2 id=calendarsystem>Calendar systems</h2>
+<p>A calendar system is represented by a function that takes a <code>Date d</code> object and returns an object with the following fields:</p>
+<h3 id=first><code>first</code></h3>
+<div class=definition>
+	<p><code>Date</code> of the first day of the month containing <code>d</code>.</p>
+</div>
+<h3 id=last><code>last</code></h3>
+<div class=definition>
+	<p><code>Date</code> of the last day of the month containing <code>d</code>.</p>
+</div>
+<h3 id=prev><code>prev</code></h3>
+<div class=definition>
+	<p><code>Date</code> of the day exactly one month before <code>d</code>.</p>
+</div>
+<h3 id=next><code>next</code></h3>
+<div class=definition>
+	<p><code>Date</code> of the day exactly one month after <code>d</code>.</p>
+</div>
+<h3 id=prevyear><code>prevYear</code></h3>
+<div class=definition>
+	<p><code>Date</code> of the day exactly one year before <code>d</code>.</p>
+</div>
+<h3 id=nextyear><code>nextYear</code></h3>
+<div class=definition>
+	<p><code>Date</code> of the day exactly one year after <code>d</code>.</p>
+</div>
+<h3 id=y><code>y</code></h3>
+<div class=definition>
+	<p>Number of the year of <code>d</code>, in this calendar system. This is passed to <a href=#years><code>years</code></a> for display.</p>
+</div>
+<h3 id=m><code>m</code></h3>
+<div class=definition>
+	<p>Number (0-indexed) of the month of <code>d</code>, in this calendar system. This is the index into <a href=#monthnames><code>monthNames</code></a>.</p>
+</div>
+<h3 id=d><code>d</code></h3>
+<div class=definition>
+	<p>Number of the date of <code>d</code>, in this calendar system. This is passed to <a href=#dates><code>dates</code></a> for display.</p>
+</div>
+<h3 id=dow><code>dow</code></h3>
+<div class=definition>
+	<p>0-indexed number of the day of the week of the <em>first</em> day of the month (not of <code>d</code>. Note that this is not necessarily just <code class=language-javascript>first.getDay()</code>, since this calendar system may use some other "week" system.</p>
+</div>
+<h3 id=dow><code>toDate</code></h3>
+<div class=definition>
+	<p>Function that takes an object <code class=language-javascript>{y: y, m: m, d: d}</code> representing a date in this calendar and returns the corresponding Javascript <code>Date</code>. Not currently used; I plan to expand the <a href=#parse>parse method</a> to allow using this. If the values given are invalid, should either return <code class=language-javascript>new Date(undefined)</code> or do some error correcting the way new <code class=language-javascript>Date(y, m, d)</code> does, e.g. turning 0 dates into the last day of the previous month.</p>
+</div>
+<h3>Examples</h3>
+<p>I implemented two calendar systems that I wanted, and they are stored in <code class=language-javascript>$.bililite.flexcal.calendars</code>: Gregorian and Jewish.</p>
+<h4><code class=language-javascript>$.bililite.flexcal.calendars.gregorian</code></h4>
+<div class=definition>
+	<pre><code class=language-javascript>
+	function(d){
+			var m = d.getMonth(), y = d.getFullYear(), date = d.getDate(), first = new Date (y, m, 1);
+			var prev = new Date (y, m-1, date), next = new Date (y, m+1, date);
+			if (prev.getDate() != date) prev = new Date (y, m, 0); // adjust for too-short months
+			if (next.getDate() != date) next = new Date (y, m+2, 0);
+			var nextYearDate = m == 1 && date == 29 ? 28 : date;
+			return {
+				first: first,
+				last: new Date (y, m+1, 0),
+				prev: prev,
+				next: next,
+				prevYear: new Date (y-1, m, nextYearDate),
+				nextYear: new Date (y+1, m, nextYearDate),
+				m: m,
+				y: y,
+				d: d,
+				dow: first.getDay(),
+				toDate: function (d) {return new Date (d.y, d.m, d.d)}
+			};
+		}
+	</code></pre>
+</div>
+<h4><code class=language-javascript>$.bililite.flexcal.calendars.jewish</code></h4>
+<div class=definition>
+	<p>Define a function 
+	<pre><code class=language-javascript>
+		function addDay(d, n){
+		if (n === undefined) n = 1;
+		return new Date(d.getFullYear(), d.getMonth(), d.getDate()+n);
+	}
+	</code></pre>
+	and functions <code class=language-javascript>civ2heb(d)</code> that takes a Javascript <code>Date</code> and returns an object <code class=language-javascript>{y: y, m: m, d: d}</code> representing the Jewish date, and <code class=language-javascript>heb2civ(h)</code> which does the reverse. See the <a href=https://github.com/dwachss/flexcal/blob/master/jquery.flexcal.js>source code</a> for details. Then the calendar function is:</p>
+	<pre><code class=language-javascript>
+	function(d){
+			var h = civ2heb(d);
+			var roshchodesh = addDay(d, -h.d+1);
+			var daysinlastmonth = Math.max(civ2heb(addDay(roshchodesh,-1)).daysinmonth, h.d); //  the min/max() correct for the possibility of other month being too short
+			var daysintonextmonth = Math.min(civ2heb(addDay(roshchodesh, h.daysinmonth)).daysinmonth, h.d);
+			return {
+				first: roshchodesh,
+				last: addDay(roshchodesh, h.daysinmonth-1),
+				prev: addDay(d, -daysinlastmonth),
+				next: addDay(roshchodesh, h.daysinmonth+daysintonextmonth-1),
+				prevYear: heb2civ($.extend({}, h, {y: h.y-1})),
+				nextYear: heb2civ($.extend({}, h, {y: h.y+1})),
+				m: h.m,
+				y: h.y,
+				d: h.d,
+				dow: roshchodesh.getDay(),
+				toDate: heb2civ
+			};
+		}
+	</code></pre>
+</div>
+
+<h2 id=strings>Specifying Strings as Localization Objects</h2>
+<p>If a string is passed as the localization object, it is assumed to be the key into the <code class=language-javascript>$.bililite.flexcal.l10n</code>, which comes with three entries predefined:  <code class=language-javascript>'en'</code> (English localization of the Gregorian calendar), <code class=language-javascript>'jewish'</code> (English localization of the Jewish calendar), and <code class=language-javascript>'he-jewish'</code> (Hebrew localization of the Jewish calendar).</p>
+<p>Note that the standard I am using is <code>languageCode-calendarSystem</code>, where <code>calendarSystem</code> is the index into the <code class=language-javascript>$.bililite.flexcal.calendars</code> array.</p>
+
+<h3>Using jQuery UI <code>datepicker</code></h3>
+<p>Datepicker comes with a large number of localization files that can be easily used with <code>flexcal</code>. You need to include the localization file, with something like <code class=language-html>&lt;script src="https://cdn.rawgit.com/jquery/jquery-ui/master/ui/i18n/datepicker-fr.js"&gt;&lt;/script&gt;</code> to get the French localization. <code>flexcal</code> will then interpret <code class=language-javascript>'fr'</code> as a reference to <code class=language-javascript>$.datepicker.regional['fr']</code>.</p>
+<p>Note that all the <code>datepicker</code> localizations are for the Gregorian calendar. Note also that including localization file sets the defaults for <code>datepicker</code> to that language, so if you want to actually use <code>datepicker</code>, you may want to call <code class=language-javascript>$.datepicker.setDefaults($.datepicker.regional[''])</code> to set them back. Note also that not all the fields that <code>flexcal</code> uses are set in the <code>datepicker</code> localization files, especially <a href=#name><code>name</code></a>, so you may want to set that separately (see the <a href=options.html#calendars><code>calendars</code> example</a>).</p>
+
+<h3>Using Keith Wood's <code>calendarspicker</code></h3>
+<p><a href="http://keith-wood.name/">Keith Wood</a> is maintaining the jQuery plugin that eventually became the official jQuery UI datepicker. His version, however, handles multiple calendar systems, much like flexcal (though I like my plugin, of course). His <a href="https://github.com/kbwood/calendars">code is on github</a>, and the <a href="http://keith-wood.name/calendars.html">documentation is on his personal site</a>. He has support for many calendar systems, and I wanted to let flexcal use that. I don't use his datepicker code, just the calendar systems.</p>
+<p>To use it, include the basic calendar code with <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.js">&lt;/script&gt;</code> and all the localization files. To use the Arabic localization, include <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars-ar.js">&lt;/script&gt;</code> and <code class=language-javascript>'ar'</code> as the localization object. To use the Islamic calendar with Arabic localization, include both <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.islamic.js">&lt;/script&gt;</code> and <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.islamic-ar.js"&gt;&lt;/script&gt;</code>, and use <code class=language-javascript>'islamic'</code> for the Islamic calendar with English localization, and <code class=language-javascript>'ar-islamic'</code> for the Islamic calendar with Arabic localization.</p>
+<p>Some localization names use the 2-letter language code plus a country code, like <code class=language-javascript>'en-GB'</code>. <code>flexcal</code> is smart enough to handle that.</p>
+<p>Note that the <a href=#name><code>name</code></a> field in these localization files is only the name of the calendar system, so you may want to set that separately.Note also that the <a href=#prevtext><code>prevText</code></a> and <a href=#nexttext><code>nextText</code></a> fields are not set in the calendar localization files, but in his datepicker localization files. So including that requires including the entire datepicker file, <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.picker.js">&lt;/script&gt;</code> and the localization file, <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.picker-ar.js">&lt;/script&gt;</code>. So as note to require including the whole datepicker (I assume you are using <code>flexcal</code>!) I  created a stub that can be included instead, <a href=https://github.com/jquery.calendars.picker-mock.js>jquery.calendars.picker-mock.js</a>. You still have to include the picker localization file, like jquery.calendars.picker-ar.js.</p>
+<h3>Undefined Names</code>
+<p>Any string that cannot be interpreted as an index into an array of localization objects will be interpreted as simply a name. So <code class=language-javascript>'French'</code> is interpreted as <code class=language-javascript>{name: 'French'}</code>. All actual localization names start with a lower case letter.</p>
+
+<h3 id=tol10n><code>tol10n</code></h3>
+<p>As a utility function, localization objects can be created with a standalone function, <code class=language-javascript>$.bililite.flexcal.tol10n(name, defaultL10n)</code>. <code>name</code> can be an object, which is taken as the actual localization object, or a string, which is interpreted as <a href=#strings>above</code>. If it is an array, then each element is evaluated and the results <code class=language-javascript>$.extend</code>ed together. <code>defaultL10n</code> must be an object, and it will be <code class=language-javascript>$.extend</code>ed with the result of evaluating <code>name</code>. If <code>defaultL10n</code> is undefined, <a href=options.html#l10n><code class=language-javascript>$.bililite.flexcal.prototype.options.l10n</code></a> is used.</p>
+<h2>Examples</h2>
+<p><code class=language-javascript>$.bililite.flexcal.tol10n('fr')</code> (if the datepicker localization file is included)returns</p>
+<pre><code class=language-javascript>{
+	calendar: function(d) {...} // $.bililite.flexcal.calendars.gregorian,
+	closeText: "Fermer", // used by datepicker, not flexcal
+	currentText: "Aujourd'hui",
+	dateFormat: "dd/mm/yy",
+	dates: function (n) {return n.toString()},
+	dayNames: Array[7],
+ 	dayNamesMin: ["D","L","M","M","J","V","S"],
+	dayNamesShort: Array[7],
+	firstDay: 1,
+	isRTL: false,
+	monthNames:["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],
+	monthNamesShort: ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."]
+	name: "flexcal", // from the default
+	nextText: "Suivant",
+	prevText: "Précédent",
+	showMonthAfterYear: false,
+	weekHeader: "Sem.",
+	yearSuffix: "",
+	years: function (n) {return n.toString()
+}
+</pre></code>
+<p>And <code class=language-javascript>$.bililite.flexcal.tol10n(['fr', 'French', {dateFormat: 'yyyy-mm-dd'}])</code> returns </p>
+<pre><code class=language-javascript>{
+	calendar: function(d) {...} // $.bililite.flexcal.calendars.gregorian,
+	closeText: "Fermer", // used by datepicker, not flexcal
+	currentText: "Aujourd'hui",
+	dateFormat: "yyyy-mm-dd", // from the third element
+	dates: function (n) {return n.toString()},
+	dayNames: Array[7],
+ 	dayNamesMin: ["D","L","M","M","J","V","S"],
+	dayNamesShort: Array[7],
+	firstDay: 1,
+	isRTL: false,
+	monthNames:["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],
+	monthNamesShort: ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."]
+	name: "French", // from the second element
+	nextText: "Suivant",
+	prevText: "Précédent",
+	showMonthAfterYear: false,
+	weekHeader: "Sem.",
+	yearSuffix: "",
+	years: function (n) {return n.toString()
+}
+</pre></code>
+
+<h2>Formatting and Parsing</h2>
+<p><code>flexcal</code> as it stands has a minimal formatting/parsing capability.</p>
+
 
       </section>
       <footer>
