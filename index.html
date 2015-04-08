@@ -28,7 +28,7 @@
       </header>
       <section>
 <h4>Just what the world needs&mdash;another date picker</h4>
-<p>The current incarnation of the <a href="http://jqueryui.com/demos/datepicker/">jQuery UI datepicker</a> works fine, but I needed something that could handle the <a href="http://en.wikipedia.org/wiki/Jewish_calendar">Jewish calendar</a>. This is not the same as localizing <code>datepicker</code> to use Hebrew;that just translates the month and day names but uses the same <a href="http://en.wikipedia.org/wiki/Gregorian_calendar">Gregorian calendar</a> as everyone uses. I needed a calendar that could switch between multiple, completely different calendar systems.</p>
+<p>The current incarnation of the <a href="http://jqueryui.com/demos/datepicker/">jQuery UI datepicker</a> works fine, but I needed something that could handle the <a href="http://en.wikipedia.org/wiki/Jewish_calendar">Jewish calendar</a>. This is not the same as localizing <code>datepicker</code> to use Hebrew; that just translates the month and day names but uses the same <a href="http://en.wikipedia.org/wiki/Gregorian_calendar">Gregorian calendar</a> as everyone uses. I needed a calendar that could switch between multiple, completely different calendar systems.</p>
 <p>The algorithms for converting dates from Jewish to Gregorian are readily available <a href="http://sourceforge.net/projects/hebcal/">open-source</a>, and the calendar is just a table, and so was born <code>flexcal</code>. In its simplest form, it looks like <code>datepicker</code>:</p>
 <pre><code class="language-html demo">&lt;span&gt;Using &lt;code&gt;datepicker&lt;/code&gt;: &lt;/span&gt;&lt;input id=&quot;date1&quot;/&gt;
 &lt;br/&gt;

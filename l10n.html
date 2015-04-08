@@ -112,7 +112,7 @@
 </div>
 <h3 id=fromyears><code>fromYears</code></h3>
 <div class=definition>
-	<p>Function to convert a string into a year number. If undefined, then only numbers can be parsed as years. Meant to be the inverse of <a href=#years><code>years</code>. Not used in displaying the calendar, or in the simplest version of <code>flexcal</code> at all. I plan to expand the <a href=#parse>parse method</a> to allow using this.</p>
+	<p>Function to convert a string into a year number. If undefined, then only numbers can be parsed as years. Meant to be the inverse of <a href=#years><code>years</code></a>. Not used in displaying the calendar, or in the simplest version of <code>flexcal</code> at all. I plan to expand the <a href=#parse>parse method</a> to allow using this.</p>
 	<h4>Default value</h4>
 	<p><code class=language-javascript>undefined</code></p>
 </div>
@@ -124,7 +124,7 @@
 </div>
 <h3 id=fromdates><code>fromdates</code></h3>
 <div class=definition>
-	<p>Function to convert a string into a date number. If undefined, then only numbers can be parsed as dates. Meant to be the inverse of <a href=#dates><code>dates</code>. Not used in displaying the calendar, or in the simplest version of <code>flexcal</code> at all. I plan to expand the <a href=#parse>parse method</a> to allow using this.</p>
+	<p>Function to convert a string into a date number. If undefined, then only numbers can be parsed as dates. Meant to be the inverse of <a href=#dates><code>dates</code></a>. Not used in displaying the calendar, or in the simplest version of <code>flexcal</code> at all. I plan to expand the <a href=#parse>parse method</a> to allow using this.</p>
 	<h4>Default value</h4>
 	<p><code class=language-javascript>undefined</code></p>
 </div>
@@ -217,7 +217,7 @@
 		return new Date(d.getFullYear(), d.getMonth(), d.getDate()+n);
 	}
 	</code></pre>
-	and functions <code class=language-javascript>civ2heb(d)</code> that takes a Javascript <code>Date</code> and returns an object <code class=language-javascript>{y: y, m: m, d: d}</code> representing the Jewish date, and <code class=language-javascript>heb2civ(h)</code> which does the reverse. See the <a href=https://github.com/dwachss/flexcal/blob/master/jquery.flexcal.js>source code</a> for details. Then the calendar function is:</p>
+	and functions <code class=language-javascript>civ2heb(d)</code> that takes a Javascript <code>Date</code> and returns an object <code class=language-javascript>{y: y, m: m, d: d}</code> representing the Jewish date, and <code class=language-javascript>heb2civ(h)</code> which does the reverse. See the <a href=https://github.com/dwachss/flexcal/blob/master/jquery.flexcal.js>source code</a> for details. The <code>civ2heb</code> function also includes a <code>daysinmonth</code> field that is the number of days in that Jewish month. Then the calendar function is:</p>
 	<pre><code class=language-javascript>
 	function(d){
 			var h = civ2heb(d);
@@ -254,13 +254,13 @@
 <p>To use it, include the basic calendar code with <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.js">&lt;/script&gt;</code> and all the localization files. To use the Arabic localization, include <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars-ar.js">&lt;/script&gt;</code> and <code class=language-javascript>'ar'</code> as the localization object. To use the Islamic calendar with Arabic localization, include both <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.islamic.js">&lt;/script&gt;</code> and <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.islamic-ar.js"&gt;&lt;/script&gt;</code>, and use <code class=language-javascript>'islamic'</code> for the Islamic calendar with English localization, and <code class=language-javascript>'ar-islamic'</code> for the Islamic calendar with Arabic localization.</p>
 <p>Some localization names use the 2-letter language code plus a country code, like <code class=language-javascript>'en-GB'</code>. <code>flexcal</code> is smart enough to handle that.</p>
 <p>Note that the <a href=#name><code>name</code></a> field in these localization files is only the name of the calendar system, so you may want to set that separately.Note also that the <a href=#prevtext><code>prevText</code></a> and <a href=#nexttext><code>nextText</code></a> fields are not set in the calendar localization files, but in his datepicker localization files. So including that requires including the entire datepicker file, <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.picker.js">&lt;/script&gt;</code> and the localization file, <code class="language-html">&lt;script src="https://cdn.rawgit.com/kbwood/calendars/master/jquery.calendars.picker-ar.js">&lt;/script&gt;</code>. So as note to require including the whole datepicker (I assume you are using <code>flexcal</code>!) I  created a stub that can be included instead, <a href=https://github.com/jquery.calendars.picker-mock.js>jquery.calendars.picker-mock.js</a>. You still have to include the picker localization file, like jquery.calendars.picker-ar.js.</p>
-<h3>Undefined Names</code>
+<h3>Undefined Names</h3>
 <p>Any string that cannot be interpreted as an index into an array of localization objects will be interpreted as simply a name. So <code class=language-javascript>'French'</code> is interpreted as <code class=language-javascript>{name: 'French'}</code>. All actual localization names start with a lower case letter.</p>
 
 <h3 id=tol10n><code>tol10n</code></h3>
-<p>As a utility function, localization objects can be created with a standalone function, <code class=language-javascript>$.bililite.flexcal.tol10n(name, defaultL10n)</code>. <code>name</code> can be an object, which is taken as the actual localization object, or a string, which is interpreted as <a href=#strings>above</code>. If it is an array, then each element is evaluated and the results <code class=language-javascript>$.extend</code>ed together. <code>defaultL10n</code> must be an object, and it will be <code class=language-javascript>$.extend</code>ed with the result of evaluating <code>name</code>. If <code>defaultL10n</code> is undefined, <a href=options.html#l10n><code class=language-javascript>$.bililite.flexcal.prototype.options.l10n</code></a> is used.</p>
+<p>As a utility function, localization objects can be created with a standalone function, <code class=language-javascript>$.bililite.flexcal.tol10n(name, defaultL10n)</code>. <code>name</code> can be an object, which is taken as the actual localization object, or a string, which is interpreted as <a href=#strings>above</a>. If it is an array, then each element is evaluated and the results <code class=language-javascript>$.extend</code>ed together. <code>defaultL10n</code> must be an object, and it will be <code class=language-javascript>$.extend</code>ed with the result of evaluating <code>name</code>. If <code>defaultL10n</code> is undefined, <a href=options.html#l10n><code class=language-javascript>$.bililite.flexcal.prototype.options.l10n</code></a> is used.</p>
 <h2>Examples</h2>
-<p><code class=language-javascript>$.bililite.flexcal.tol10n('fr')</code> (if the datepicker localization file is included)returns</p>
+<p><code class=language-javascript>$.bililite.flexcal.tol10n('fr')</code> (if the datepicker localization file is included) returns</p>
 <pre><code class=language-javascript>{
 	calendar: function(d) {...} // $.bililite.flexcal.calendars.gregorian,
 	closeText: "Fermer", // used by datepicker, not flexcal
@@ -308,10 +308,113 @@
 </pre></code>
 
 <h2>Formatting and Parsing</h2>
-<p><code>flexcal</code> as it stands has a minimal formatting/parsing capability.</p>
+<p><code>flexcal</code> as it stands has a minimal formatting/parsing capability. The formatting specification is based on that of <a href=http://keith-wood.name/calendarsRef.html#c_formatDate>Keith Wood's calendars</a>, except for not using 2-digit years. It is also compatible with the jQuery UI formats.</p>
+<p>The codes are:</p>
+<ul>
+<li><code>d</code>: Date number</li>
+<li><code>dd</code>: Date number, padded to two digits</li>
+<li><code>m</code>: Month number (1-indexed. Note that internally (as with <code>Date</code>) months are 0-based)</li>
+<li><code>mm</code>: Month number, padded to two digits</li>
+<li><code>yy</code>: Year number. There is no option for a two-digit year.</li>
+<li><code>yyyy</code>: Year number, padded to four digits (which really shouldn't be relevant)</li>
+</ul>
+<p>Any other string is interpreted literally.</p>
 
+<h3 id=format><code>format</code></h3>
+<p>There are two utility functions, <code class=language-javascript>$.bililite.flexcal.format(d, l10n)</code> and <code class=language-javascript>$.bililite.flexcal.parse(s, l10n)</code>.</p>
+<p><code class=language-javascript>$.bililite.flexcal.format(d, l10n)</code> takes two arguments (none are optional), a <code>Date</code> d, and a localization object <code>l10n</code>. <code>l10n</code> has to be an object; to use a string, run it through <a href=#tol10n><code>tol10n</code></a>, as <code class=language-javascript>$.bililite.flexcal.format(new Date(2015,3,8), $.bililite.flexcal.tol10n('fr'))</code>. It returns a string with the date formatted according to <code class=language-javascript>l10n.dateFormat</code>. In the last example, the French date format is <code class=language-javascript>'dd/mm/yy'</code> and the result would be <code class=language-javascript>'08/04/2015'</code>.</p>
+<h3 id=parse><code>parse</code></h3>
+<p><code class=language-javascript>$.bililite.flexcal.parse(s, l10n)</code> is the reverse. It takes a string <code>s</code> and tries to parse it according to <code class=language-javascript>l10n.dateFormat</code>. It tries to obey <a href=http://en.wikipedia.org/wiki/Robustness_principle>Postel's law</a>, "Be conservative in what you send, be liberal in what you accept", and accept anything that looks like the format. It just looks for three numbers and interprets them in the order in the format string. A completely uninterpretable string returns <code class=language-javascript>new Date(NaN)</code>.</p>
+<p>I hope to write a more complete formatter/parser in the future (<a href=https://github.com/dwachss/flexcal/issues/4>Issue #4</a>).</p>
 
-      </section>
+<h2>Examples</h2>
+<p>See the examples for the <a href=http://localhost:8000/options.html#calendars><code>calendars</code></a> option, and the examples in the <a href=http://localhost:8000/index.html>introduction</p>.
+ <p>The <a href="http://en.wikipedia.org/wiki/French_Revolutionary_Calendar">French Revolutionary calendar</a>. This is just to show off how flexible the widget is; 10-day weeks and 5-day months are no problem.</p>
+<input id=jacobin />
+<script class=demo>
+flexcalReady.then(function(){
+$.bililite.flexcal.l10n.jacobin = { // insert the calendar system directly into the list
+	name: 'Jacobin',
+	calendar: function(d){
+		var j = (function (d){
+			// algorithm from Romme's rule; valid 1992-2091. See http://en.wikipedia.org/wiki/French_Revolutionary_Calendar#Converting_from_the_Gregorian_Calendar
+			// look at  http://www.fourmilab.ch/documents/calendar/ for more accurate algorithms
+			var y = d.getFullYear();
+			var jNY = new Date(y, 8, 22); // Jacobin New Year
+			if (jNY > d) jNY = new Date(y-1, 8, 22);
+			var jD = (d-jNY)/(24*60*60*1000); // day of the Jacobin year, 0-indexed
+			return {y: jNY.getFullYear()-1791, m: Math.floor(jD/30), d: Math.floor(jD % 30)+1};
+		})(d);
+		// number of Sans-culottide days this year (5 for regular year, 6 for leap year. Our algorithm is only accurate for 1992-2091, so this is simple
+		function sc() {return d.getFullYear() % 4 == 0 ? 6 : 5}
+		function addDay(d, n){
+			if (n === undefined) n = 1;
+			return new Date(d.getFullYear(), d.getMonth(), d.getDate()+n);
+		}
+		var prev = addDay(d, -30);
+		if (j.m == 0) if (j.d > sc()) prev = addDay(prev, 31-sc()-j.d);
+		var next = addDay(d, 30);
+		if (j.m == 11) if (j.d > sc()) next = addDay(next, -j.d+sc());
+		var first = addDay(d, -j.d+1)
+		return {
+			first: first,
+			last: addDay(first, j.m == 12 ? sc()-1 : 29),
+			prev: prev,
+			next: next,
+			m: j.m, 
+			y: j.y,
+			dow: 0
+		};
+	},
+	monthNames: ["Vend&#233;miaire", "Brumaire", "Frimaire", "Niv&#244;se",
+		"Pluvi&#244;se", "Vent&#244;se", "Germinal", "Flor&#233;al", "Prairial",
+		"Messidor", "Thermidor", "Fructidor", "Sans-culottide"],
+	dayNamesMin: ['1<sup>i</sup>','2<sup>i</sup>','3<sup>i</sup>','4<sup>i</sup>','5<sup>i</sup>',
+		'6<sup>i</sup>','7<sup>i</sup>','8<sup>i</sup>','9<sup>i</sup>','10<sup>i</sup>'],
+	years: $.bililite.flexcal.archaicNumbers([ 
+		[1000, 'M'], 
+		[900, 'CM'], 
+		[500, 'D'], 
+		[400, 'CD'], 
+		[100, 'C'], 
+		[90, 'XC'], 
+		[50, 'L'], 
+		[40, 'XL'], 
+		[10, 'X'], 
+		[9, 'IX'], 
+		[5, 'V'], 
+		[4, 'IV'], 
+		[1, 'I'] 
+	])
+};
+$('#jacobin').flexcal({
+  position: 'rt',
+  calendars: ['en', 'jacobin']
+});
+
+});
+</script>
+
+<h3><code>archaicNumbers</code></h3>
+<p>The French Revolutionary Calendar example uses a utility function for translating normal numbers into Roman numerals. <code class=language-javascript>$.bililite.flexcal.archaicNumbers(arr)</code> takes an array of equivalent numbers and returns a function, <code class=language-javascript>f(n)</code> that takes a number and returns a string that is the equivalent. This function can be used for the <a href=options.html#dates><code>dates</code></a> and <a href=options.html#years><code>years</code></a> options. So:</p>
+<pre><code class=language-javascript>var convertToRoman = $.bililite.flexcal.archaicNumbers([ 
+	[1000, 'M'], 
+	[900, 'CM'], 
+	[500, 'D'], 
+	[400, 'CD'], 
+	[100, 'C'], 
+	[90, 'XC'], 
+	[50, 'L'], 
+	[40, 'XL'], 
+	[10, 'X'], 
+	[9, 'IX'], 
+	[5, 'V'], 
+	[4, 'IV'], 
+	[1, 'I'] 
+]);
+assert (convertToRoman(2015), 'MMXV');</code></pre>
+<p>I hope to write a reverse function for parsing, though that hasn't happened yet.</p> 
+     </section>
       <footer>
 		<p>Comments? Questions? Create an <a href=https://github.com/dwachss/flexcal/issues>issue</a>!</p>
 		<p><small><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"></a> This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 License</a>.</small></p>
