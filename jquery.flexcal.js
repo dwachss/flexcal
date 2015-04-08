@@ -533,7 +533,7 @@ $.bililite.flexcal.calendars = {
 $.bililite.flexcal.prototype.options.l10n.calendar = $.bililite.flexcal.calendars.gregorian;
 
 function archaicNumbers(arr){
-	return function(n){
+	var f = function(n){
 		var ret = '';
 		$.each(arr, function(){
 			var num = this[0];
@@ -545,6 +545,7 @@ function archaicNumbers(arr){
 		});
 		return ret; 
 	}
+	return f;
 }
 $.bililite.flexcal.archaicNumbers = archaicNumbers;
 
@@ -860,18 +861,18 @@ $.bililite.flexcal.format = function (d, l10n){
 		replace (/d/g, d.getDate()).
 		replace (/mm/g, pad(d.getMonth()+1, 2)).
 		replace (/m/g, d.getMonth()+1).
-		replace (/yyyy/g, d.getFullYear()).
+		replace (/yyyy/g, pad(d.getFullYear(), 4)).
 		replace (/yy/g, d.getFullYear()); // jQuery UI datepicker uses yy for the 4-digit year
 };
 
-$.bililite.flexcal.parse = function (d, l10n){
+$.bililite.flexcal.parse = function (s, l10n){
 	// I want to accept as many inputs as possible; we just look for 3 numbers in the right order
 	var ymd = l10n.dateFormat. // determine the order of year-month-day
 		replace(/[^ymd]/g,'').
 		replace(/y+/g,'y').
 		replace(/m+/g,'m').
 		replace(/d+/g,'d');
-	var match = d.match(/(\d+)/g); // get the numbers
+	var match = s.match(/(\d+)/g); // get the numbers
 	if (!match) return new Date(NaN); // invalid Date
 	return new Date(match[ymd.indexOf('y')], match[ymd.indexOf('m')]-1, match[ymd.indexOf('d')]);
 };
