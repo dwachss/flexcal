@@ -550,39 +550,39 @@ $.bililite.flexcal.archaicNumbers = archaicNumbers;
 
 var latin2hebrew = archaicNumbers([
 	[1000,''], // over 1000 is ignored
-	[400,'&#1514;'],
-	[300,'&#1513;'],
-	[200,'&#1512;'],
-	[100,'&#1511;'],
-	[90,'&#1510;'],
-	[80,'&#1508;'],
-	[70,'&#1506;'],
-	[60,'&#1505;'],
-	[50,'&#1504;'],
-	[40,'&#1502;'],
-	[30,'&#1500;'],
-	[20,'&#1499;'],
-	[10,'&#1497;'],
-	[9,'&#1496;'],
-	[8,'&#1495;'],
-	[7,'&#1494;'],
-	[6,'&#1493;'],
-	[5,'&#1492;'],
-	[4,'&#1491;'],
-	[3,'&#1490;'],
-	[2,'&#1489;'],
-	[1,'&#1488;'],
-	[/&#1497;&#1492;/, '&#1496;&#x05F4;&#1493;'], // special cases for 15 and 16
-	[/&#1497;&#1493;/, '&#1496;&#x05F4;&#1494;'],
+	[400,'ת'],
+	[300,'ש'],
+	[200,'ר'],
+	[100,'ק'],
+	[90,'צ'],
+	[80,'פ'],
+	[70,'ע'],
+	[60,'ס'],
+	[50,'נ'],
+	[40,'מ'],
+	[30,'ל'],
+	[20,'כ'],
+	[10,'י'],
+	[9,'ט'],
+	[8,'ח'],
+	[7,'ז'],
+	[6,'ו'],
+	[5,'ה'],
+	[4,'ד'],
+	[3,'ג'],
+	[2,'ב'],
+	[1,'א'],
+	[/יה/, 'ט״ו'], // special cases for 15 and 16
+	[/יו/, 'ט״ז'],
 	/*
-	[/&#1499;$/,'&#1498;'], // sofit letters; from my Israeli correspondents it seems that numbers do not use sofit letters
-	[/&#1502;$/,'&#1501;'],
-	[/&#1504;$/,'&#1503;'],
-	[/&#1508;$/,'&#1507;'],
-	[/&#1510;$/,'&#1509;'],
+	[/כ$/,'ך'], // sofit letters; from my Israeli correspondents it seems that numbers do not use sofit letters
+	[/מ$/,'ם'],
+	[/נ$/,'ן'],
+	[/פ$/,'ף'],
+	[/צ$/,'ץ'],
 	*/
-	[/(&#\d{4};)(&#\d{4};)$/, '$1&#x05F4;$2'], // gershayim (what I always called "choopchiks"--the double or single hash marks
-	[/^(&#\d{4};)$/, "$1&#x05F3;"] // geresh
+	[/(.)(.)$/, '$1״$2'], // gershayim (what I always called "choopchiks"--the double or single hash marks
+	[/^(.)$/, "$1׳"] // geresh
 ]);
 
 $.bililite.flexcal.l10n = {
@@ -595,32 +595,31 @@ $.bililite.flexcal.l10n = {
 		monthNames: ['Nisan', 'Iyar', 'Sivan', 'Tammuz', 'Av', 'Elul',
 			'Tishrei', 'Cheshvan', 'Kislev', 'Tevet', 'Shevat', 'Adar',
 			'Adar I', 'Adar II'],
-		dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','&#1513;']
+		dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','ש']
 	},
 	'he-jewish': {
-		name: '&#1506;&#1489;&#1512;&#1497;&#1514;',
+		name: 'עברית',
 		calendar: $.bililite.flexcal.calendars.jewish,
 		monthNames:  [
-			"&#1504;&#1497;&#1505;&#1503;",
-			"&#1488;&#1497;&#1497;&#1512;",
-			"&#1505;&#1497;&#1493;&#1503;",
-			"&#1514;&#1502;&#1493;&#1494;",
-			"&#1488;&#1489;",
-			"&#1488;&#1500;&#1493;&#1500;",
-			"&#1514;&#1513;&#1512;&#1497;",
-			"&#1495;&#1513;&#1493;&#1503;",
-			"&#1499;&#1505;&#1500;&#1493;",
-			"&#1496;&#1489;&#1514;",
-			"&#1513;&#1489;&#1496;",
-			"&#1488;&#1491;&#1512;",
-			"&#1488;&#1491;&#1512; &#1488;'",
-			"&#1488;&#1491;&#1512; &#1489;'"
+			"ניסן",
+			"אייר",
+			"סיון",
+			"תמוז",
+			"אב",
+			"אלול",
+			"תשרי",
+			"חשון",
+			"כסלו",
+			"טבת",
+			"שבט",
+			"אדר",
+			"אדר א'",
+			"אדר ב'"
 		],
-		dayNamesMin: ['&#1488;&#x05F3;','&#1489;&#x05F3;','&#1490;&#x05F3;','&#1491;&#x05F3;','&#1492;&#x05F3;',
-			'&#1493;&#x05F3;','&#1513;&#1489;&#1514;'],
+		dayNamesMin: ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','שבת'],
 		isRTL: true,
-		prevText: '&#1492;&#1511;&#1493;&#1491;&#1501;',
-		nextText: '&#1492;&#1489;&#1488;',
+		prevText: 'הקודם',
+		nextText: 'הבא',
 		years: latin2hebrew,
 		dates: latin2hebrew
 	}
@@ -845,8 +844,8 @@ if ($.calendars) $.bililite.flexcal.tol10n.localizers.woodsCalendar = function (
 	// next and prev text are in the date picker, not the language localization
 	if (language in $.calendarsPicker.regionalOptions){
 		// jQuery UI standards say don't include the little arrows, which calendarsPicker often does
-		var next = $.calendarsPicker.regionalOptions[language].nextText.replace (/&#x3e;/g,'');
-		var prev = $.calendarsPicker.regionalOptions[language].prevText.replace (/&#x3c;/g,'');
+		var next = $.calendarsPicker.regionalOptions[language].nextText.replace (/&#x3e;|>/g,'');
+		var prev = $.calendarsPicker.regionalOptions[language].prevText.replace (/&#x3c;|</g,'');
 		if (next) ret.nextText = next;
 		if (prev) ret.prevText = prev;
 	};
