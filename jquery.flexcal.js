@@ -532,7 +532,7 @@ $.bililite.flexcal.calendars = {
 // need to add the default after it is defined
 $.bililite.flexcal.prototype.options.l10n.calendar = $.bililite.flexcal.calendars.gregorian;
 
-window.archaicNumbers = function(arr){
+function archaicNumbers(arr){
 	return function(n){
 		var ret = '';
 		$.each(arr, function(){
@@ -546,8 +546,9 @@ window.archaicNumbers = function(arr){
 		return ret; 
 	}
 }
+$.bililite.flexcal.archaicNumbers = archaicNumbers;
 
-var arabic2hebrew = archaicNumbers([
+var latin2hebrew = archaicNumbers([
 	[1000,''], // over 1000 is ignored
 	[400,'&#1514;'],
 	[300,'&#1513;'],
@@ -620,8 +621,8 @@ $.bililite.flexcal.l10n = {
 		isRTL: true,
 		prevText: '&#1492;&#1511;&#1493;&#1491;&#1501;',
 		nextText: '&#1492;&#1489;&#1488;',
-		years: arabic2hebrew,
-		dates: arabic2hebrew
+		years: latin2hebrew,
+		dates: latin2hebrew
 	}
 };
 
