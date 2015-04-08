@@ -47,7 +47,10 @@ QUnit.test('archaicNumbers', function (assert){
 		[1, 'I'] 
 	];
 	var convertToRoman = $.bililite.flexcal.archaicNumbers(roman);
-	assert.equal(convertToRoman(2015), 'MMXV');
+	assert.equal(convertToRoman.format(2015), 'MMXV');
+	assert.equal(convertToRoman.parse('MMXV'), 2015);
+	assert.equal(convertToRoman.format(409), 'CDIX');
+	assert.equal(convertToRoman.parse('CDIX'), 409);
 	var hebrew = [
 		[1000,''], // over 1000 is ignored
 		[400,'ת'],
@@ -78,5 +81,6 @@ QUnit.test('archaicNumbers', function (assert){
 		[/^([א-ת])$/, "$1׳"] // geresh
 	];
 	var convertToHebrew = $.bililite.flexcal.archaicNumbers(hebrew);
-	assert.equal(convertToHebrew(5775), 'תשע״ה');
+	assert.equal(convertToHebrew.format(5775), 'תשע״ה');
+	assert.equal(convertToHebrew.parse('תשע״ה'), 775);
 });

@@ -533,19 +533,37 @@ $.bililite.flexcal.calendars = {
 $.bililite.flexcal.prototype.options.l10n.calendar = $.bililite.flexcal.calendars.gregorian;
 
 function archaicNumbers(arr){
-	var f = function(n){
-		var ret = '';
-		$.each(arr, function(){
-			var num = this[0];
-			if (parseInt(num) > 0){
-				for (; n >= num; n -= num) ret += this[1];
-			}else{
-				ret = ret.replace(num, this[1]);
-			}
-		});
-		return ret; 
+	// arr is assumed to be ordered in the order desired for formatting
+	// for parsing we want to read the longest string first.
+	var arrParse = arr.slice().sort(function (a,b) {return b[1].length - a[1].length});
+	return {
+		format: function(n){
+			var ret = '';
+			$.each(arr, function(){
+				var num = this[0];
+				if (parseInt(num) > 0){
+					for (; n >= num; n -= num) ret += this[1];
+				}else{
+					ret = ret.replace(num, this[1]);
+				}
+			});
+			return ret; 
+		},
+		parse: function (s){
+			var ret = 0;
+			$.each (arrParse, function(){
+				var num = this[0], letter = this[1];
+				if (parseInt(num) > 0 && letter.length > 0){ // only translate things which have numeric value
+					var re = new RegExp(this[1], 'g'); // assumption: none of the replacement strings have RegExp special characters
+					s = s.replace(re, function (match){
+						ret += num;
+						return '';
+					});
+				}
+			});
+			return ret;
+		}
 	}
-	return f;
 }
 $.bililite.flexcal.archaicNumbers = archaicNumbers;
 
@@ -621,8 +639,8 @@ $.bililite.flexcal.l10n = {
 		isRTL: true,
 		prevText: 'הקודם',
 		nextText: 'הבא',
-		years: latin2hebrew,
-		dates: latin2hebrew
+		years: latin2hebrew.format,
+		dates: latin2hebrew.format
 	}
 };
 
