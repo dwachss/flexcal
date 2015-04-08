@@ -307,7 +307,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		// TODO: implement some kind of caching
 		var ret = [], l10n = this.o.l10n;
 		var cal = l10n.calendar(d);
-		var daysinweek = l10n.dayNamesMin.length, dow = cal.dow;
+		var daysinweek = l10n.dayNamesMin.length;
+		var dow = (cal.dow - l10n.firstDay + daysinweek) % daysinweek; // mod operator (% fails for negative dividends)
 		ret.push (
 			'<a class="go ',
 			l10n.isRTL ? 'ui-datepicker-next ' : 'ui-datepicker-prev ',
@@ -337,7 +338,9 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		);
 		if ((cal.last - cal.first)/1000/60/60/24 > daysinweek){
 			// short "months" are only present in calendars that add days that are not part of the week (see the French Revolutionary calendar)
-			ret.push('<thead><tr><th>',l10n.dayNamesMin.join('</th><th>'),'</th></tr></thead>');
+			var dayNames = l10n.dayNamesMin.slice(); // copy
+			for (var i = 0; i < l10n.firstDay; ++i) dayNames.push(dayNames.shift()); // rotate the names
+			ret.push('<thead><tr><th>', dayNames.join('</th><th>'),'</th></tr></thead>');
 		}
 		ret.push('<tbody>');
 		if (dow > 0) ret.push('<tr>');
