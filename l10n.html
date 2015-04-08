@@ -100,7 +100,7 @@
 </div>
 <h3 id=firstday><code>firstDay</code></h3>
 <div class=definition>
-	<p>Number of the day of the week (0-indexed) that the calendar should start. Not currently implemented (<a href="https://github.com/dwachss/flexcal/issues/5">Issue #5</a>), always assumes 0.</p>
+	<p>Number of the day of the week (0-indexed) that the calendar should start.</p>
 	<h4>Default value</h4>
 	<p><code class=language-javascript>0</code></p>
 </div>
@@ -267,9 +267,9 @@
 	currentText: "Aujourd'hui",
 	dateFormat: "dd/mm/yy",
 	dates: function (n) {return n.toString()},
-	dayNames: Array[7],
+	dayNames: ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"],
  	dayNamesMin: ["D","L","M","M","J","V","S"],
-	dayNamesShort: Array[7],
+	dayNamesShort: Array["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."],
 	firstDay: 1,
 	isRTL: false,
 	monthNames:["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],
@@ -290,9 +290,9 @@
 	currentText: "Aujourd'hui",
 	dateFormat: "yyyy-mm-dd", // from the third element
 	dates: function (n) {return n.toString()},
-	dayNames: Array[7],
+	dayNames: ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"],
  	dayNamesMin: ["D","L","M","M","J","V","S"],
-	dayNamesShort: Array[7],
+	dayNamesShort: Array["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."],
 	firstDay: 1,
 	isRTL: false,
 	monthNames:["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],
