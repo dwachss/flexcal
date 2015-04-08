@@ -201,6 +201,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		var self = this;
 		this._super(box); // start getting the HTML as soon as possible
 		this.element.bind(this.widgetEventPrefix+'shown', function(){
+			if (self.options.box) return; // for an inline flexcal, showing is under programmatic control. Don't unexpectedly change the focus
 			if (self._triggerElement){
 				self._triggerElement[0].focus(); // keep the focus on the element that triggered the popup
 			}else{
