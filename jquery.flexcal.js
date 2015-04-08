@@ -581,8 +581,8 @@ var latin2hebrew = archaicNumbers([
 	[/פ$/,'ף'],
 	[/צ$/,'ץ'],
 	*/
-	[/(.)(.)$/, '$1״$2'], // gershayim (what I always called "choopchiks"--the double or single hash marks
-	[/^(.)$/, "$1׳"] // geresh
+	[/([א-ת])([א-ת])$/, '$1״$2'], // gershayim (what I always called "choopchiks"--the double or single hash marks
+	[/^([א-ת])$/, "$1׳"] // geresh
 ]);
 
 $.bililite.flexcal.l10n = {

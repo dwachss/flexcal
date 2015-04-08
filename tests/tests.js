@@ -29,3 +29,54 @@ QUnit.test( "datepicker", function( assert ) {
 	target.flexcal('commit', d);
 	assert.equal(target.val(), '3/13/2015', 'commit');
 });
+
+QUnit.test('archaicNumbers', function (assert){
+	var roman = [ 
+		[1000, 'M'], 
+		[900, 'CM'], 
+		[500, 'D'], 
+		[400, 'CD'], 
+		[100, 'C'], 
+		[90, 'XC'], 
+		[50, 'L'], 
+		[40, 'XL'], 
+		[10, 'X'], 
+		[9, 'IX'], 
+		[5, 'V'], 
+		[4, 'IV'], 
+		[1, 'I'] 
+	];
+	var convertToRoman = $.bililite.flexcal.archaicNumbers(roman);
+	assert.equal(convertToRoman(2015), 'MMXV');
+	var hebrew = [
+		[1000,''], // over 1000 is ignored
+		[400,'ת'],
+		[300,'ש'],
+		[200,'ר'],
+		[100,'ק'],
+		[90,'צ'],
+		[80,'פ'],
+		[70,'ע'],
+		[60,'ס'],
+		[50,'נ'],
+		[40,'מ'],
+		[30,'ל'],
+		[20,'כ'],
+		[10,'י'],
+		[9,'ט'],
+		[8,'ח'],
+		[7,'ז'],
+		[6,'ו'],
+		[5,'ה'],
+		[4,'ד'],
+		[3,'ג'],
+		[2,'ב'],
+		[1,'א'],
+		[/יה/, 'ט״ו'], // special cases for 15 and 16
+		[/יו/, 'ט״ז'],
+		[/([א-ת])([א-ת])$/, '$1״$2'], // gershayim
+		[/^([א-ת])$/, "$1׳"] // geresh
+	];
+	var convertToHebrew = $.bililite.flexcal.archaicNumbers(hebrew);
+	assert.equal(convertToHebrew(5775), 'תשע״ה');
+});
