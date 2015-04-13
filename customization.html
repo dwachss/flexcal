@@ -87,6 +87,25 @@ $('#2').flexcal('after', '_adjustHTML', function (cal){ // extend the _adjustHTM
 	}); 
 });
 </code></pre>
+
+<p>As described in the <a href=http://github.bililite.com/extending-widgets.html>Extending Widgets tutorial</a>, this creates a single instance of <code>flexcal</code> with the drop-down menus. You could subclass <code>flexcal</code> to do the same thing but allow creating multiple instances:</p>
+<input id=3 />
+<pre><code class="language-javascript demo">
+$.widget ('bililite.dropdownflexcal', $.bililite.flexcal, {
+	_adjustHTML: function(cal){
+		this._super(cal);
+		cal.find('.ui-datepicker-month').html(monthMenu(this.option('current'), this.option('l10n')));
+		cal.find('.ui-datepicker-year').html(yearMenu(this.option('current'), this.option('l10n'), this.option('yearRange')));
+		var self = this;
+		cal.find('select').on('change', function(){
+			self.option('current', new Date($(this).val()));
+		}); 		
+	},
+	options: {yearRange: 5}
+});
+
+$('#3').dropdownflexcal({calendars: ['en', 'he-jewish'], position: 'bl', 'class': 'multicalendar'});
+</code></pre>
       </section>
       <footer>
 		<p>Comments? Questions? Create an <a href=https://github.com/dwachss/flexcal/issues>issue</a>!</p>
