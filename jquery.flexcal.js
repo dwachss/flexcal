@@ -188,8 +188,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	 * Protected methods
 	 **************/
 	_adjustHTML: function(cal){
-		cal.find('a').removeClass('ui-state-focus').filter('[rel="'+ISOdate(this.options.current)+'"]').addClass('ui-state-focus');
-		cal.find('a').removeClass('ui-state-active').filter('[rel="'+ISOdate(this.parse(this.element.val()))+'"]').addClass('ui-state-active');
+		cal.find('a').removeClass('ui-state-focus').filter('.commit[rel="'+ISOdate(this.options.current)+'"]').addClass('ui-state-focus');
+		cal.find('a').removeClass('ui-state-active').filter('.commit[rel="'+ISOdate(this.parse(this.element.val()))+'"]').addClass('ui-state-active');
 		cal.find('a:not([href])')['ui-clickable']();
 		cal.find('a.go').removeClass('ui-state-default') // ui-datepicker has its own styling
 			.each(function(){ this.title = $(this).text() }); // when we use image replacement for the prev/next buttons, leave the text as a tooltip title
