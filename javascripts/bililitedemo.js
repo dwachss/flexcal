@@ -9,8 +9,7 @@ $(document).ready(function(){
 	$('code.demo.language-css').each(function(){
 		$('<style>'+$(this).text()+'</style>').appendTo('head');
 	});
-	eval($('code.demo.language-javascript').text());
-	
+	eval($('code.demo.language-javascript').text());	
 	
 	// Prism uses a different notation (language-markup rather than language-html)
 	Prism.languages.html = Prism.languages.markup;
