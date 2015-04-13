@@ -105,7 +105,7 @@ var defaultURL = 'data:,' +
 '		<div class="ui-flexcal-pane"></div>',
 '		<div class="ui-flexcal-pane"></div>',
 '	</div>',
-'<div class="ui-datepicker-buttonpane ui-widget-content"></div>',
+'	<div class="ui-flexcal-buttonpane"></div>',
 '</div>'].join('\n');
 
 $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
