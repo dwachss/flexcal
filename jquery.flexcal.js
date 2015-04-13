@@ -26,12 +26,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 (function($){
 $.fn.extend({
-	// utility function to look for elements in the jQuery object ($.fn.filter) and elements that are children of the jQuery object ($.fn.find)
-	findandfilter: function(selector){
-		var ret = this.filter(selector).add(this.find(selector));
-		ret.prevObject = ret.prevObject.prevObject; // maintain the filter/end chain correctly (the filter and the find both push onto the chain). 
-		return ret;
-	},
 	// add indicators that an element is active; UI doesn't use :hover, which probably makes sense for IE
 	'ui-clickable': function(){
 		return this.addClass('ui-state-default')
@@ -137,7 +131,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		},
 		reposition: true,
 		tab: 0,
-		transition: function(oldCalendar, newCalendar, rev, l10n){
+		transition: function(oldCalendar, newCalendar, rev){
 			oldCalendar.hide();
 			newCalendar.show();
 		}
@@ -174,11 +168,9 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			this._oldCalendar = this._box().find('.ui-flexcal-pane').eq(0);
 			this._newCalendar = this._oldCalendar.next('.ui-flexcal-pane');
 		}
-		//%%this.o.$cont = $cont;
-		//%%this.o.elements = this.o.$cont.children();
 		this._setTabs();
 		this._makeCurrentCalendar(this.options.tab);
-		this._setDate(this.element.val());
+		this._setDate(this.element.val(), false);
 		this._super();
 	},
 	/**************
@@ -197,14 +189,14 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	_adjustHTML: function(cal){
 		cal.find('a').removeClass('ui-state-focus').filter('[rel="'+ISOdate(this.options.current)+'"]').addClass('ui-state-focus');
 		cal.find('a').removeClass('ui-state-active').filter('[rel="'+ISOdate(this.parse(this.element.val()))+'"]').addClass('ui-state-active');
-		cal.findandfilter('a:not([href])')['ui-clickable']();
-		cal.filter('a.go').removeClass('ui-state-default') // ui-datepicker has its own styling
+		cal.find('a:not([href])')['ui-clickable']();
+		cal.find('a.go').removeClass('ui-state-default') // ui-datepicker has its own styling
 			.each(function(){ this.title = $(this).text() }); // when we use image replacement for the prev/next buttons, leave the text as a tooltip title
 		// allow for using either the jQuery UI icons or the FontAwesome icon font
-		cal.filter('a.ui-datepicker-prev').find('span.ui-icon').addClass('ui-icon-circle-triangle-w fa fa-chevron-circle-left');
-		cal.filter('a.ui-datepicker-next').find('span.ui-icon').addClass('ui-icon-circle-triangle-e fa fa-chevron-circle-right');
-		if (this._l10n.isRTL) cal.filter('table').css('direction', 'rtl');
-		cal.find('a.commit').filter(this.excludefilter).
+		cal.find('a.ui-datepicker-prev').find('span.ui-icon').addClass('ui-icon-circle-triangle-w fa fa-chevron-circle-left');
+		cal.find('a.ui-datepicker-next').find('span.ui-icon').addClass('ui-icon-circle-triangle-e fa fa-chevron-circle-right');
+		if (this._l10n.isRTL) cal.find('table').css('direction', 'rtl');
+		cal.find('a.commit').filter(this._excludefilter).
 		  removeClass('commit')['ui-unclickable']().addClass('ui-state-disabled');
 		return cal;
 	},
@@ -229,15 +221,12 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		var self = this;
 		this.options.current = this.parse(this.options.current);
 		if (isNaN(this.options.current.getDate())) this.options.current = new Date;
-		//%%this.o = $.extend({before: [], after: []}, this.options.transitionOptions); // create an "options" object for the cycle plugin
-		//%% this.o.$cont = this.o.elements =
 		if (this.options.filter){
 			// the filter option returns true for elements to allow, but _adjustHTML expects a filter that returns true for elements to disable
 			this._excludefilter = function(){
 				return !(self.options.filter.call(this, parseISO(this.rel)));
 			}
 		}
-		//%%this.o.currSlide = 0;
 		this._setL10n(); // create a default localization
 		if (this.options.box) this.show(); // inline calendars get shown right away
 	},
@@ -300,11 +289,11 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 				case $.ui.keyCode.PAGE_UP: return calendarDate('prevYear');
 				case $.ui.keyCode.PAGE_DOWN: return calendarDate('nextYear');
 				case $.ui.keyCode.RIGHT:
-					self._makeCurrentCalendar((self.options.tab+1)%self.tabs.length);
+					self._makeCurrentCalendar((self.options.tab+1)%self._tabs.length);
 					self._setDate(undefined, true);
 					return false;
 				case $.ui.keyCode.LEFT:
-					self._makeCurrentCalendar((self.options.tab+self.tabs.length-1)%self.tabs.length);
+					self._makeCurrentCalendar((self.options.tab+self._tabs.length-1)%self._tabs.length);
 					self._setDate(undefined, true);
 					return false;
 			}
@@ -408,24 +397,23 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		// d is the date we want to change to; if undefined just redraws the calendar
 		// set animate == true to force the animated transition, false to prevent it.
 		// if undefined, only animate if the new date is not on the currently visible calendar
-		var currCalendar = this._oldCalendar.find('table');
 		var oldd = this.options.current;
 		d = this.parse(d);
 		if (isNaN(d.getTime())) d = oldd;
 		this.options.current = d;
 		this._trigger('set', 0, [d, oldd]);
 		// the find(..) looks for a date element with the desired date (stored in the rel attribute). If it's there, then the new date is showing and we can use it
-		if (animate == null) animate = currCalendar.find('a[rel="'+ISOdate(d)+'"]').length == 0;
-		if (!animate){
-			this._adjustHTML(currCalendar);
+		var needCalendar = this._oldCalendar.find('table a[rel="'+ISOdate(d)+'"]').length == 0;
+		if (animate == null) animate = needCalendar;
+		if (!animate && !needCalendar){
+			this._adjustHTML(this._oldCalendar);
 		}else{
 			if (ISOdate(oldd) != ISOdate(d)) this._rev = (oldd > d); // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
-			var cal = this._generateCalendar(d);
-			var slide = this._newCalendar.html(cal);
-			this._adjustHTML(cal);
-			var size = slide.find('table').tableSize(this._box().parent()[0]);
-			slide.css(size);
-			this._transition(size);
+			this._newCalendar.html(this._generateCalendar(d));
+			this._adjustHTML(this._newCalendar);
+			var size = this._newCalendar.find('table').tableSize(this._box().parent()[0]);
+			this._newCalendar.css(size);
+			this._transition(size, animate);
 		}
 	},
 	_setL10n: function(name){
@@ -452,7 +440,6 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			this._makeCurrentCalendar(value);
 			this._setDate(undefined, true);
 		}
-		if (key == 'transitionOptions') $.extend (this.o, value); // actually change the transition options
 	},
 	_setTabs: function(){
 		this._tabs = this._createTabs().children();
@@ -465,33 +452,33 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			this._makeCurrentCalendar(this.options.tab);
 		}
 	},
-	_transition: function(size){
+	_transition: function(size, animate){
 		var first = this._oldCalendar, second = this._newCalendar, self = this;
 		function nextSlide(){
 			self._oldCalendar = second;
 			self._newCalendar = first;
 			// IE won't set the tab size correctly, so we do it by hand. 
 			if (!$.support.ULwidth){
-				var tabbar = self.tabs.parent();
+				var tabbar = self._tabs.parent();
 				var width = size.width;
 				$.each(['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'],
 					function(){ width -= parseFloat(tabbar.css(this.toString())) });
 				tabbar.width(width);
 			}
 		}
-		if (this._box().is(':hidden')){
+		if (!animate || this._box().is(':hidden')){
 			// if box is hidden, then we don't need to animate anything
 			first.hide();
 			second.css({top: 0, left: 0, opacity: 1}).show(); // make sure we correct any leftover css from the transition effects
 			second.parent().css(size);
 			nextSlide();
 		}else{
-			// Make the parent sized correctly then animate to the larger size before and to the smaller size after the transition
+			// Make the parent sized correctly then animate
 			second.parent().animate(size, 100, function(){
 				first.add(second).stop (true, true); // make sure that the new calendar is available to show
-				self.options.transition(first, second, self._rev, self._l10n);
+				self.options.transition.call(self.element, first, second, self._rev);
 				nextSlide();
-				if (self.options.reposition) self.position(); // adjust position for new size (this will jump rather than animate, but I'm not sure what to do about that.
+				if (self.options.reposition) self.position(); // adjust position for new size
 			});
 		}
 	}

@@ -42,8 +42,7 @@
 			if (trigger == 'self'){
 				trigger = this.element;
 			}
-			if (this._triggerElement) $(trigger).unbind('.textpopup'); // don't forget to remove the old bindings 
-			// note that for elements that can get focus, self.show will be called twice (but we test for :visible so it doesn't animate twice)
+			if (this._triggerElement) $(trigger).unbind('.textpopup');
 			if (trigger){
 				this._triggerElement = $(trigger);
 				this._triggerElement.filter(":focusable").bind('focus.textpopup', self.show.bind(self));
@@ -59,7 +58,6 @@
 				css({display: display, visibility: 'visible'});
 		},
 		show: function(){
-			// See http://wiki.codetalks.org/wiki/index.php/Docs/Keyboard_navigable_JS_widgets for manipulating tabindex
 			var self = this, box = self._box().attr('tabindex', 0);
 			if (box.is(':visible, :animated')) return;
 			self.position();
