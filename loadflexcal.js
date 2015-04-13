@@ -26,10 +26,17 @@ var flexcalReady = $.getScript('https://cdn.rawgit.com/dwachss/jquery.repo/v1.1.
 }).then(function(){
 	return $.getScript ('javascripts/bililitedemo.js');
 });
-$.get('pages.json').then(function(pages){
-	if (typeof pages === 'string') pages = JSON.parse(pages);
-	for (page in pages){
-		$('<p>').append($('<a>').text(page).attr('href', pages[page])).appendTo('nav');
-	}
+$(function(){
+	$.get('pages.json').then(function(pages){
+		if (typeof pages === 'string') pages = JSON.parse(pages);
+		for (page in pages){
+			$('<p>').append($('<a>').text(page).attr('href', pages[page])).appendTo('nav');
+		}
+	});
+
+	var themeswitcher = $('<div>').prependTo('footer');
+	$.getScript('http://cdn.rawgit.com/harborhoffer/Super-Theme-Switcher/master/jquery.themeswitcher.min.js').then(function(){
+		themeswitcher.themeswitcher({ imgpath: 'https://cdn.rawgit.com/harborhoffer/Super-Theme-Switcher/master/images/' });
+	});
 });
 

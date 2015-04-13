@@ -54,7 +54,6 @@
 <li><a href=#show><code>show</code></a></li>
 <li><a href=#tab><code>tab</code></a></li>
 <li><a href=#transition><code>transition</code></a></li>
-<li><a href=#transitionOptions><code>transitionOptions</code></a></li>
 <li><a href=#trigger><code>trigger</code></a></li>
 <li><a href=#url><code>url</code></a></li>
 </ul>
@@ -433,7 +432,7 @@ flexcalReady.then(function(){
 	<h4>Default value</h4>
 	<p><code class="language-javascript">true</code> (but reset to <code class="language-javascript">false</code> for inline calendars)</p>
 	<h4>Example</h4>
-	<p>See <a href=#hide><code>hide</code></a>.</p>
+	<p>See the <a href=#hidemethod><code>hide</code> method</a>.</p>
 </div>
 <h3 id=reposition><code>reposition</code></h3>
 <div class=definition>
@@ -443,7 +442,7 @@ flexcalReady.then(function(){
 <h4>Default value</h4>
 <p><code class="language-javascript">true</code></p>
 <h4>Example</h4>
-<p>See the example for <a href=#transitionOptions><code>transitionOptions</code></a>.</p>
+<p>See the second example for <a href=#transition><code>transition</code></a>.</p>
 </div>
 <h3 id=show><code>show</code></h3>
 <div class=definition>
@@ -458,79 +457,39 @@ flexcalReady.then(function(){
 <h3 id=transition><code>transition</code></h3>
 <div class=definition>
 <p><code>{Function}</code></p>
-<p>Function to animate the transition between months or between calendars. The sole argument is <code>transitionOptions</code>, copied from the <a href=#transitionOptions>option of that name</a>, with the following extra fields:</p>
-<dl>
-	<dt><code>transitionOptions.$cont</code></dt>
-	<dd>jQuery object that is the container for the calendars</dd>
-	<dt><code>transitionOptions.elements</code></dt>
-	<dd>jQuery object that has two elements, each an absolutely-positioned &lt;div&gt; one on top of the other, that are the calendars to be transitioned</dd>
-	<dt><code>transitionOptions.currSlide</code></dt>
-	<dd>The index of the current calendar in <code>transitionOptions.elements</code>. Thus, <code class="language-javascript">transitionOptions.elements.eq(transitionOptions.currSlide)</code> is the currently-showing calendar and <code class="language-javascript">transitionOptions.elements.eq(1-transitionOptions.currSlide)</code> is the currently hidden calendar that needs to be shown</dd>
-	<dt><code>transitionOptions.rev</code></dt>
-	Boolean to indicate that the animation should show a "reverse" transition, going to a previous month.
-	<dt><code>transitionOptions.l10n</code></dt>
-	<dd>Localization object for the calendar to be displayed (<code class="language-javascript">transitionOptions.elements.eq(1-transitionOptions.currSlide)</code>). The transition function can use <code class="language-javascript">transitionOptions.l10n.isRTL</code> to determine if "next month" should be animated right-to-left or left-to-right</dd>
-</dl>
-<p>The options object that is passed to the transition function was designed to allow drop-in use of Mike Alsup's excellent <a href="http://www.malsup.com/jquery/cycle/">cycle plugin</a>, but it turned out to be <a href=transition.html>more complicated than that</a>. Nonetheless, the terminology remains.</p>
+<p>Function to animate the transition between months or between calendars. Arguments are <code>oldCalendar</code>, the <code class=language-html>&lt;div&gt;</code> that contains the calendar to hide, <code>newCalendar</code>, the <code class=language-html>&lt;div&gt;</code> that contains the calendar to show, and <code>rev</code>, a Boolean that is <code class=language-javascript>true</code> if the animation should show a "reverse" transition, going to a previous month.</p>
 <h4>Default Value</h4>
-<pre><code class="language-javascript">function(o){
-	o.elements.eq(o.currSlide).hide();
-	o.elements.eq(1-o.currSlide).show();
+<pre><code class="language-javascript">function(oldCalendar, newCalendar, rev){
+	oldCalendar.hide();
+	newCalendar.show();
 }</code></pre>
 <h4>Examples</h4>
+<p>See the <a href=transition.html>Transition page</a>.</p>
 <p>Sliding transition</p>
-<pre><code class="language-javascript">$(element).flexcal({
-	transition: function(o){
-		var dir = (o.rev != o.l10n.isRTL) ? 'right' : 'left';
-		var first = o.elements.eq(o.currSlide), second = o.elements.eq(1-o.currSlide);
-		first.hide('blind', {direction: dir}, function(){
-			second.show('blind', {direction: dir});
-		});
-	}
-});</code></pre>
 <input id=16 />
 <script class=demo>
 flexcalReady.then(function(){
 	$('#16').flexcal({
-		transition: function(o){
-			var dir = (o.rev != o.l10n.isRTL) ? 'right' : 'left';
-			var first = o.elements.eq(o.currSlide), second = o.elements.eq(1-o.currSlide);
-			first.hide('blind', {direction: dir}, function(){
-				second.show('blind', {direction: dir});
+		transition: function(oldCalendar, newCalendar, rev){
+			var dir = (rev != this.flexcal('option', 'l10n').isRTL) ? 'right' : 'left';
+			oldCalendar.hide('blind', {direction: dir}, function(){
+				newCalendar.show('blind', {direction: dir});
 			});
 		}
 	});
 });
 </script>
-</div>
-<h3 id=transitionOptions><code>transitionOptions</code></h3>
-<div class=definition>
-<p><code>{undefined|Object}</code></p>
-<p>Options passed to <a href=#transition><code>transition</code></a>.</p>
-<h4>Default Value</h4>
-<p><code class="language-javascript">undefined</code></p>
-<h4>Example</h4>
-<p>slow transition</p>
-<pre><code class="language-javascript">$(element).flexcal({
-	position: 'rt',
-	transition: function(o){
-		var first = o.elements.eq(o.currSlide), second = o.elements.eq(1-o.currSlide);
-		first.fadeOut(o.duration);
-		second.fadeIn(o.duration);
-	},
-	transitionOptions: {duration: 1000}	// very slow fade
-});</code></pre>
+<p>Slow transition. Note that any arbitrary value can be passed to the widget constructor and retrieved with <code>option</code>.</p>
 <input id=17 />
 <label><input type="checkbox" name="check17" checked /> Reposition</label><br/>
 <script class=demo>
 flexcalReady.then(function(){
 	$('#17').flexcal({
-	transition: function(o){
-		var first = o.elements.eq(o.currSlide), second = o.elements.eq(1-o.currSlide);
-		first.fadeOut(o.duration);
-		second.fadeIn(o.duration);
-	},
-	transitionOptions: {duration: 1000}	
+		transition: function(oldCalendar, newCalendar, rev){
+			oldCalendar.fadeOut(this.flexcal('option', 'transitionDuration'));
+			newCalendar.fadeIn(this.flexcal('option', 'transitionDuration'));
+		},
+		transitionDuration: {duration: 1000}	// very slow fade
 	});
 	$('[name=check17]').change(function(){
 		console.log($(this).is(':checked'));
@@ -688,7 +647,7 @@ flexcalReady.then(function(){
 	<p>Note the difference to setting the <a href=#current><code>current</code></a> option, which only sets the visible date.</p>
 	<h4>Example</h4>
 	<div style="display: inline-block"></div>
-	<input id=22a /> <input type=button value="Commit(New Year)" /> <input type=button value="Current (New Year)" />
+	<input id=22a /> <input type=button value="Commit (New Year)" /> <input type=button value="Current (New Year)" />
 	<script class=demo>
 	flexcalReady.then(function(){
 		var newyears = new Date (2016, 0, 1);

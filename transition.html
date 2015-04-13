@@ -1,0 +1,299 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Flexcal Transitions</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="stylesheets/prism-dw.css" />
+ 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/prism/gh-pages/prism.js"></script>
+	<script src="http://malsup.github.io/jquery.cycle.all.js"></script>
+	<script>$.fn.cycle1 = $.fn.cycle; // allow both versions of cycle</script>
+	<script src="http://malsup.github.io/jquery.cycle2.js"></script>
+	<script src="http://malsup.github.io/jquery.cycle2.flip.js"></script>
+	<script src="http://malsup.github.io/jquery.cycle2.scrollVert.js"></script>
+	<script src="http://malsup.github.io/jquery.cycle2.tile.js"></script>
+	<script>$.fn.cycle2 = $.fn.cycle; // allow both versions of cycle</script>
+    <script src="javascripts/prism.linenumber.js"></script>
+	<script src="loadflexcal.js"></script>
+ 	<style>
+		.inline {
+			height: 19em;
+		}
+		.inline > div{
+			display: inline-block;
+			transition: all 0s;
+		}
+	</style>
+	<style id=transitionstyle>
+		.hidden {
+			opacity: .25;
+			transform: rotate(1040deg)  scale(0.125);
+			z-index: 1;
+			transition: opacity 1s, transform 1s;
+			transition-timing-function: cubic-bezier(0.895, 0.03, 0.685, 0.22); /* http://easings.net/#easeInQuart */
+		}
+	</style>
+ </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Flexcal</h1>
+        <p>jQuery UI datepicker</p>
+
+        <p class="view"><a href="https://github.com/dwachss/flexcal">View the Project on GitHub <small>dwachss/flexcal</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/dwachss/flexcal/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/dwachss/flexcal/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/dwachss/flexcal">View On <strong>GitHub</strong></a></li>
+        </ul>
+		<nav>
+		</nav>
+      </header>
+      <section>
+<h1>Flexcal Transitions</h1>
+<p>I had far too much fun playing with these effects when I should have been doing real work, but they demonstrate what is possible.</p>
+<h2>Default transition</h2>
+<p>Just hide the old and show the new.</p>
+<div class=inline><div id=1></div></div>
+<script class=demo>
+flexcalReady.then(function(){
+	$('<input>').flexcal({
+		box:  $('#1')
+	});
+});
+</script>
+<h2>Fading transition</h2>
+<p>This shows that you can pass additional parameters in the options, and get them by using <code class=language-javascript>this</code>
+<div class=inline><div id=2></div></div>
+<script class=demo>
+flexcalReady.then(function(){
+	$('<input>').flexcal({
+		box:  $('#2'),
+		transition: function(oldCalendar, newCalendar, rev){
+			var duration = this.flexcal('option', 'transitionDuration');
+			oldCalendar.fadeOut(duration);
+			newCalendar.fadeIn(duration);
+		},
+		transitionDuration: 'slow'
+	});
+});
+</script>
+<h2>Vertical sliding transition</h2>
+<p>This shows how to use the <code>rev</code> argument; reverse transitions scroll up.</p>
+<div class=inline><div id=3></div></div>
+<script class=demo>
+flexcalReady.then(function(){
+	$('<input>').flexcal({
+		box:  $('#3'),
+		transition: function(oldCalendar, newCalendar, rev){
+			oldCalendar.hide('blind', {direction: rev ? 'up' : 'down'});
+			newCalendar.delay(50).show('blind', {direction: rev ? 'down' : 'up'});
+		}
+	});
+});
+</script>
+<h2>Horizontal sliding transition</h2>
+<p>This shows how to use <code>this</code> to get the localization object to determine if "reverse" transitions should be right-to-left or left-to-right. Use the page up and page down keys to see this best.</p>
+<div class=inline><div id=4></div></div>
+<script class=demo>
+flexcalReady.then(function(){
+	$('<input>').flexcal({
+		box:  $('#4'),
+		calendars: ['LTR', ['RTL', {isRTL: true}] ],
+		transition: function(oldCalendar, newCalendar, rev){
+			rev = (rev != this.flexcal('option', 'l10n').isRTL);
+			oldCalendar.hide('blind', {direction: rev ? 'left' : 'right'});
+			newCalendar.delay(50).show('blind', {direction: rev ? 'right' : 'left'});
+		}
+	});
+});
+</script>
+<h2>Cycle plugin</h2>
+<p>You can use <a hef=http://jquery.malsup.com/cycle/>Mike Alsup's excellent cycle plugin</a> to control the transition effects, with some attention to setting the correct options.</p>
+<div>
+	<label>Effect: <select id=fx1></select></label>
+	<label>Easing: <select id=easing1></select></label>
+	<label>Sync: <input id=sync1 type=checkbox checked /></label>
+</div>
+<div class=inline><div id=5></div></div>
+<script class=demo>
+flexcalReady.then(function(){
+	for (var e in $.easing){
+		$('#easing1').append($('<option>').text(e));
+	};
+	for (var t in $.fn.cycle1.transitions){
+		if (t == 'none') continue;
+		$('#fx1').append($('<option>').text(t));
+	};
+	$('<input>').flexcal({
+		box:  $('#5'),
+		transition: function(oldCalendar, newCalendar, rev){
+			$.fn.cycle = $.fn.cycle1;
+			rev = rev != (oldCalendar.index() < newCalendar.index()); // cycle cares about the order of the elements
+			oldCalendar.parent().cycle1({
+				timeout: 0, // don't autostart
+				rev: rev,
+				easing: $('#easing1').val(),
+				fx: $('#fx1').val(),
+				sync: $('#sync1').is(':checked'),
+				startingSlide: oldCalendar.index(),
+				cleartypeNoBg: true // don't put a black background on the calendar
+			}).cycle (newCalendar.index());
+		}
+	});
+});
+</script>
+<p>[In order to demonstrate both the original <code>cycle</code> and the new <code>cycle</code> (called cycle2 but it uses the same name as a plugin) plugins, I renamed them <code>cycle1</code> and <code>cycle2</code>, and swap the names as needed.]</p>
+<h2>Cycle2 plugin</h2>
+<p>Mike Alsup also has <a hef=http://jquery.malsup.com/cycle2/>cycle2</a>, which is aimed more at markup-based slideshows rather than programmatically-controlled ones, so it requires a little more hacking to get it to work. It has some cool effects, though.</p>
+<div>
+	<label>Effect: <select id=fx2></select></label>
+	<label>Easing: <select id=easing2></select></label>
+	<label>Vertical Tile Effect: <input id=tile2 type=checkbox checked /></label>
+</div>
+<div class=inline><div id=6></div></div>
+<script class=demo>
+flexcalReady.then(function(){
+	for (var e in $.easing){
+		$('#easing2').append($('<option>').text(e));
+	};
+	for (var t in $.fn.cycle2.transitions){
+		if (t == 'custom' || t == 'none') continue;
+		$('#fx2').append($('<option>').text(t));
+	};
+	$('<input>').flexcal({
+		box:  $('#6'),
+		transition: function(oldCalendar, newCalendar, rev){
+			$.fn.cycle = $.fn.cycle2;
+			rev = rev == (oldCalendar.index() < newCalendar.index()); // cycle cares about the order of the elements
+			// cycle2 doesn't allow changing options in mid-stream. Hack it by deleting the old options.
+			oldCalendar.parent().removeData('cycle.opts').
+				cycle({
+					timeout: 0, 
+					autoHeight: false, // don't create a sentinel slide that messes up our index()
+					log: false, // don't write to the console
+					slides: '> *',
+					reverse: oldCalendar.index() < newCalendar.index(),
+					easing: $('#easing2').val(),
+					fx: $('#fx2').val(),
+					startingSlide: oldCalendar.index(),
+					tileVertical: $('#tile2').is(':checked')
+				}).cycle (rev ? 'prev' : 'next');
+		}
+	});
+});
+</script>
+<h2>CSS3 transitions</h2>
+<p>CSS3 transitions allow for some cool effects that do not rely on javascript; just change classes with <code>transition</code> set and it works. For instance, using this:</p>
+<pre id=insertstyle><code class=language-css></code></pre>
+<script>
+	Prism.highlightElement($('#insertstyle code').text($('#transitionstyle').text())[0]);
+</script>
+<p>We can do this:</p>
+<div class=inline><div id=7></div></div>
+<script class=demo>
+flexcalReady.then(function(){
+	$('<input>').flexcal({
+		box:  $('#7'),
+		transition: function(oldCalendar, newCalendar, rev){ 
+			oldCalendar.one('transitionend', function(){
+				$(this).hide().removeClass('hidden');
+			}).addClass('hidden');
+			newCalendar.show();
+		}
+	});
+});
+</script>
+
+<h2>Flexcal slot machine</h2>
+<p>Ages ago <a href=http://www.eyecon.ro/>Stefan Petre</a> made a cute little jQuery-based <a href=https://web.archive.org/web/20071221133637/http://www.eyecon.ro/slotmachine/ >slot machine plugin</a>, long since lost to all but The Internet Archive. I spent a few hours inspired by that making this transition:</p>
+<div class=inline><div id=8></div></div>
+<script class=demo>
+flexcalReady.then(function(){
+	$('<input>').flexcal({
+		box:  $('#8'),
+		transition: function(oldCalendar, newCalendar, rev){ 
+			var self = this;
+			var origTable = newCalendar.find('table'), container = oldCalendar.parent();
+			oldCalendar.css({zIndex: 1}).animate({top: -container.height()}, 'normal', 'easeInBack');
+			newCalendar.css({top: container.height(), zIndex: 2}).show().animate({top: 0}, 'normal', 'easeInBack', function(){
+				// make two identical tables without headers and position them correctly (lined up with the bottom)
+				var spinners = tableSpinners (origTable, self.flexcal('option', 'gif'));
+				var tables = origTable.clone().add(origTable.clone()).appendTo(newCalendar).
+					find('caption').remove().end().
+					css({bottom: 0 , marginBottom: 0, zIndex: 101});
+				function dropOne(){
+					if (spinners.length == 0){
+						tables.remove();
+						return;
+					}
+					var spinner = spinners.eq(Math.floor(Math.random()*spinners.length));
+					var h = spinner.height();
+					var left = spinner.offset().left - origTable.offset().left;
+					var right = left + spinner.width();
+					spinners = spinners.not(spinner.remove());
+					// hack from http://malsup.github.io/jquery.cycle2.flip.js to animate some unused property
+					$('<div>').animate({lineHeight: 3*h}, {
+						duration: self.flexcal('option', 'slotsduration'),
+						easing: 'easeOutElastic',
+						step: function(now, fx){
+							tables.eq(1).css(offsetColumn(right, left, h, now-h));
+							tables.eq(0).css(offsetColumn(right, left, h, now));
+						},
+						complete: dropOne
+					});
+				}
+				setTimeout (dropOne, self.flexcal('option', 'slotsduration'));
+			})
+		}, 
+		slotsduration: 1500,
+		gif: 'http://bililite.com/images/ani-bw.gif'
+	});
+
+	function tableSpinners(t, gif){
+		var topRow = t.find('tr:first td, tr:first th'), botRow = t.find('tr:last td'), ret = $();
+		for(var i = 0; i < topRow.length; ++i){
+			var topCell = topRow.eq(i), botCell = botRow.eq(i);
+			ret = ret.add($('<img>').appendTo('body').css(topCell.offset()).
+				css({
+					paddingTop: '2px',
+					paddingBottom: '2px',
+					position: 'absolute', 
+					width: botCell.outerWidth(true), 
+					height: t.find('thead').height()+t.find('tbody').height(),
+					zIndex: 101
+				}).
+				attr('src', gif)
+			);
+		}
+		return ret;
+	}
+
+	// create a css object with bottom = b and clip set to rect(0 r h l) pixels, with
+	// the top and bottom of that rect offset by b so the clip rect is fixed on the screen
+	// and offsetting b if it is out of the range -h..h
+	function offsetColumn (r, l, h, b){
+		b = b%(2*h)-h; // move b into range
+		return {bottom: b+'px', clip: ['rect(',b,'px, ',r,'px, ',b+h,'px, ',l,'px)'].join('')};
+	}
+});
+</script>
+
+      </section>
+      <footer>
+		<p>Comments? Questions? Create an <a href=https://github.com/dwachss/flexcal/issues>issue</a>!</p>
+		<p><small><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"></a> This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 License</a>.</small></p>
+        <p><small>Hosted on GitHub Pages&mdash;Theme Based on Minimalist by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+
+  </body>
+</html>
