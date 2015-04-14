@@ -1,6 +1,6 @@
 // flexcal: a multi-calendar date picker 
 
-// Version 3.3
+// Version 3.4
 
 // Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
@@ -81,17 +81,21 @@ if ($.support.ULwidth=== undefined){
 
 var oneDay = 86400000; // milliseconds/day
 // for internal use; requires ECMAScript 5 (no IE 8!)
-// must have parseISO(ISOdate(d)).getTime() === d.getTime()
+// must have parseISO(formatISO(d)).getTime() === d.getTime()
 // Can't just use new Date() for parseISO() because new Date('2015-02-27') assumes UTC, which gets converted to 
 // a local time, which (for those of us in the Western hemisphere) is the day before.
-function ISOdate(d) {
+function formatISO(d) {
 	try {
 		return d.toISOString().slice(0,10);
 	}catch(e){
 		return 'Invalid   ';
 	}
 } 
-function parseISO(s) {var m = s.match(/(\d+)/g); return new Date(m[0],m[1]-1,m[2]); }
+function parseISO(s) {
+	var m = s.match(/(\d+)/g);
+	return new Date(m[0],m[1]-1,m[2]);
+}
+
 // from http://stackoverflow.com/a/1268377 . Assumes whole positive numbers; too-long numbers are left as is
 function pad(n, p) {
 	var zeros = Math.max(0, p - n.toString().length );
@@ -99,7 +103,7 @@ function pad(n, p) {
 }
 
 var defaultURL = 'data:,' +
-['<div class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal">',
+['<div class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal ui-helper-clearfix">',
 '	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"></ul>',
 '	<div class="ui-flexcal-container">',
 '		<div class="ui-flexcal-pane"></div>',
@@ -112,6 +116,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	options: {
 		url: defaultURL,
 		calendars: ['en'],
+		changeYear: false,
+		changeMonth: false,
 		current: undefined,
 		filter: undefined,
 		hidetabs: 'conditional',
@@ -188,17 +194,33 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	 * Protected methods
 	 **************/
 	_adjustHTML: function(cal){
-		cal.find('a').removeClass('ui-state-focus').filter('.commit[rel="'+ISOdate(this.options.current)+'"]').addClass('ui-state-focus');
-		cal.find('a').removeClass('ui-state-active').filter('.commit[rel="'+ISOdate(this.parse(this.element.val()))+'"]').addClass('ui-state-active');
+		cal.find('a').removeClass('ui-state-focus').filter('.commit[rel="'+formatISO(this.options.current)+'"]').addClass('ui-state-focus');
+		cal.find('a').removeClass('ui-state-active').filter('.commit[rel="'+formatISO(this.parse(this.element.val()))+'"]').addClass('ui-state-active');
 		cal.find('a:not([href])')['ui-clickable']();
 		cal.find('a.go').removeClass('ui-state-default') // ui-datepicker has its own styling
 			.each(function(){ this.title = $(this).text() }); // when we use image replacement for the prev/next buttons, leave the text as a tooltip title
 		// allow for using either the jQuery UI icons or the FontAwesome icon font
 		cal.find('a.ui-datepicker-prev').find('span.ui-icon').addClass('ui-icon-circle-triangle-w fa fa-chevron-circle-left');
 		cal.find('a.ui-datepicker-next').find('span.ui-icon').addClass('ui-icon-circle-triangle-e fa fa-chevron-circle-right');
-		if (this._l10n.isRTL) cal.find('table').css('direction', 'rtl');
+		cal.css('direction', this._l10n.isRTL ? 'rtl' : 'ltr');
 		cal.find('a.commit').filter(this._excludefilter).
 		  removeClass('commit')['ui-unclickable']().addClass('ui-state-disabled');
+		if (this.options.changeMonth){
+			var monthMenu = $('<select>').html(this._listMonths(this.option('current')).map(function(m){
+				return $('<option>').text(m[0]).val(m[1]).prop('selected', m[2]);
+			}));
+			cal.find('.ui-datepicker-month').html(monthMenu);
+		}
+		if (this.options.changeYear){
+			var yearMenu = $('<select>').html(this._listYears(this.option('current')).map(function(m){
+				return $('<option>').text(m[0]).val(m[1]).prop('selected', m[2]);
+			}));
+			cal.find('.ui-datepicker-year').html(yearMenu);
+		}
+		var self = this;
+		cal.find('select').on('change', function(){
+			self._setDate(new Date($(this).val()));
+		}); 		
 		return cal;
 	},
 	_commit: function(d){
@@ -321,7 +343,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		ret.push (
 			'<a class="go ',
 			l10n.isRTL ? 'ui-datepicker-next ' : 'ui-datepicker-prev ',
-			'ui-corner-all" rel="', ISOdate(cal.prev) ,'">',
+			'ui-corner-all" rel="', formatISO(cal.prev) ,'">',
 			'<span class="ui-icon">',
 			'<span>'+l10n.prevText || 'Previous'+'</span>', // internal span for icon replacement
 			'</span>',
@@ -330,7 +352,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		ret.push (
 			'<a class="go ',
 			l10n.isRTL ? 'ui-datepicker-prev ' : 'ui-datepicker-next ',
-			'ui-corner-all" rel="', ISOdate(cal.next),'">',
+			'ui-corner-all" rel="', formatISO(cal.next),'">',
 			'<span class="ui-icon">',
 			'<span>'+l10n.nextText || 'Next'+'</span>', // internal span for icon replacement
 			'</span>',
@@ -355,7 +377,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		if (dow > 0) ret.push('<tr>');
 		for (var i = 0; i < dow; ++i) ret.push ('<td class="ui-datepicker-other-month ui-state-disabled"></td>');
 		for (i = 1, d = cal.first; d <= cal.last; ++i, ++dow, d.setDate(d.getDate()+1)){
-			var dstring = ISOdate(d);
+			var dstring = formatISO(d);
 			if (dow == 0) ret.push('<tr>');
 			ret.push(
 				'<td><a class="',
@@ -379,6 +401,36 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		ret.push('</tbody>');
 		ret.push('</table>');
 		return $(ret.join(''));
+	},
+	_listMonths: function(d){
+		// returns an array of months of the year of Date d, as [monthName, Date, isThisMonth]
+		var origD = d;
+		var l10n = this._l10n, c = l10n.calendar, y = c(d).y;
+		var ret = [[l10n.monthNames[c(d).m], d, true]];
+		for (d=c(d).prev; c(d).y === y; d = c(d).prev){ // go through all the previous months of the year 
+			ret.unshift([l10n.monthNames[c(d).m], d, false]);
+		}
+		d = origD;
+		for (d=c(d).next; c(d).y === y; d = c(d).next){ // go through all the next months of the year
+			ret.push([l10n.monthNames[c(d).m], d, false]);
+		}
+		return ret;
+	},
+	_listYears: function(d){
+		// returns an array of years surrounding Date d, as [formatted year, Date, isThisYear]
+		var origD = d, n = 5; // n is number of years before and after d
+		var l10n = this._l10n, c = l10n.calendar;
+		var ret = [[l10n.years(c(d).y), d, true]];
+		for (var i = 0; i < n; ++i){
+			d = c(d).prevYear;
+			ret.unshift([l10n.years(c(d).y), d, false]);
+		}
+		d = origD;
+		for (var i = 0; i < n; ++i){
+			d = c(d).nextYear;
+			ret.push([l10n.years(c(d).y), d, false]);
+		}
+		return ret;
 	},
 	_makeCurrentCalendar: function (n){
 		this._tabs.eq(this.options.tab).removeClass('ui-tabs-selected ui-state-active')
@@ -404,12 +456,12 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		this.options.current = d;
 		this._trigger('set', 0, [d, oldd]);
 		// the find(..) looks for a date element with the desired date (stored in the rel attribute). If it's there, then the new date is showing and we can use it
-		var needCalendar = this._oldCalendar.find('table a[rel="'+ISOdate(d)+'"]').length == 0;
+		var needCalendar = this._oldCalendar.find('table a[rel="'+formatISO(d)+'"]').length == 0;
 		if (animate == null) animate = needCalendar;
 		if (!animate && !needCalendar){
 			this._adjustHTML(this._oldCalendar);
 		}else{
-			if (ISOdate(oldd) != ISOdate(d)) this._rev = (oldd > d); // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
+			if (formatISO(oldd) != formatISO(d)) this._rev = (oldd > d); // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
 			this._newCalendar.html(this._generateCalendar(d));
 			this._adjustHTML(this._newCalendar);
 			var size = this._newCalendar.find('table').tableSize(this._box().parent()[0]);
@@ -419,6 +471,9 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	},
 	_setL10n: function(name){
 		this._l10n = tol10n(name, this.options.l10n);
+		// jQuery UI standards say don't include the little arrows, but many localizations don't obey this
+		this._l10n.nextText = this._l10n.nextText.replace (/&#x3e;|>/gi,'');
+		this._l10n.prevText = this._l10n.prevText.replace (/&#x3c;|</gi,'');
 		this._trigger('setL10n', 0, this._l10n);
 	},
 	_setOption: function(key, value) {
@@ -640,8 +695,8 @@ $.bililite.flexcal.l10n = {
 			"טבת",
 			"שבט",
 			"אדר",
-			"אדר א'",
-			"אדר ב'"
+			"אדר א׳",
+			"אדר ב׳"
 		],
 		dayNamesMin: ['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','שבת'],
 		isRTL: true,
@@ -870,11 +925,8 @@ if ($.calendars) $.bililite.flexcal.tol10n.localizers.woodsCalendar = function (
 	ret.calendar = $.bililite.flexcal.calendars[calendarSystem];
 	// next and prev text are in the date picker, not the language localization
 	if (language in $.calendarsPicker.regionalOptions){
-		// jQuery UI standards say don't include the little arrows, which calendarsPicker often does
-		var next = $.calendarsPicker.regionalOptions[language].nextText.replace (/&#x3e;|>/g,'');
-		var prev = $.calendarsPicker.regionalOptions[language].prevText.replace (/&#x3c;|</g,'');
-		if (next) ret.nextText = next;
-		if (prev) ret.prevText = prev;
+		ret.nextText = $.calendarsPicker.regionalOptions[language].nextText;
+		ret.prevText = $.calendarsPicker.regionalOptions[language].prevText;
 	};
 	return ret;	
 };
