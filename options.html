@@ -39,8 +39,10 @@
 <h3>Options</h3>
 <ul>
 <li><a href=#box><code>box</code></a></li>
-<li><a href=#busy><code>busy</code></a></li>
+<li><a href=#buttons><code>buttons</code></a></li>
 <li><a href=#calendars><code>calendars</code></a></li>
+<li><a href=#changeMonth><code>changeMonth</code></a></li>
+<li><a href=#changeYear><code>changeYear</code></a></li>
 <li><a href=#class><code>'class'</code></a></li>
 <li><a href=#current><code>current</code></a></li>
 <li><a href=#duration><code>duration</code></a></li>
@@ -52,10 +54,10 @@
 <li><a href=#position><code>position</code></a></li>
 <li><a href=#reposition><code>reposition</code></a></li>
 <li><a href=#show><code>show</code></a></li>
+<li><a href=#structure><code>structure</code></a></li>
 <li><a href=#tab><code>tab</code></a></li>
 <li><a href=#transition><code>transition</code></a></li>
 <li><a href=#trigger><code>trigger</code></a></li>
-<li><a href=#url><code>url</code></a></li>
 </ul>
 
 <h3>Events</h3>
@@ -76,6 +78,7 @@
 <li><a href=#parse><code>parse</code></a></li>
 <li><a href=#positionmethod><code>position</code></a></li>
 <li><a href=#showmethod><code>show</code></a></li>
+<li><a href=#today><code>today</code></a></li>
 </ul>
 
 <h2>Localization</h2>
@@ -365,13 +368,6 @@ flexcalReady.then(function(){
 </div>
 
 <h2>Animation</h2>
-<h3 id=busy><code>busy</code></h3>
-<div class=definition>
-<p>{String|jQuery|DOM element}}</p>
-<p>Wait image to insert while the calendar is loading (really only relevant if the <a href=#url><code>url</code></a> parameter represents a resource that comes from the server; the default <code>url</code> is a <code>data</code> URL and does not need to load asynchronously).</p>
-<h4>Default value</h4>
-<p><code class="language-javascript">'&lt;img src="http://bililite.com/images/busy/wait22.gif" /&gt;'</code>: <img src="http://bililite.com/images/busy/wait22.gif" /></p>
-</div>
 <h3 id=duration><code>duration</code></h3>
 <div class=definition>
 <p>{String|Number|Array}</p>
@@ -518,6 +514,53 @@ flexcalReady.then(function(){
 });
 </script>
 </div>
+<h3 id=buttons><code>buttons</code></h3>
+<div class=definition>
+<p><code>{Array (String)}</code></p>
+<p>List of buttons to be added to the button pane at the bottom of the calendar. See the <a href=buttons.html>full documentation</a>.</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">[]</code></p>
+<h4>Example</h4>
+<input id=18a />
+<script class=demo>
+flexcalReady.then(function(){
+	$('#18a').flexcal({
+		buttons: ['today'],
+		position: 'br'
+	});
+});
+</script>
+</div>
+
+<h3 id=changeMonth><code>changeMonth</code></h3>
+<div class=definition>
+<p><code>{Boolean}</code></p>
+<p>Set <code class="language-javascript">true</code> to insert a drop-down menu of months in the calendar header. The name comes from the equivalent option in jQuery UI datepicker.</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">false</code></p>
+<h4>Example</h4>
+<input id=18b />
+<script class=demo>
+flexcalReady.then(function(){
+	$('#18b').flexcal({
+		changeMonth: true,
+		changeYear: true,
+		position: 'br'
+	});
+});
+</script>
+</div>
+
+<h3 id=changeYear><code>changeYear</code></h3>
+<div class=definition>
+<p><code>{Boolean}</code></p>
+<p>Set <code class="language-javascript">true</code> to insert a drop-down menu of years in the calendar header. The name comes from the equivalent option in jQuery UI datepicker.</p>
+<h4>Default value</h4>
+<p><code class="language-javascript">false</code></p>
+<h4>Example</h4>
+<p>See <a href=#changeMonth><code>changeMonth</code></a>.</p>
+</div>
+
 <h3 id=trigger><code>trigger</code></h3>
 <div class=definition>
 <p><code>{'self'|null|String|jQuery object|DOM element}</code></p>
@@ -539,21 +582,22 @@ flexcalReady.then(function(){
 </script>
 </div>
 
-<h3 id=url><code>url</code></h3>
+<h3 id=structure><code>structure</code></h3>
 <div class=definition>
 <p><code>{String}</code></p>
-<p>URL of the underlying structure of the calendar. It is a URL, so it can be loaded with AJAX. Includes a special case to recognize <code>data</code> URL's to load them immediately.</p>
+<p>HTML of the underlying structure of the calendar..</p>
 <h4>Default value</h4>
-<pre><code class=language-html>data:,&lt;div class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal"&gt;
-	&lt;ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"&gt;&lt;/ul&gt;
-	&lt;div class="ui-flexcal-container"&gt;
-		&lt;div class="ui-flexcal-pane"&gt;&lt;/div&gt;
-		&lt;div class="ui-flexcal-pane"&gt;&lt;/div&gt;
+<pre><code class=language-html>	&lt;div class=&quot;ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal ui-helper-clearfix&quot;&gt;
+		&lt;ul class=&quot;ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all&quot;&gt;&lt;/ul&gt;
+		&lt;div class=&quot;ui-flexcal-container&quot;&gt;
+			&lt;div class=&quot;ui-flexcal-pane&quot;&gt;&lt;/div&gt;
+			&lt;div class=&quot;ui-flexcal-pane&quot;&gt;&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;div class=&quot;ui-datepicker-buttonpane ui-widget-content&quot;&gt;&lt;/div&gt;
 	&lt;/div&gt;
-	&lt; class="ui-flexcal-buttonpane"&gt;&lt;/div&gt;
-&lt;/div&gt;</code></pre>
+</code></pre>
 <p>The two <code class=language-html>&lt;div&gt;</code>s with <code class=language-html>class="ui-flexcal-pane"</code> will contain the calendar; one is shown and the other is hidden to allow <a href=#transition>animated transitions</a>.</p>
-<p>The <code class=language-html>&lt;div&gt;</code> with <code class=language-html>class="ui-datepicker-buttonpane"</code> is generally invisible but is available for adding buttons like a "Today" button"</p>
+<p>The <code class=language-html>&lt;div&gt;</code> with <code class=language-html>class="ui-datepicker-buttonpane"</code> is generally invisible but is available for adding buttons like a "Today" button"; see the <a href=#buttons><code>buttons</code></a> option.</p>
 </div>
 
 <h2>Events</h2>
@@ -704,6 +748,12 @@ flexcalReady.then(function(){
 	<p>Shows the calendar and sets the active date to the date represented by the value of the attached text box. Takes no parameters.</p>
 	<h4>Example</h4>
 	<p>See <a href=#hide><code>hide</code></a>.</p>
+</div>
+<h3 id=today><code>today</code></h3>
+<div class=definition>
+	<p>Sets the current date (the date showing on the calendar) to today's date. Takes no parameters.</p>
+	<h4>Example</h4>
+	<p>See the <a href=#buttons><code>buttons</code></a> example for a button that uses the <code>today</code> command.</p>
 </div>
 
 
