@@ -1,0 +1,282 @@
+<style>
+  .keyboard {
+    display: block;
+    clear: both;
+    background: url(kb.gif) transparent no-repeat;
+    height: 174px; 
+    width: 486px;
+    position: relative;
+  }
+  .key {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+  }
+  .key:hover, .key:active, .key.hover {
+    background: transparent no-repeat url(kb.gif);
+  }
+  .row1 {
+    top: 8px;
+  }
+  .row2 {
+    top: 48px;
+  }
+  .row3 {
+    top: 88px;
+  }
+  .doublequote:hover {
+    background-position: -4px -174px;
+  }
+  .doublequote:active, .doublequote.hover {
+    background-position: -4px -348px;
+  }    
+  .quote:hover {
+    background-position: -44px -174px;
+  }
+  .quote:active, .quote.hover {
+    background-position: -44px -348px;
+  }    
+  .qof:hover {
+    background-position: -85px -174px;
+  }
+  .qof:active, .qof.hover {
+    background-position: -85px -348px;
+  }    
+  .resh:hover {
+    background-position: -125px -174px;
+  }
+  .resh:active, .resh.hover {
+    background-position: -125px -348px;
+  }    
+  .alef:hover {
+    background-position: -165px -174px;
+  }
+  .alef:active, .alef.hover {
+    background-position: -165px -348px;
+  }    
+  .tet:hover {
+    background-position: -205px -174px;
+  }
+  .tet:active, .tet.hover {
+    background-position: -205px -348px;
+  }    
+  .vav:hover {
+    background-position: -245px -174px;
+  }
+  .vav:active, .vav.hover {
+    background-position: -245px -348px;
+  }    
+  .nunsofit:hover {
+    background-position: -285px -174px;
+  }
+  .nunsofit:active, .nunsofit.hover {
+    background-position: -285px -348px;
+  }    
+  .memsofit:hover {
+    background-position: -325px -174px;
+  }
+  .memsofit:active, .memsofit.hover {
+    background-position: -325px -348px;
+  }    
+  .peh:hover {
+    background-position: -365px -174px;
+  }
+  .peh:active, .peh.hover {
+    background-position: -365px -348px;
+  }    
+  .colon:hover {
+    background-position: -405px -174px;
+  }
+  .colon:active, .colon.hover {
+    background-position: -405px -348px;
+  }    
+  .semicolon:hover {
+    background-position: -444px -174px;
+  }
+  .semicolon:active, .semicolon.hover {
+    background-position: -444px -348px;
+  }    
+  .shin:hover {
+    background-position: -20px -214px;
+  }
+  .shin:active, .shin.hover {
+    background-position: -20px -388px;
+  }    
+  .dalet:hover {
+    background-position: -60px -214px;
+  }
+  .dalet:active, .dalet.hover {
+    background-position: -60px -388px;
+  }    
+  .gimel:hover {
+    background-position: -101px -214px;
+  }
+  .gimel:active, .gimel.hover {
+    background-position: -101px -388px;
+  }    
+  .chof:hover {
+    background-position: -141px -214px;
+  }
+  .chof:active, .chof.hover {
+    background-position: -141px -388px;
+  }    
+  .ayin:hover {
+    background-position: -181px -214px;
+  }
+  .ayin:active, .ayin.hover {
+    background-position: -181px -388px;
+  }    
+  .yod:hover {
+    background-position: -221px -214px;
+  }
+  .yod:active, .yod.hover {
+    background-position: -221px -388px;
+  }    
+  .chet:hover {
+    background-position: -261px -214px;
+  }
+  .chet:active, .chet.hover {
+    background-position: -261px -388px;
+  }    
+  .lamed:hover {
+    background-position: -301px -214px;
+  }
+  .lamed:active, .lamed.hover {
+    background-position: -301px -388px;
+  }    
+  .chofsofit:hover {
+    background-position: -341px -214px;
+  }
+  .chofsofit:active, .chofsofit.hover {
+    background-position: -341px -388px;
+  }    
+  .pehsofit:hover {
+    background-position: -381px -214px;
+  }
+  .pehsofit:active, .pehsofit.hover {
+    background-position: -381px -388px;
+  }    
+  .comma:hover {
+    background-position: -420px -214px;
+  }
+  .comma:active, .comma.hover {
+    background-position: -420px -388px;
+  }    
+  .zayin:hover {
+    background-position: -36px -254px;
+  }
+  .zayin:active, .zayin.hover {
+    background-position: -36px -428px;
+  }    
+  .samech:hover {
+    background-position: -76px -254px;
+  }
+  .samech:active, .samech.hover {
+    background-position: -76px -428px;
+  }    
+  .bet:hover {
+    background-position: -117px -254px;
+  }
+  .bet:active, .bet.hover {
+    background-position: -117px -428px;
+  }    
+  .heh:hover {
+    background-position: -157px -254px;
+  }
+  .heh:active, .heh.hover {
+    background-position: -157px -428px;
+  }    
+  .nun:hover {
+    background-position: -197px -254px;
+  }
+  .nun:active, .nun.hover {
+    background-position: -197px -428px;
+  }    
+  .mem:hover {
+    background-position: -237px -254px;
+  }
+  .mem:active, .mem.hover {
+    background-position: -237px -428px;
+  }    
+  .tzadi:hover {
+    background-position: -277px -254px;
+  }
+  .tzadi:active, .tzadi.hover {
+    background-position: -277px -428px;
+  }    
+  .tav:hover {
+    background-position: -317px -254px;
+  }
+  .tav:active, .tav.hover {
+    background-position: -317px -428px;
+  }    
+  .tzadisofit:hover {
+    background-position: -357px -254px;
+  }
+  .tzadisofit:active, .tzadisofit.hover {
+    background-position: -357px -428px;
+  }    
+  .period:hover {
+    background-position: -397px -254px;
+  }
+  .period:active, .period.hover {
+    background-position: -397px -428px;
+  }    
+  .space {
+    top: 130px;
+    width: 331px;
+    height: 42px;
+  }
+  .space:hover {
+    background-position: -73px -296px;
+  }
+  .space:active, .space.hover {
+    background-position: -73px -470px;
+  }
+	.capsLock {
+		background: white;
+		text-align: center;
+		font-family: serif;
+		font-size: 80%;
+	}
+</style>
+<div class="keyboardContainer">
+<p class="capsLock">Press the Caps Lock key to use the physical keyboard</p>
+<div class="keyboard">
+<a class="key row1 doublequote k81" style="left: 4px" href="javascript:insertLetter" title="&#x05F4;"></a>
+<a class="key row1 quote k87" style="left: 44px" href="javascript:insertLetter" title="&#x05F3;"></a>
+<a class="key row1 qof k69" style="left: 85px" href="javascript:insertLetter" title="&#1511;"></a>
+<a class="key row1 resh k82" style="left: 125px" href="javascript:insertLetter" title="&#1512;"></a>
+<a class="key row1 alef k84" style="left: 165px" href="javascript:insertLetter" title="&#1488;"></a>
+<a class="key row1 tet k89" style="left: 205px" href="javascript:insertLetter" title="&#1496;"></a>
+<a class="key row1 vav k85" style="left: 245px;" href="javascript:insertLetter" title="&#1493;"></a>
+<a class="key row1 nunsofit k73" style="left: 285px;" href="javascript:insertLetter" title="&#1503;"></a>
+<a class="key row1 memsofit k79" style="left: 325px;" href="javascript:insertLetter" title="&#1501;"></a>
+<a class="key row1 peh k80" style="left: 365px;" href="javascript:insertLetter" title="&#1508;"></a>
+<a class="key row1 colon k219" style="left: 405px;" href="javascript:insertLetter" title=":"></a>
+<a class="key row1 semicolon k221" style="left: 444px;" href="javascript:insertLetter" title=";"></a>
+<a class="key row2 shin k65" style="left: 20px;" href="javascript:insertLetter" title="&#1513;"></a>
+<a class="key row2 dalet k83" style="left: 60px;" href="javascript:insertLetter" title="&#1491;"></a>
+<a class="key row2 gimel k68" style="left: 101px;" href="javascript:insertLetter" title="&#1490;"></a>
+<a class="key row2 chof k70" style="left: 141px;" href="javascript:insertLetter" title="&#1499;"></a>
+<a class="key row2 ayin k71" style="left: 181px;" href="javascript:insertLetter" title="&#1506;"></a>
+<a class="key row2 yod k72" style="left: 221px;" href="javascript:insertLetter" title="&#1497;"></a>
+<a class="key row2 chet k74" style="left: 261px;" href="javascript:insertLetter" title="&#1495;"></a>
+<a class="key row2 lamed k75" style="left: 301px;" href="javascript:insertLetter" title="&#1500;"></a>
+<a class="key row2 chofsofit k76" style="left: 341px;" href="javascript:insertLetter" title="&#1498;"></a>
+<a class="key row2 pehsofit k59" style="left: 381px;" href="javascript:insertLetter" title="&#1507;"></a>
+<a class="key row2 comma k222" style="left: 420px;" href="javascript:insertLetter" title=","></a>
+<a class="key row3 zayin k90" style="left: 36px;" href="javascript:insertLetter" title="&#1494;"></a>
+<a class="key row3 samech k88" style="left: 76px;" href="javascript:insertLetter" title="&#1505;"></a>
+<a class="key row3 bet k67" style="left: 117px;" href="javascript:insertLetter" title="&#1489;"></a>
+<a class="key row3 heh k86" style="left: 157px;" href="javascript:insertLetter" title="&#1492;"></a>
+<a class="key row3 nun k66" style="left: 197px;" href="javascript:insertLetter" title="&#1504;"></a>
+<a class="key row3 mem k78" style="left: 237px;" href="javascript:insertLetter" title="&#1502;"></a>
+<a class="key row3 tzadi k77" style="left: 277px;" href="javascript:insertLetter" title="&#1510;"></a>
+<a class="key row3 tav k188" style="left: 317px;" href="javascript:insertLetter" title="&#1514;"></a>
+<a class="key row3 tzadisofit k190" style="left: 357px;" href="javascript:insertLetter" title="&#1509;"></a>
+<a class="key row3 period k191" style="left: 397px;" href="javascript:insertLetter" title="."></a>
+<a class="key space k32" style="left: 73px;" href="javascript:insertLetter" title=" "></a>
+</div>
+</div>
+

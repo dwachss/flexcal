@@ -102,19 +102,20 @@ function pad(n, p) {
 	return Math.pow(10,zeros).toString().substr(1) + n;
 }
 
-var defaultURL = 'data:,' +
-['<div class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal ui-helper-clearfix">',
-'	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"></ul>',
-'	<div class="ui-flexcal-container">',
-'		<div class="ui-flexcal-pane"></div>',
-'		<div class="ui-flexcal-pane"></div>',
-'	</div>',
-'	<div class="ui-flexcal-buttonpane"></div>',
-'</div>'].join('\n');
+var defaultHTML = [
+	'<div class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal ui-helper-clearfix">',
+	'	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"></ul>',
+	'	<div class="ui-flexcal-container">',
+	'		<div class="ui-flexcal-pane"></div>',
+	'		<div class="ui-flexcal-pane"></div>',
+	'	</div>',
+	'	<div class="ui-datepicker-buttonpane ui-widget-content"></div>',
+	'</div>'
+].join('\n');
 
-$.widget('bililite.flexcal', $.bililite.ajaxpopup, {
+$.widget('bililite.flexcal', $.bililite.textpopup, {
 	options: {
-		url: defaultURL,
+		buttons: [],
 		calendars: ['en'],
 		changeYear: false,
 		changeMonth: false,
@@ -141,12 +142,14 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		transition: function(oldCalendar, newCalendar, rev){
 			oldCalendar.hide();
 			newCalendar.show();
-		}
+		},
+		structure: defaultHTML
 	},
 	/**************
 	 * Public methods
 	 **************/
 	commit: function(d){
+		d = d || this.options.current;
 		this.element.val(this.format(d));
 		this._setDate(d, false);
 		this._trigger('commit', 0, d);
@@ -177,8 +180,12 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		}
 		this._setTabs();
 		this._makeCurrentCalendar(this.options.tab);
+		this._setButtons(true);
 		this._setDate(this.element.val(), false);
 		this._super();
+	},
+	today: function(){
+		this._setDate(new Date);
 	},
 	/**************
 	 * Protected fields (public ones are in the options object)
@@ -217,10 +224,6 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			}));
 			cal.find('.ui-datepicker-year').html(yearMenu);
 		}
-		var self = this;
-		cal.find('select').on('change', function(){
-			self._setDate(new Date($(this).val()));
-		}); 		
 		return cal;
 	},
 	_commit: function(d){
@@ -229,18 +232,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		this.element[0].focus(); 
 		if (!this.options.box) this.hide();
 	},
-	_createTabs: function(){
-		var self = this;
-		return this._box().find('ul.ui-tabs-nav')
-			.html($.map(this.options.calendars, function(n,i){
-				return $([
-					'<li class="ui-corner-top" style="list-style: none"><a>', // odd bug: occasionally I get a list-style-image showing if I don't remove it on each tab
-					tol10n(n, self.options.l10n).name,
-					'</a></li>'
-					].join('')).data('flexcal.l10n', n)[0];
-			}));
-	},
 	_init: function(){
+		if (!$.Widget.prototype.yield) this._super(); // if not using my subclassing code, need to initialize the textpopup explicitly
 		var self = this;
 		this.options.current = this.parse(this.options.current);
 		if (isNaN(this.options.current.getDate())) this.options.current = new Date;
@@ -255,7 +248,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 	},
 	_fill: function(box){
 		var self = this;
-		this._super(box); // start getting the HTML as soon as possible
+		box.html(this.options.structure);
 		this.element.bind(this.widgetEventPrefix+'shown', function(){
 			if (self.options.box) return; // for an inline flexcal, showing is under programmatic control. Don't unexpectedly change the focus
 			if (self._triggerElement){
@@ -271,8 +264,8 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 				return false;
 			}
 		});
-		box.click(function(e){
-			var $target = $(e.target).closest('a');
+		box.on('click', 'a', function(e){
+			var $target = $(this);
 			if ($target.length == 0 || $target.is('[href]')){
 				return; // allow real links to work
 			}else if ($target.is('.go')){
@@ -285,7 +278,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			}
 			return false; // and don't leave the page (or even change to a /# page)
 		}).keydown(function (e){
-			// from http://dev.aol.com/dhtml_style_guide#datepicker plus respecting isRTL, and changing control-keys to alt keys (FF uses ctrl-page up/down to switch tabs)
+			// largely from http://oaa-accessibility.org/example/15/ plus respecting isRTL, and changing control-keys to alt keys (FF uses ctrl-page up/down to switch tabs), and allowing tab to actually exit the calendar
 			// alt-arrow keys switches calendars
 			var dir = self._l10n.isRTL ? -1 : 1;
 			function offsetDate(d) { self._setDate(new Date (self.options.current.getTime()+d*oneDay)); return false; }
@@ -332,6 +325,16 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			}else if (e.deltaX < 0){ // scroll left
 				box.trigger({type: 'keydown', keyCode: $.ui.keyCode.LEFT, altKey: true}); // prev tab
 			}
+		}).on('change', 'select', function(){
+			// allow use of drop-down menus
+			self._setDate(new Date($(this).val()));
+		}).on('click', 'button', function(){
+			// allow use of command buttons
+			this.className.split(' ').forEach(function(command){
+				// a bit hacky to use class names as commands
+				if ($.isFunction(self[command]))self[command].call(self);
+			});
+			return false;
 		});
 	},
 	_generateCalendar: function(d){
@@ -433,7 +436,7 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		return ret;
 	},
 	_makeCurrentCalendar: function (n){
-		this._tabs.eq(this.options.tab).removeClass('ui-tabs-selected ui-state-active')
+		this._tabs.removeClass('ui-tabs-selected ui-state-active')
 			.children()['ui-clickable']();
 		n = Math.min(this._tabs.length-1, Math.max (0, n)) || 0; // correct the parameters
 		var tab = this._tabs.eq(n).addClass('ui-tabs-selected ui-state-active') // mark the tab as current
@@ -445,6 +448,20 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		// or to a new tab (which is always in the browser's default direction). Using an XOR here allows
 		// the transition code to "overcorrect" back to the right result with its XOR
 		this.options.tab = n;
+	},
+	_setButtons: function (redraw){
+		var self = this;
+		if (redraw){
+			self._box().find('.ui-datepicker-buttonpane').html(
+				self.options.buttons.map(function(className){
+					return $('<button>').addClass(className);
+				})
+			);
+		}
+		this._box().find('button').each(function(){
+			var text = this.className.split(' ')[0];
+			$(this).html(self._l10n[text+'Text'] || text);
+		});
 	},
 	_setDate: function(d, animate){
 		// d is the date we want to change to; if undefined just redraws the calendar
@@ -474,6 +491,9 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 		// jQuery UI standards say don't include the little arrows, but many localizations don't obey this
 		this._l10n.nextText = this._l10n.nextText.replace (/&#x3e;|>/gi,'');
 		this._l10n.prevText = this._l10n.prevText.replace (/&#x3c;|</gi,'');
+		 // jQuery UI datepicker uses what I feel is the wrong notation
+		this._l10n.todayText = this._l10n.todayText || this._l10n.currentText; 
+		this._setButtons(false); // change the button text without redrawing the whole thing
 		this._trigger('setL10n', 0, this._l10n);
 	},
 	_setOption: function(key, value) {
@@ -482,6 +502,9 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			return; // _setDate records the new date in options.current; we want a valid date, not whatever the user passed in
 		}
 		this._super.apply(this, arguments);
+		if (key == 'buttons'){
+			this._setButtons(true);
+		}
 		// _setTabs redraws the tab bar; _setDate redraws the calendar
 		if (key == 'calendars' || key == 'calendarNames' || key == 'hidetabs'){
 			this._setTabs();
@@ -492,13 +515,21 @@ $.widget('bililite.flexcal', $.bililite.ajaxpopup, {
 			this._setDate(undefined, true);
 		}
 		if (key == 'tab'){
-			this._setTabs();
+			// TODO: is this necessary? this._setTabs();
 			this._makeCurrentCalendar(value);
 			this._setDate(undefined, true);
 		}
 	},
 	_setTabs: function(){
-		this._tabs = this._createTabs().children();
+		var self = this;
+		this._tabs = this._box().find('ul.ui-tabs-nav')
+			.html($.map(this.options.calendars, function(n,i){
+				return $([
+					'<li class="ui-corner-top" style="list-style: none"><a>', // odd bug: occasionally I get a list-style-image showing if I don't remove it on each tab
+					tol10n(n, self.options.l10n).name,
+					'</a></li>'
+					].join('')).data('flexcal.l10n', n)[0];
+			})).children();
 		var hidetabs = this.options.hidetabs;
 		this._tabs.children()['ui-clickable'](); // the <a>'s are the clickable elements
 		if (hidetabs === true || (hidetabs =='conditional' && this.options.calendars.length == 1)){
@@ -669,7 +700,8 @@ var latin2hebrew = archaicNumbers([
 
 $.bililite.flexcal.l10n = {
 	en: {
-		name: 'English'
+		name: 'English',
+		todayText: 'Today'
 	},
 	jewish: {
 		name: 'Jewish',
@@ -677,7 +709,8 @@ $.bililite.flexcal.l10n = {
 		monthNames: ['Nisan', 'Iyar', 'Sivan', 'Tammuz', 'Av', 'Elul',
 			'Tishrei', 'Cheshvan', 'Kislev', 'Tevet', 'Shevat', 'Adar',
 			'Adar I', 'Adar II'],
-		dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','ש']
+		dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','ש'],
+		todayText: 'Today'
 	},
 	'he-jewish': {
 		name: 'עברית',
@@ -702,6 +735,7 @@ $.bililite.flexcal.l10n = {
 		isRTL: true,
 		prevText: 'הקודם',
 		nextText: 'הבא',
+		todayText: 'היום',
 		years: latin2hebrew.format,
 		dates: latin2hebrew.format
 	}
@@ -915,7 +949,8 @@ if ($.calendars) $.bililite.flexcal.tol10n.localizers.woodsCalendar = function (
 				y: y,
 				m: m-1, // Wood's code uses 1-based counting
 				d: d,
-				dow: first.getDay()
+				dow: first.getDay(),
+				toDate: function (d) { return c.newDate(d.y, d.m+1, d.d).toJSDate() }
 			}
 		}
 	}
@@ -923,10 +958,9 @@ if ($.calendars) $.bililite.flexcal.tol10n.localizers.woodsCalendar = function (
 	if (!(language in region)) return;
 	var ret = $.extend({}, region[''], region[language]);
 	ret.calendar = $.bililite.flexcal.calendars[calendarSystem];
-	// next and prev text are in the date picker, not the language localization
+	// some details are in the date picker, not the language localization
 	if (language in $.calendarsPicker.regionalOptions){
-		ret.nextText = $.calendarsPicker.regionalOptions[language].nextText;
-		ret.prevText = $.calendarsPicker.regionalOptions[language].prevText;
+		ret = $.extend(ret, $.calendarsPicker.regionalOptions[language]);
 	};
 	return ret;	
 };

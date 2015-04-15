@@ -50,16 +50,17 @@ padding: 0.1em 1em; /* tabs should be smaller */
 .ui-flexcal.ui-datepicker td a.ui-state-disabled {
 	border: 1px solid transparent; /* to keep the boxes the same size as the active ones */
 }
-.ui-flexcal-buttonpane:empty {
+.ui-flexcal .ui-datepicker-buttonpane {
+	margin: 0.2em 0 0 0;
+	padding: 0.2em 0.2em 0;
+}
+.ui-flexcal .ui-datepicker-buttonpane:empty {
 	margin: 0;
 	border: none;
 }
-.ui-flexcal-buttonpane {
-	margin: 0.2em 0 0 0;
-	padding: 0.2em 0.2em 0;
-	border-top: 1px solid #aaaaaa;
+.ui-flexcal .ui-datepicker-buttonpane button {
+	margin: 0 0.1em;
 }
-
 .ui-flexcal .go {
 	z-index: 1;
 	font-size: 0.90em;
