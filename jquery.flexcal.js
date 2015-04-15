@@ -117,8 +117,8 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	options: {
 		buttons: [],
 		calendars: ['en'],
-		changeYear: false,
 		changeMonth: false,
+		changeYear: false,
 		current: undefined,
 		filter: undefined,
 		hidetabs: 'conditional',
