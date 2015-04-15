@@ -13,7 +13,7 @@ $.ajaxSetup({
   cache: true // no reason not to cache scripts
 });
 var flexcalReady = $.getScript('https://cdn.rawgit.com/dwachss/jquery.repo/v1.1.1/jquery.repo.js').then(function(){
-	return $.repo('dwachss/flexcal');
+	return $.repo('dwachss/flexcal',0);
 }).then(function (repo){
 	$('head').append('<link rel=stylesheet href="'+repo+'/flexcal.css" />');
 	return $.getScripts([
