@@ -44,9 +44,6 @@ padding: 0.1em 1em; /* tabs should be smaller */
 	width: auto !important;
 	display: block !important; /* the 1.9 UI has a display: none; we don't want that */
 }
-.ui-flexcal.ui-datepicker table caption {
-	font-size: 1.2em;
-}
 .ui-flexcal.ui-datepicker td a.ui-state-disabled {
 	border: 1px solid transparent; /* to keep the boxes the same size as the active ones */
 }
