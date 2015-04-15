@@ -1,5 +1,5 @@
 A jQuery UI datepicker widget that allows for multiple calendars and calendar systems.
-Documentation at https://github.com/dwachss/flexcal .
+Documentation at http://github.bililite.com/flexcal .
 
 jquery.flexcal.js is the main file; it requires the flexcal.css file for styling.
 
