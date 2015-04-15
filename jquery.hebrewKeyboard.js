@@ -130,7 +130,7 @@
 			});
 		},
 		options: {
-			url: '/inc/keyboard.html',
+			url: 'keyboard.html',
 			capslockOff: 'Press the Caps Lock key to use the physical keyboard',
 			capslockOn: 'Press the Caps Lock key to restore the physical keyboard'
 		}	

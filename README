@@ -1,11 +1,15 @@
 A jQuery UI datepicker widget that allows for multiple calendars and calendar systems.
-Documentation at http://bililite.com/blog/2009/04/03/new-jquery-widget-flexcal/
+Documentation at https://github.com/dwachss/flexcal .
 
 jquery.flexcal.js is the main file; it requires the flexcal.css file for styling.
 
-It depends on my jQuery UI subclassing routines, jquery.ui.subclass.js (documentation at http://github.bililite.com/extending-widgets.html ) and popup widget, jquery.textpopup.js (documentation at http://bililite.com/blog/2009/01/02/new-ui-widgets-textpopup-and-hebrewkeyboard/ )
+It depends on my textpopup plugin, documented at http://bililite.com/blog/2009/01/02/new-ui-widgets-textpopup-and-hebrewkeyboard/ .
+
+jquery.ui.subclass.js is my extension of the jQuery widget framework, documentation at http://github.bililite.com/extending-widgets.html that originally was needed for flexcal and is still included in this project.
+
+ jquery.hebrewKeyboard.js is a popup Hebrew keyboard that uses much of the same framework, documented at http://bililite.com/blog/2009/01/02/new-ui-widgets-textpopup-and-hebrewkeyboard/ . Though honestly, if you need a foreign-language virtual keyboard, look at Ilya Lebedev's JavaScript VirtualKeyboard (http://www.allanguages.info/#layouts= ) or my jQuery plugin that uses it, jsvk ( https://github.com/dwachss/bililiteRange/blob/master/jquery.jsvk.js ) and the bililiteRange library ( https://github.com/dwachss/bililiteRange ).
 
 
 jquery.timepickr.js is a time picker widget (documentation at http://bililite.com/blog/2009/07/09/updating-timepickr/ )
 
-jquery.calendars.picker-mock.js is a stub that allows localization using Keith Woods's calendar systems (http://keith-wood.name/calendarsRef.html ) without loading his whole datepicker. See http://bililite.com/blog/2015/02/13/improved-flexcal/ for details.
+jquery.calendars.picker-mock.js is a stub that allows localization using Keith Woods's calendar systems (http://keith-wood.name/calendarsRef.html ) without loading his whole datepicker. See http://github.bililite.com/flexcal/l10n.html for details.
