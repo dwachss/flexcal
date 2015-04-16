@@ -87,7 +87,7 @@ var oneDay = 86400000; // milliseconds/day
 // Similarly, formatting with toISOString.
 function formatISO(d) {
 	if (isNaN(d.getTime())) return 'Invalid   ';
-	return pad(d.getFullYear(), 4)+'-'+pad(d.getMonth(), 2)+'-'+pad(d.getDate(), 2)
+	return pad(d.getFullYear(), 4)+'-'+pad(d.getMonth()+1, 2)+'-'+pad(d.getDate(), 2)
 } 
 function parseISO(s) {
 	var m = s.match(/(\d+)/g);
