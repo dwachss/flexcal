@@ -49,7 +49,7 @@ padding: 0.1em 1em; /* tabs should be smaller */
 }
 .ui-flexcal .ui-datepicker-buttonpane {
 	margin: 0.2em 0 0 0;
-	padding: 0.2em 0.2em 0;
+	padding: 0.2em 0 0;
 }
 .ui-flexcal .ui-datepicker-buttonpane:empty {
 	margin: 0;

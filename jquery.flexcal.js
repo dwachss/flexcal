@@ -69,16 +69,6 @@ $.fn.extend({
 	}
 });
 
-// correct for IE not expanding <UL>s to fill the container if they have layout
-if ($.support.ULwidth=== undefined){
-	$.support.ULwidth = (function(){
-		var test = $('<div style="position: absolute;"><ul class="" style="height: 1%;"></ul><p style="width: 100px"></p></div>').appendTo('body');
-		var ret = test.find('ul').width() > 0;
-		test.remove();
-		return ret;
-	})();
-}
-
 var oneDay = 86400000; // milliseconds/day
 // for internal use; requires ECMAScript 5 (no IE 8!)
 // must have parseISO(formatISO(d)).getTime() === d.getTime()
@@ -199,7 +189,6 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	 * Protected methods
 	 **************/
 	_adjustHTML: function(cal){
-		console.log(formatISO(new Date));
 		cal.find('a').removeClass('ui-state-focus').filter('.commit[rel="'+formatISO(this.options.current)+'"]').addClass('ui-state-focus');
 		cal.find('a').removeClass('ui-state-active').filter('.commit[rel="'+formatISO(this.parse(this.element.val()))+'"]').addClass('ui-state-active');
 		cal.find('a').removeClass('ui-state-highlight').filter('.commit[rel="'+formatISO(new Date)+'"]').addClass('ui-state-highlight');
@@ -452,10 +441,11 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	_setButtons: function (redraw){
 		var self = this;
 		if (redraw){
-			self._box().find('.ui-datepicker-buttonpane').html(
-				self.options.buttons.map(function(className){
-					return $('<button>').addClass(className);
-				})
+			self._box().find('.ui-datepicker-buttonpane').children().detach().end().append(
+				self.options.buttons.map(function(element){
+					if (typeof element == 'string')	return $('<button>').addClass(element);
+					return element;
+				})				
 			);
 		}
 		this._box().find('button').each(function(){
@@ -470,7 +460,6 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		var oldd = this.options.current;
 		d = this.parse(d);
 		if (isNaN(d.getTime())) d = oldd;
-		console.log(d);
 		this.options.current = d;
 		this._trigger('set', 0, [d, oldd]);
 		// the find(..) looks for a date element with the desired date (stored in the rel attribute). If it's there, then the new date is showing and we can use it
@@ -545,15 +534,8 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		function nextSlide(){
 			self._oldCalendar = second;
 			self._newCalendar = first;
-			// IE won't set the tab size correctly, so we do it by hand. 
-			if (!$.support.ULwidth){
-				var tabbar = self._tabs.parent();
-				var width = size.width;
-				$.each(['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'],
-					function(){ width -= parseFloat(tabbar.css(this.toString())) });
-				tabbar.width(width);
-			}
 		}
+		this._box().find('.ui-datepicker-buttonpane').css('width', size.width);
 		if (!animate || this._box().is(':hidden')){
 			// if box is hidden, then we don't need to animate anything
 			first.hide();
