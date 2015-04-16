@@ -11,9 +11,6 @@
 .ui-flexcal.ui-datepicker table td {
 	width: 2em;
 }
-.multicalendar .ui-flexcal.ui-datepicker table td { /* bigger calendar boxes with room for more tabs on top */
-	width: 3.5em;
-}
 .ui-flexcal-container {
 	position: relative;
 	overflow: hidden;
@@ -46,6 +43,9 @@ padding: 0.1em 1em; /* tabs should be smaller */
 }
 .ui-flexcal.ui-datepicker td a.ui-state-disabled {
 	border: 1px solid transparent; /* to keep the boxes the same size as the active ones */
+}
+.ui-flexcal caption.ui-datepicker-header {
+	line-height: 1.52em; /* to align with the prev/next buttons */
 }
 .ui-flexcal .ui-datepicker-buttonpane {
 	margin: 0.2em 0 0 0;

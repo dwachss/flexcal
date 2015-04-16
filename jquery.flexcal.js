@@ -471,6 +471,13 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			if (formatISO(oldd) != formatISO(d)) this._rev = (oldd > d); // if the date is unchanged, we may be transitioning calendars, so leave the rev flag alone
 			this._newCalendar.html(this._generateCalendar(d));
 			this._adjustHTML(this._newCalendar);
+			// if the tab bar is bigger than the calendar, it looks funny
+			var width = this._box().find('.ui-tabs-nav li:visible').get().reduce(function(accum, elem){
+				return accum + $(elem).width();
+			}, 0);
+			 0;
+			var daynames = this._newCalendar.find('th');
+			daynames.css('min-width', (width/daynames.length) + 'px');
 			var size = this._newCalendar.find('table').tableSize(this._box().parent()[0]);
 			this._newCalendar.css(size);
 			this._transition(size, animate);
@@ -505,29 +512,29 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			this._setDate(undefined, true);
 		}
 		if (key == 'tab'){
-			// TODO: is this necessary? this._setTabs();
 			this._makeCurrentCalendar(value);
 			this._setDate(undefined, true);
 		}
 	},
 	_setTabs: function(){
 		var self = this;
-		this._tabs = this._box().find('ul.ui-tabs-nav')
-			.html($.map(this.options.calendars, function(n,i){
-				return $([
-					'<li class="ui-corner-top" style="list-style: none"><a>', // odd bug: occasionally I get a list-style-image showing if I don't remove it on each tab
-					tol10n(n, self.options.l10n).name,
-					'</a></li>'
-					].join('')).data('flexcal.l10n', n)[0];
-			})).children();
+		var tabbar = this._box().find('ul.ui-tabs-nav').empty();
+		this.options.calendars.forEach (function (name){
+			tabbar.append( $('<li>').
+				addClass('ui-corner-top').
+				append($('<a>').text(tol10n(name, self.options.l10n).name)).
+				data('flexcal.l10n', name)
+			);
+		});
+		this._tabs = tabbar.children();
 		var hidetabs = this.options.hidetabs;
 		this._tabs.children()['ui-clickable'](); // the <a>'s are the clickable elements
 		if (hidetabs === true || (hidetabs =='conditional' && this.options.calendars.length == 1)){
 			this._tabs.parent().hide();
 		}else{
 			this._tabs.parent().show();
-			this._makeCurrentCalendar(this.options.tab);
 		}
+		this._makeCurrentCalendar(this.options.tab);
 	},
 	_transition: function(size, animate){
 		var first = this._oldCalendar, second = this._newCalendar, self = this;
