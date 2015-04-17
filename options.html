@@ -204,7 +204,6 @@ flexcalReady.then(function(){
 			{name: 'UK', dateFormat: 'dd/mm/yyyy'},
 			{name: 'ISO 8601', dateFormat: 'yyyy-mm-dd'}
 		],
-		'class': 'multicalendar',
 		position: 'bl',
 		set: showCurrent, // event handlers
 		setL10n: showCurrent
@@ -259,13 +258,11 @@ flexcalReady.then(function(){
 <h3 id=class><code>'class'</code></h3>
 <div class=definition>
 <p><code>{undefined|String}</code></p>
-<p>Class name[s] to be applied to the calendar container. Two classes are defined in the <code>flexcal.css</code> file: <code>multicalendar</code> makes the calendar wider, accommodating more tabs; <code>fontawesome</code> uses <a href=http://fortawesome.github.io/Font-Awesome/>FontAwesome</a> icons instead of the jQuery UI images for the next/previous chevrons.</p>
+<p>Class name[s] to be applied to the calendar container. One class is defined in the <code>flexcal.css</code> file: <code>fontawesome</code> uses <a href=http://fortawesome.github.io/Font-Awesome/>FontAwesome</a> icons instead of the jQuery UI images for the next/previous chevrons.</p>
 <h4>Default value</h4>
 <p><code class="language-javascript">undefined</code></p>
 <h4>Example</h4>
-<p>Changing the <code>multicalendar</code> class does not immediately change the size of the calendar, since the table size is set by calculation, not by CSS directly. Try changing calendar tabs or months.</p>
 <div>
-	<label><input type=checkbox name=multicalendar> Multicalendar</label>
 	<label><input type=checkbox name=fontawesome> FontAwesome</label>
 </div>
 <div id=8 style="display: inline-block"></div>
@@ -299,7 +296,6 @@ flexcalReady.then(function(){
 flexcalReady.then(function(){
 	var flexcalContainer = $('<input>').flexcal({ // an inline calendar
 	  calendars: ['en', 'jewish', 'he-jewish'],
-	  'class': 'multicalendar',
 	  box: '#9',
 	  duration: 0
 	});
