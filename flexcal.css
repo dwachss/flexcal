@@ -45,7 +45,7 @@ position: absolute;
 }
 .ui-flexcal th span {
 	display: inline-block;
-	min-width: 1.6em; /* td's themselves do not respect widths */
+	min-width: 1.8em; /* td's themselves do not respect widths */
 }
 .ui-flexcal {
 	width: auto !important;
