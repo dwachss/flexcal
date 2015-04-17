@@ -67,7 +67,7 @@ $.fn.extend({
 		this.prepend(caption);
 		return h;
 	}),
-	trueWidth: makeVisible($.fn.innerWidth),
+	trueWidth: makeVisible($.fn.outerWidth),
 });
 
 var oneDay = 86400000; // milliseconds/day
