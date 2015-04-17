@@ -11,9 +11,6 @@
 button.fa {
 	font-family: FontAwesome !important;
 }
-.ui-flexcal.ui-datepicker table td {
-	width: 2.25em;
-}
 .ui-flexcal-container {
 	position: relative;
 	overflow: hidden;
@@ -25,27 +22,32 @@ position: absolute;
 .ui-flexcal .ui-tabs-nav {
 	margin-bottom: 0.2em !important;
 }
-.ui-flexcal.ui-tabs .ui-tabs-nav li a {
-padding: 0.1em 1em; /* tabs should be smaller */
+.ui-flexcal .ui-tabs-nav li a {
+	padding: 0.1em 1em; /* tabs should be smaller */
 }
 .ui-flexcal .ui-tabs-selected a:hover { /* any other stylesheet that styles a's needs to be overridden */
 	border: none !important;
 	color: inherit !important;
 }
-.ui-flexcal.ui-datepicker table {
+.ui-flexcal table {
 	width: auto !important;
+	table-layout: fixed;
 	position: absolute; /* for accurate width measurements */
 	left: 0;
 }
-.ui-flexcal.ui-datepicker th {
+.ui-flexcal th {
 	padding: 0.1em 0.3em !important;
 	box-sizing: border-box; /* makes calculating widths easier */
 }
-.ui-flexcal.ui-datepicker {
+.ui-flexcal th span {
+	display: inline-block;
+	width: 1.6em; /* td's themselves do not respect widths */
+}
+.ui-flexcal {
 	width: auto !important;
 	display: block !important; /* the 1.9 UI has a display: none; we don't want that */
 }
-.ui-flexcal.ui-datepicker td a.ui-state-disabled {
+.ui-flexcal td a.ui-state-disabled {
 	border: 1px solid transparent; /* to keep the boxes the same size as the active ones */
 }
 .ui-flexcal caption.ui-datepicker-header {

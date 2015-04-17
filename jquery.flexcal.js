@@ -25,6 +25,24 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 (function($){
+	
+function makeVisible (callback){
+	// offsetHeight and -Width for invisible elements is always zero. This function temporarily makes the element
+	// and all its ancestors visible (using jQuery's $.swap method). Note that $.fn.height() uses $.swap, but only
+	// for the element itself. This uses it on all the ancestors.
+	return function swapper (elem, parent){
+		if (arguments.length < 1) elem = this[0];
+		if (arguments.length < 2) parent = elem;
+		if (!elem) return undefined;
+		if (!parent || !parent.style) return callback.call(this);
+		return $.swap(
+			parent,
+			{display:'inline-block'}, // make it visible but shrink to contents
+			swapper.bind(this, elem, parent.parentNode)			
+		);
+	};
+}
+
 $.fn.extend({
 	// add indicators that an element is active; UI doesn't use :hover, which probably makes sense for IE
 	'ui-clickable': function(){
@@ -37,50 +55,19 @@ $.fn.extend({
 	'ui-unclickable': function(){
 		return this.removeClass('ui-state-default ui-state-focus ui-state-hover').unbind('.ui');
 	},
-	tableSize: function(topParent){
-		// Get the "natural" dimensions of a table; the browser normally squeezes it to fit the container no matter what .
-		// Hack it by displaying all ancestors with infinite width, the way jQuery itself does for invisible elements.
-		// and it seems that offsetHeight for a table does not include the caption in Firefox.
-		// This returns the offset dimension (content + padding + border); you need to parse the margin CSS if you want that.
-		// topParent is the top-most ancestor that we need to hack
-		topParent = topParent || $('body')[0];
-		function truesize (e, parent){
-			var ret = {};
-			if (!parent || parent == topParent) return {width: e.offsetWidth, height: trueheight(e)};
-			$.swap (
-				parent,
-				{width:'9999px',  display:'block'},
-				function() { ret = truesize(e, parent.parentNode) }
-			);
-			return ret;
-		}
-		function trueheight(e){
-			for (var child = e.firstChild; child; child = child.nextSibling){ 
-					if (child.nodeName.toLowerCase() == 'caption'){ 
-							e.removeChild(child); 
-							var h = e.offsetHeight; 
-							e.insertBefore(child, e.firstChild); 
-							return h + child.offsetHeight; 
-					} 
-			} 
-			return e.offsetHeight;
-		}
-		return this.length ? truesize (this[0], this[0].parentNode) : {height: 0, width: 0} ;
-	},
-	divWidth: function(boxSizing){
-		// for a div or other display: block element, the problem is the opposite of the table size above:
-		// the width generally fills the parent width. To shrink it to fit the contents, it must be inline-block.
-		var f = 'width', margin = false, self = this, ret;
-		if (boxSizing == 'padding') f = 'innerWidth';
-		if (boxSizing == 'border' || boxSizing == 'margin') f = 'outerWidth';
-		if (boxSizing == 'margin') margin = true;
-		$.swap(
-			this[0],
-			{display: 'inline-block'},
-			function() { ret = margin ? self[f](margin) : self[f] }
-		);
-		return ret;
-	}
+	trueHeight: makeVisible(function(){
+		// Firefox bug (as of version 37): table offsetHeight does not include the caption.
+		// https://bugzilla.mozilla.org/show_bug.cgi?id=820891
+		// jQuery does not correct for this: http://bugs.jquery.com/ticket/2196
+		// assumes a single caption at most
+		var caption = this.find('caption');
+		var h = caption.outerHeight();
+		caption.detach();
+		h += this.outerHeight();
+		this.prepend(caption);
+		return h;
+	}),
+	trueWidth: makeVisible($.fn.innerWidth),
 });
 
 var oneDay = 86400000; // milliseconds/day
@@ -377,7 +364,7 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			// short "months" are only present in calendars that add days that are not part of the week (see the French Revolutionary calendar)
 			var dayNames = l10n.dayNamesMin.slice(); // copy
 			for (var i = 0; i < l10n.firstDay; ++i) dayNames.push(dayNames.shift()); // rotate the names
-			ret.push('<thead><tr><th>', dayNames.join('</th><th>'),'</th></tr></thead>');
+			ret.push('<thead><tr><th><span>', dayNames.join('</span></th><th><span>'),'</span></th></tr></thead>');
 		}
 		ret.push('<tbody>');
 		if (dow > 0) ret.push('<tr>');
@@ -486,12 +473,11 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			this._newCalendar.html(this._generateCalendar(d));
 			this._adjustHTML(this._newCalendar);
 			// if the tab bar is bigger than the calendar, it looks funny
-			var width = this._box().find('.ui-tabs-nav li:visible').get().reduce(function(accum, elem){
-				return accum + $(elem).outerWidth(true);
-			}, 0);
+			var width = this._box().find('.ui-tabs-nav').trueWidth();
 			var daynames = this._newCalendar.find('th');
 			daynames.css('min-width', (width/daynames.length) + 'px');
-			var size = this._newCalendar.find('table').tableSize(this._box().parent()[0]);
+			var table = this._newCalendar.find('table');
+			var size = {width: table.trueWidth(), height: table.trueHeight() };
 			this._newCalendar.css(size);
 			this._transition(size, animate);
 		}
