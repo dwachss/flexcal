@@ -13,6 +13,7 @@ button.fa {
 }
 .ui-flexcal {
 	z-index: 0; /* establish a stacking context */
+	padding: 0.2em !important;
 }
 .ui-flexcal-container {
 	position: relative;
