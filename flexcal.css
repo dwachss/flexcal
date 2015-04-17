@@ -11,6 +11,9 @@
 button.fa {
 	font-family: FontAwesome !important;
 }
+.ui-flexcal {
+	z-index: 0; /* establish a stacking context */
+}
 .ui-flexcal-container {
 	position: relative;
 	overflow: hidden;
