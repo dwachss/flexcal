@@ -5,11 +5,14 @@
 	text-indent: 0 !important;
 	margin-top: -0.5em !important;
 }
-.fontawesome .ui-icon span{
+.fontawesome .ui-icon span {
 	text-indent: -99999px; /* move text for icon replacement */
 }
+button.fa {
+	font-family: FontAwesome !important;
+}
 .ui-flexcal.ui-datepicker table td {
-	width: 2em;
+	width: 2.25em;
 }
 .ui-flexcal-container {
 	position: relative;
@@ -36,6 +39,7 @@ padding: 0.1em 1em; /* tabs should be smaller */
 }
 .ui-flexcal.ui-datepicker th {
 	padding: 0.1em 0.3em !important;
+	box-sizing: border-box; /* makes calculating widths easier */
 }
 .ui-flexcal.ui-datepicker {
 	width: auto !important;

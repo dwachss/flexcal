@@ -40,8 +40,8 @@ $.fn.extend({
 	tableSize: function(topParent){
 		// Get the "natural" dimensions of a table; the browser normally squeezes it to fit the container no matter what .
 		// Hack it by displaying all ancestors with infinite width, the way jQuery itself does for invisible elements.
-		// and it seems that offsetHeight for a table does not include the caption, at least in Firefox
-		// returns the offset dimension (content + padding + border); you need to parse the margin CSS if you want that.
+		// and it seems that offsetHeight for a table does not include the caption in Firefox.
+		// This returns the offset dimension (content + padding + border); you need to parse the margin CSS if you want that.
 		// topParent is the top-most ancestor that we need to hack
 		topParent = topParent || $('body')[0];
 		function truesize (e, parent){
@@ -66,6 +66,20 @@ $.fn.extend({
 			return e.offsetHeight;
 		}
 		return this.length ? truesize (this[0], this[0].parentNode) : {height: 0, width: 0} ;
+	},
+	divWidth: function(boxSizing){
+		// for a div or other display: block element, the problem is the opposite of the table size above:
+		// the width generally fills the parent width. To shrink it to fit the contents, it must be inline-block.
+		var f = 'width', margin = false, self = this, ret;
+		if (boxSizing == 'padding') f = 'innerWidth';
+		if (boxSizing == 'border' || boxSizing == 'margin') f = 'outerWidth';
+		if (boxSizing == 'margin') margin = true;
+		$.swap(
+			this[0],
+			{display: 'inline-block'},
+			function() { ret = margin ? self[f](margin) : self[f] }
+		);
+		return ret;
 	}
 });
 
@@ -473,9 +487,8 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			this._adjustHTML(this._newCalendar);
 			// if the tab bar is bigger than the calendar, it looks funny
 			var width = this._box().find('.ui-tabs-nav li:visible').get().reduce(function(accum, elem){
-				return accum + $(elem).width();
+				return accum + $(elem).outerWidth(true);
 			}, 0);
-			 0;
 			var daynames = this._newCalendar.find('th');
 			daynames.css('min-width', (width/daynames.length) + 'px');
 			var size = this._newCalendar.find('table').tableSize(this._box().parent()[0]);
