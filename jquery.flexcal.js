@@ -473,7 +473,8 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			this._newCalendar.html(this._generateCalendar(d));
 			this._adjustHTML(this._newCalendar);
 			// if the tab bar is bigger than the calendar, it looks funny
-			var width = this._box().find('.ui-tabs-nav').trueWidth();
+			var tabbar = this._box().find('.ui-tabs-nav');
+			var width = tabbar.css('display') == 'none' ? '0' : tabbar.trueWidth();
 			var daynames = this._newCalendar.find('th');
 			daynames.css('min-width', (width/daynames.length) + 'px');
 			var table = this._newCalendar.find('table');
