@@ -173,9 +173,6 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		this._setDate(this.element.val(), false);
 		this._super();
 	},
-	today: function(){
-		this._setDate(new Date);
-	},
 	/**************
 	 * Protected fields (public ones are in the options object)
 	 **************/
@@ -318,14 +315,12 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		}).on('change', 'select', function(){
 			// allow use of drop-down menus
 			self._setDate(new Date($(this).val()));
-		}).on('click', 'button', function(){
-			// allow use of command buttons
-			this.className.split(' ').forEach(function(command){
-				// a bit hacky to use class names as commands
-				if ($.isFunction(self[command]))self[command].call(self);
-			});
-			return false;
 		});
+		// allow buttons to find this
+		box.find('.ui-datepicker-buttonpane').data(
+			self.widgetName,
+			{element: self.element, widget: box, instance: self}
+		);
 	},
 	_generateCalendar: function(d){
 		// TODO: implement some kind of caching
@@ -561,6 +556,15 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	}
 });
 
+// predefined button classes
+$('body').on('click', '.ui-flexcal button.today', function(){
+	var instance = $.data(this.parentNode, 'flexcal').instance;
+	if (this.classList.contains('commit')){
+		instance._commit(new Date);
+	}else{
+		instance._setDate(new Date);
+	}
+});
 
 function addDay(d, n){
 	if (n === undefined) n = 1;
