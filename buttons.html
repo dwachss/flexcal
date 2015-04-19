@@ -8,6 +8,20 @@
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" href="stylesheets/prism-dw.css" />
+ 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/i18n/datepicker-fr.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/prism/gh-pages/prism.js"></script>
+    <script src="javascripts/scale.fix.js"></script>
+    <script src="javascripts/prism.linenumber.js"></script>
+	<script src="loadflexcal.js"></script>
+	<script>
+	flexcalReady.then(function(){
+		// change some of the defaults for these examples
+		$.bililite.flexcal.prototype.options.position = 'bl';
+		$.bililite.flexcal.prototype.options.calendars = ['en',['fr', 'Français']];
+	});
+	</script>
   </head>
   <body>
     <div class="wrapper">
@@ -28,18 +42,104 @@
       </header>
       <section>
 <h1>Flexcal Buttons</h1>
-      </section>
+<h2>Introduction</h2>
+<p>Though I don't really like them, I've had requests for things like a "Today" button in the calendar. So there is a <code class=language-html>&lt;div&gt;</code> at the bottom of the calendar with <code>class=ui-datepicker-buttonpane</code> for putting them in. The <a href=options.html#buttons><code>buttons</code></a> option is an array of elements or button description strings to insert. The simplest ones are <code class=language-javascript>['today']</code> for a button that switches the calendar to today's date, and  <code class=language-javascript>['today _commit']</code> (note the underscore) to "commit" to today's date, entering it in the attached input box and closing the calendar:</p>
+<code class=language-javascript>['today']</code>: <input id=1>
+<script class=demo>
+flexcalReady.then(function(){
+	$('#1').flexcal({
+		buttons: ['today']
+	});
+});
+</script>
+<br /><code class=language-javascript>['today _commit']</code>: <input id=2>
+<script class=demo>
+flexcalReady.then(function(){
+	$('#2').flexcal({
+		buttons: ['today _commit']
+	});
+});
+</script>
+<h2>The <code>buttons</code> array</h2>
+<p>Each item in the <code>buttons</code> array is appended to the buttonpane <code class=language-html>&lt;div&gt;</code>. If it is anything but a string, it is appended straight:</p>
+<input id=3>
+<script class=demo>
+var smileyURL = 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Smiley.svg/200px-Smiley.svg.png';
+flexcalReady.then(function(){
+	$('#3').flexcal({
+		buttons: [$('<span>&copy; 2015 Me</span>'), $('<img>').attr('src', smileyURL).height(50)]
+	});
+});
+</script>
+
+     </section>
       <footer>
 		<p>Comments? Questions? Create an <a href=https://github.com/dwachss/flexcal/issues>issue</a>!</p>
 		<p><small><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"></a> This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 License</a>.</small></p>
         <p><small>Hosted on GitHub Pages&mdash;Theme Based on Minimalist by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
- 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-	<script src="https://cdn.rawgit.com/dwachss/prism/gh-pages/prism.js"></script>
-    <script src="javascripts/prism.linenumber.js"></script>
-	<script src="loadflexcal.js"></script>
-  </body>
+<script>
+$('<input>').appendTo('body').flexcal({
+	buttons: ['today commit']
+});
+$('<input>').appendTo('body').flexcal({
+	buttons: ['today commit hide']
+});
+$('<input>').appendTo('body').flexcal({
+	buttons: ['today _commit']
+});
+$('<input>').appendTo('body').flexcal({
+	calendars: [['en', {closeText: 'Done'}],['fr', 'Français']],
+	buttons: ['close hide']
+});
+$('<input>').appendTo('body').flexcal({
+	calendars: [['en', {closeText: 'Done'}],['fr', 'Français']],
+	buttons: ['close commit hide']
+});
+var smiley = $('<img>').
+	attr('src', 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Smiley.svg/220px-Smiley.svg.png').
+	css({position: 'absolute', zIndex: 10, opacity: 0.5, pointerEvents: 'none'}).
+	hide().
+	appendTo('body');
+$.bililite.flexcal.prototype.smile = function(){
+	smiley.toggle().position( {of: this.option('box')} );
+};
+$('body').on('flexcalhidden', 'input', $.fn.hide.bind(smiley));
+$('<input>').appendTo('body').flexcal({
+	buttons: ['smile']
+});
+$('<input>').appendTo('body').flexcal({
+	buttons: ['smile'],
+	l10n: {smileText: 'Have a Happy Day'}
+});
+$('<input>').appendTo('body').flexcal({
+	buttons: ['Have&nbsp;a&nbsp;Happy&nbsp;Day smile'],
+});
+$('<input>').appendTo('body').flexcal({
+	buttons: ['Have&nbsp;a&nbsp;<strong>Happy</strong>&nbsp;Day smile'],
+});
+$('<input>').appendTo('body').flexcal({
+	calendars: [['en', {smileText: 'Smile'}],['fr', 'Français', {smileText: 'Souriez'}]],
+	buttons: ['smile'],
+});
+$('<input>').appendTo('body').flexcal({
+	calendars: [['en', {closeText: 'Done'}],['fr', 'Français'], 'he', 'he-jewish'],
+	buttons: [$('<span>Select a Date</span>'), 'close hide']
+});
+$('<input>').appendTo('body').flexcal({
+	calendars: ['en',['fr', 'Français']],
+	buttons: ['&#8203; hide fa fa-times-circle'] // zero-width space
+});
+var hidetabs = $('<label><input type=checkbox /> Hide Tab Bar</label>');
+hidetabs.find('input').on('change', function(){
+	hidetabsExample.flexcal('option', 'hidetabs', $(this).is(':checked'));
+});
+var hidetabsExample = $('<input>').appendTo('body').flexcal({
+	calendars: ['en',['fr', 'Français']],
+	buttons: [hidetabs, 'today'] 
+});
+
+	</script>
+ </body>
 </html>

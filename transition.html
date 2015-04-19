@@ -109,8 +109,8 @@ flexcalReady.then(function(){
 		calendars: ['LTR', ['RTL', {isRTL: true}] ],
 		transition: function(oldCalendar, newCalendar, rev){
 			rev = (rev != this.flexcal('option', 'l10n').isRTL);
-			oldCalendar.hide('blind', {direction: rev ? 'left' : 'right'});
-			newCalendar.delay(50).show('blind', {direction: rev ? 'right' : 'left'});
+			oldCalendar.hide('blind', {direction: rev ? 'right' : 'left'});
+			newCalendar.delay(50).show('blind', {direction: rev ? 'left' : 'right'});
 		}
 	});
 });
