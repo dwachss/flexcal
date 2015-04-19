@@ -78,6 +78,10 @@
 			// lazy create
 			return this.theBox || this._createBox();
 		},
+		widget: function(){
+			// for compatibility with the widget factory
+			return this._box();
+		},
 		_createBox: function(){
 			var self = this;
 			var box = this.options.box ?
