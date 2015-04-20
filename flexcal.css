@@ -30,7 +30,7 @@ position: absolute;
 	margin-bottom: 0.2em !important;
 }
 .ui-flexcal .ui-tabs-nav li a {
-	padding: 0.1em 1em; /* tabs should be smaller */
+	padding: 0.1em 1em !important; /* tabs should be smaller */
 }
 .ui-flexcal .ui-tabs-selected a:hover { /* any other stylesheet that styles a's needs to be overridden */
 	border: none !important;
