@@ -117,21 +117,7 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		current: undefined,
 		filter: undefined,
 		hidetabs: 'conditional',
-		l10n: {
-			name: 'flexcal',
-			monthNames: ['January','February','March','April','May','June',
-				'July','August','September','October','November','December'],
-			dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','Sa'],
-			prevText: 'Previous',
-			nextText: 'Next',
-			isRTL: false,
-			firstDay: 0,
-			years: function(n) {return n.toString()},
-			fromYears: undefined,
-			dates: function(n) {return n.toString()},
-			fromDates: undefined,
-			dateFormat: 'm/d/yyyy' // TODO: use toLocaleDateString
-		},
+		l10n: {	name: 'flexcal' }, // remainder to be filled in when the calendars are defined, below
 		reposition: true,
 		tab: 0,
 		transition: function(oldCalendar, newCalendar, rev){
@@ -630,7 +616,18 @@ $.bililite.flexcal.calendars = {
 };
 
 // need to add the default after it is defined
-$.bililite.flexcal.prototype.options.l10n.calendar = $.bililite.flexcal.calendars.gregorian;
+$.extend(
+	$.bililite.flexcal.prototype.options.l10n,
+	$.datepicker.regional[''], // use the jQuery UI defaults where possible
+	{
+		calendar: $.bililite.flexcal.calendars.gregorian,
+		years: function(n) {return n.toString()},
+		fromYears: undefined,
+		dates: function(n) {return n.toString()},
+		fromDates: undefined,
+		todayText: 'Today'
+	}
+);
 
 function archaicNumbers(arr){
 	// arr is assumed to be ordered in the order desired for formatting
@@ -707,7 +704,6 @@ var latin2hebrew = archaicNumbers([
 var l10n = $.bililite.flexcal.l10n = {
 	en: {
 		name: 'English',
-		todayText: 'Today'
 	},
 	jewish: {
 		name: 'Jewish',
@@ -716,7 +712,6 @@ var l10n = $.bililite.flexcal.l10n = {
 			'Tishrei', 'Cheshvan', 'Kislev', 'Tevet', 'Shevat', 'Adar',
 			'Adar I', 'Adar II'],
 		dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','ש'],
-		todayText: 'Today'
 	},
 	'he-jewish': {
 		name: 'עברית',
@@ -742,6 +737,7 @@ var l10n = $.bililite.flexcal.l10n = {
 		prevText: 'הקודם',
 		nextText: 'הבא',
 		todayText: 'היום',
+		closeText: 'סגור',
 		years: latin2hebrew.format,
 		dates: latin2hebrew.format
 	}
