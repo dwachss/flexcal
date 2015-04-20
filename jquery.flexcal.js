@@ -85,6 +85,12 @@ function parseISO(s) {
 	return new Date(m[0],m[1]-1,m[2]);
 }
 
+function localizer (l10n){
+	return function(text){
+		return l10n[text+'Text'] || text;
+	}
+}
+
 // from http://stackoverflow.com/a/1268377 . Assumes whole positive numbers; too-long numbers are left as is
 function pad(n, p) {
 	var zeros = Math.max(0, p - n.toString().length );
@@ -93,12 +99,12 @@ function pad(n, p) {
 
 var defaultHTML = [
 	'<div class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal ui-helper-clearfix">',
-	'	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"></ul>',
+	'	<ul dir=auto class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"></ul>',
 	'	<div class="ui-flexcal-container">',
 	'		<div class="ui-flexcal-pane"></div>',
 	'		<div class="ui-flexcal-pane"></div>',
 	'	</div>',
-	'	<div class="ui-datepicker-buttonpane ui-widget-content"></div>',
+	'	<div dir=auto class="ui-datepicker-buttonpane ui-widget-content"></div>',
 	'</div>'
 ].join('\n');
 
@@ -168,8 +174,8 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			this._newCalendar = this._oldCalendar.next('.ui-flexcal-pane');
 		}
 		this._setTabs();
+		this._setButtons();
 		this._makeCurrentCalendar(this.options.tab);
-		this._setButtons(true);
 		this._setDate(this.element.val(), false);
 		this._super();
 	},
@@ -434,20 +440,14 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		// the transition code to "overcorrect" back to the right result with its XOR
 		this.options.tab = n;
 	},
-	_setButtons: function (redraw){
+	_setButtons: function (){
 		var self = this;
-		if (redraw){
-			self._box().find('.ui-datepicker-buttonpane').children().detach().end().append(
-				self.options.buttons.map(function(element){
-					if (typeof element == 'string')	return $('<button>').addClass(element);
-					return element;
-				})				
-			);
-		}
-		this._box().find('button').each(function(){
-			var text = this.className.split(' ')[0];
-			$(this).html(self._l10n[text+'Text'] || text);
-		});
+		self._box().find('.ui-datepicker-buttonpane').children().detach().end().append(
+			self.options.buttons.map(function(element){
+				if (typeof element == 'string')	return $('<button>').addClass(element).data('flexcalL10n', element.split(' ')[0]);
+				return element;
+			})				
+		);
 	},
 	_setDate: function(d, animate){
 		// d is the date we want to change to; if undefined just redraws the calendar
@@ -483,9 +483,12 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		// jQuery UI standards say don't include the little arrows, but many localizations don't obey this
 		this._l10n.nextText = this._l10n.nextText.replace (/&#x3e;|>/gi,'');
 		this._l10n.prevText = this._l10n.prevText.replace (/&#x3c;|</gi,'');
-		 // jQuery UI datepicker uses what I feel is the wrong notation
-		this._l10n.todayText = this._l10n.todayText || this._l10n.currentText; 
-		this._setButtons(false); // change the button text without redrawing the whole thing
+		var localized = localizer(this._l10n);
+		this._box().find(':data(flexcalL10n), [data-flexcal-l10n]').each(function(){
+			// need to search for both because data attributes are not pulled into $.data until requested
+			$(this).html(localized($(this).data('flexcalL10n')));
+		});
+		this._box().find('.ui-datepicker-buttonpane').attr('dir', this._l10n.isRTL ? 'rtl' : 'ltr');
 		this._trigger('setL10n', 0, this._l10n);
 	},
 	_setOption: function(key, value) {
@@ -495,7 +498,8 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		}
 		this._super.apply(this, arguments);
 		if (key == 'buttons'){
-			this._setButtons(true);
+			this._setButtons();
+			this._setL10n(this._l10n);
 		}
 		// _setTabs redraws the tab bar; _setDate redraws the calendar
 		if (key == 'calendars' || key == 'calendarNames' || key == 'hidetabs'){
@@ -565,6 +569,15 @@ $('body').on('click', '.ui-flexcal button.today', function(){
 		instance._setDate(new Date);
 	}
 });
+$('body').on('click', '.ui-flexcal button.close', function(){
+	var instance = $.data(this.parentNode, 'flexcal').instance;
+	if (this.classList.contains('commit')){
+		instance._commit();
+	}else{
+		instance.hide();
+	}
+});
+
 
 function addDay(d, n){
 	if (n === undefined) n = 1;
@@ -692,7 +705,7 @@ var latin2hebrew = archaicNumbers([
 	[/^([א-ת])$/, "$1׳"] // geresh
 ]);
 
-$.bililite.flexcal.l10n = {
+var l10n = $.bililite.flexcal.l10n = {
 	en: {
 		name: 'English',
 		todayText: 'Today'
@@ -894,11 +907,11 @@ function partialL10n (name){
 	if ($.isArray(name)) return name.reduce( function (previous, current){ // fold all the elements into an empty object
 		return $.extend(previous, partialL10n(current));
 	}, {});
-	if ($.bililite.flexcal.l10n[name]) return $.bililite.flexcal.l10n[name];
+	if (l10n[name]) return l10n[name];
 	for (var loc in tol10n.localizers){
 		var ret = tol10n.localizers[loc](name);
 		if (ret){
-			$.bililite.flexcal.l10n[name] = ret;
+			l10n[name] = ret;
 			return ret;
 		}
 	}
@@ -906,13 +919,16 @@ function partialL10n (name){
 	return {name: name.toString()}
 };
 
-$.bililite.flexcal.tol10n.localizers = {
+tol10n.localizers = {
 	datepicker: function (name){
-		return $.datepicker.regional[name];
+		ret = $.datepicker.regional[name];
+		// jQuery UI datepicker uses what I feel is the wrong notation
+		if (ret) ret.todayText = ret.currentText;
+		return ret;
 	}
 };
 
-if ($.calendars) $.bililite.flexcal.tol10n.localizers.woodsCalendar = function (name){
+if ($.calendars) tol10n.localizers.woodsCalendar = function (name){
 	var calendarSystem, language;
 	if (name in $.calendars.calendars){
 		calendarSystem = name;
