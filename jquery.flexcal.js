@@ -87,7 +87,7 @@ function parseISO(s) {
 
 function localizer (l10n){
 	return function(text){
-		return l10n[text+'Text'] || text;
+		return l10n[text+'Text'] || '';
 	}
 }
 
