@@ -488,7 +488,6 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			// need to search for both because data attributes are not pulled into $.data until requested
 			$(this).html(localized($(this).data('flexcalL10n')));
 		});
-		this._box().find('.ui-datepicker-buttonpane').attr('dir', this._l10n.isRTL ? 'rtl' : 'ltr');
 		this._trigger('setL10n', 0, this._l10n);
 	},
 	_setOption: function(key, value) {
