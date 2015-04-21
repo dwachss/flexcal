@@ -128,10 +128,12 @@ flexcalReady.then(function(){
 	for (var e in $.easing){
 		$('#easing1').append($('<option>').text(e));
 	};
+	$('#easing1').find(':contains(easeOutBounce)').prop('selected', true);
 	for (var t in $.fn.cycle1.transitions){
 		if (t == 'none') continue;
 		$('#fx1').append($('<option>').text(t));
 	};
+	$('#fx1').find(':contains(scrollVert)').prop('selected', true);
 	$('<input>').flexcal({
 		box:  $('#5'),
 		transition: function(oldCalendar, newCalendar, rev){
@@ -164,10 +166,12 @@ flexcalReady.then(function(){
 	for (var e in $.easing){
 		$('#easing2').append($('<option>').text(e));
 	};
+	$('#easing2').find(':contains(easeOutBounce)').prop('selected', true);
 	for (var t in $.fn.cycle2.transitions){
 		if (t == 'custom' || t == 'none') continue;
 		$('#fx2').append($('<option>').text(t));
 	};
+	$('#fx2').find(':contains(tileSlide)').prop('selected', true);
 	$('<input>').flexcal({
 		box:  $('#6'),
 		transition: function(oldCalendar, newCalendar, rev){
