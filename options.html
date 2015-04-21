@@ -181,7 +181,7 @@ flexcalReady.then(function(){
 <p><input id=5 /></p>
 <script class=demo>
 flexcalReady.then(function(){
-	$('#5').flexcal({position: 'rt'}).flexcal('option', 'box').append(
+	$('#5').flexcal({position: 'rt'}).flexcal('widget').append(
 		$('<input type=button>').val('Happy New Year').click(function(){
 			$('#5').flexcal('option', 'current', new Date('Jan 01 2015'));
 		})
@@ -496,19 +496,11 @@ flexcalReady.then(function(){
 <div class=definition>
 <p><code>{undefined|jQuery object|DOM object|String}</code></p>
 <p>The element to contain the calendar. If <code class="language-javascript">undefined</code>, then the a new, absolutely-positioned &lt;div&gt; is created and the calendar is a pop-up calendar. Otherwise, the calendar is contained in <code class="language-javascript">$(this.options.box)</code>. This container should <a href="http://stackoverflow.com/questions/450903/make-div-width-equal-to-child-contents">shrink to fit its contents</a>, so it should use <code class="language-css">display: inline-block</code> or <code class="language-css">float: left/right</code> or <a href="https://css-tricks.com/almanac/properties/w/width/">other techniques</a>.</p>
-<p>When getting the value of this option, a jQuery object containing the actual DOM element is returned, no matter what the original value passed in was.</p>
 <h4>Default value</h4>
 <p><code class="language-javascript">undefined</code></p>
 <h4>Examples</h4>
 <p>For inline calendars, see the <a href=#class><code>'class'</code></a> and <a href=#hidetabs><code>hidetabs</code></a> examples.</p>
-<p><code class="language-javascript">$(element).flexcal('option', 'box').draggable()</code>: Using the value of <code>box</code> to get the calendar container to make it <a href="http://jqueryui.com/draggable/">draggable</a>.</p>
-<input id=18 />
-<script class=demo>
-flexcalReady.then(function(){
-	$('#18').flexcal();
-	$('#18').flexcal('option', 'box').css({border: '10px solid #abcdef', cursor: 'move'}).draggable();
-});
-</script>
+
 </div>
 <h3 id=buttons><code>buttons</code></h3>
 <div class=definition>
@@ -517,10 +509,10 @@ flexcalReady.then(function(){
 <h4>Default value</h4>
 <p><code class="language-javascript">[]</code></p>
 <h4>Example</h4>
-<input id=18a />
+<input id=18 />
 <script class=demo>
 flexcalReady.then(function(){
-	$('#18a').flexcal({
+	$('#18').flexcal({
 		buttons: ['today'],
 		position: 'br'
 	});
@@ -682,7 +674,16 @@ flexcalReady.then(function(){
 </div>
 <h3 id=widget><code>widget</code></h3>
 <div class=definition>
-<p>Inherited from <code>$.Widget</code>. Returns the jQuery set containing the <code class=language-html>&lt;div&gt;</code> containing the calendar. Same as <code class=language-javascript>$(...).flexcal('option', 'box')</code>.</p>
+	<p>Inherited from <code>$.Widget</code>. Returns the jQuery set containing the <code class=language-html>&lt;div&gt;</code> containing the calendar.</p>
+	<h4>Example</h4>
+	<p><code class="language-javascript">$(element).flexcal('widget').draggable()</code>: Using the value of <code>box</code> to get the calendar container to make it <a href="http://jqueryui.com/draggable/">draggable</a>.</p>
+	<input id=22 />
+	<script class=demo>
+	flexcalReady.then(function(){
+		$('#22').flexcal();
+		$('#22').flexcal('widget').css({border: '10px solid #abcdef', cursor: 'move'}).draggable();
+	});
+	</script>
 </div>
 
 
