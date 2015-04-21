@@ -61,8 +61,8 @@ position: absolute;
 	line-height: 1.52em; /* to align with the prev/next buttons */
 }
 .ui-flexcal .ui-datepicker-buttonpane {
-	margin: 0.2em 0 0 0;
-	padding: 0.2em 0 0;
+	margin: 0.2em 0 0 0 !important;
+	padding: 0.2em 0 0 ! important;
 }
 .ui-flexcal .ui-datepicker-buttonpane:empty {
 	margin: 0;
