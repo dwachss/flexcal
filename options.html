@@ -78,7 +78,7 @@
 <li><a href=#parse><code>parse</code></a></li>
 <li><a href=#positionmethod><code>position</code></a></li>
 <li><a href=#showmethod><code>show</code></a></li>
-<li><a href=#today><code>today</code></a></li>
+<li><a href=#widget><code>widget</code></a></li>
 </ul>
 
 <h2>Localization</h2>
@@ -584,12 +584,12 @@ flexcalReady.then(function(){
 <p>HTML of the underlying structure of the calendar..</p>
 <h4>Default value</h4>
 <pre><code class=language-html>	&lt;div class=&quot;ui-tabs ui-widget ui-widget-content ui-corner-all ui-datepicker ui-flexcal ui-helper-clearfix&quot;&gt;
-		&lt;ul class=&quot;ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all&quot;&gt;&lt;/ul&gt;
+		&lt;ul dir=auto class=&quot;ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all&quot;&gt;&lt;/ul&gt;
 		&lt;div class=&quot;ui-flexcal-container&quot;&gt;
 			&lt;div class=&quot;ui-flexcal-pane&quot;&gt;&lt;/div&gt;
 			&lt;div class=&quot;ui-flexcal-pane&quot;&gt;&lt;/div&gt;
 		&lt;/div&gt;
-		&lt;div class=&quot;ui-datepicker-buttonpane ui-widget-content&quot;&gt;&lt;/div&gt;
+		&lt;div dir=auto class=&quot;ui-datepicker-buttonpane ui-widget-content&quot;&gt;&lt;/div&gt;
 	&lt;/div&gt;
 </code></pre>
 <p>The two <code class=language-html>&lt;div&gt;</code>s with <code class=language-html>class="ui-flexcal-pane"</code> will contain the calendar; one is shown and the other is hidden to allow <a href=#transition>animated transitions</a>.</p>
@@ -680,6 +680,11 @@ flexcalReady.then(function(){
 	});
 	</script>
 </div>
+<h3 id=widget><code>widget</code></h3>
+<div class=definition>
+<p>Inherited from <code>$.Widget</code>. Returns the jQuery set containing the <code class=language-html>&lt;div&gt;</code> containing the calendar. Same as <code class=language-javascript>$(...).flexcal('option', 'box')</code>.</p>
+</div>
+
 
 <h2>API&mdash;setters</h2>
 <h3 id=commit><code>commit</code></h3>
@@ -745,13 +750,6 @@ flexcalReady.then(function(){
 	<h4>Example</h4>
 	<p>See <a href=#hide><code>hide</code></a>.</p>
 </div>
-<h3 id=today><code>today</code></h3>
-<div class=definition>
-	<p>Sets the current date (the date showing on the calendar) to today's date. Takes no parameters.</p>
-	<h4>Example</h4>
-	<p>See the <a href=#buttons><code>buttons</code></a> example for a button that uses the <code>today</code> command.</p>
-</div>
-
 
 <p>Plus, setting the options with <code>option</code> changes the calendar on the fly (except for <a href=#url><code>url</code></a> and <a href=#box><code>box</code></a>, which are evaluated only at creation; if you need to reset the HTML or container of the calendar, destroy it and instantiate a new one). Thus, <code class=" language-javascript"> $('input.date').flexcal('option', 'current', '1/1/2011')</code> sets the highlighted date (displaying the appropriate month).</p>
       </section>

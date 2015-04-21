@@ -42,8 +42,8 @@
       </header>
       <section>
 <h1>Flexcal Buttons</h1>
-<h2>Introduction</h2>
-<p>Though I don't really like them, I've had requests for things like a "Today" button in the calendar. So there is a <code class=language-html>&lt;div&gt;</code> at the bottom of the calendar with <code>class=ui-datepicker-buttonpane</code> for putting them in. The <a href=options.html#buttons><code>buttons</code></a> option is an array of elements or button description strings to insert. The simplest ones are <code class=language-javascript>['today']</code> for a button that switches the calendar to today's date, and  <code class=language-javascript>['today _commit']</code> (note the underscore) to "commit" to today's date, entering it in the attached input box and closing the calendar:</p>
+<h2 id=introduction>Introduction</h2>
+<p>Though I don't really like them, I've had requests for things like a "Today" button in the calendar. So there is a <code class=language-html>&lt;div&gt;</code> at the bottom of the calendar with <code>class=ui-datepicker-buttonpane</code> for putting them in. The <a href=options.html#buttons><code>buttons</code></a> option is an array of elements or button description strings to insert. The simplest ones are <code class=language-javascript>['today']</code> for a button that switches the calendar to today's date, and  <code class=language-javascript>['today commit']</code> to "commit" to today's date, entering it in the attached input box and closing the calendar:</p>
 <code class=language-javascript>['today']</code>: <input id=1>
 <script class=demo>
 flexcalReady.then(function(){
@@ -52,11 +52,11 @@ flexcalReady.then(function(){
 	});
 });
 </script>
-<br /><code class=language-javascript>['today _commit']</code>: <input id=2>
+<br /><code class=language-javascript>['today commit']</code>: <input id=2>
 <script class=demo>
 flexcalReady.then(function(){
 	$('#2').flexcal({
-		buttons: ['today _commit']
+		buttons: ['today commit']
 	});
 });
 </script>
@@ -67,7 +67,125 @@ flexcalReady.then(function(){
 var smileyURL = 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Smiley.svg/200px-Smiley.svg.png';
 flexcalReady.then(function(){
 	$('#3').flexcal({
-		buttons: [$('<span>&copy; 2015 Me</span>'), $('<img>').attr('src', smileyURL).height(50)]
+		buttons: [$('<span>&copy; 2015 Me</span>'), $('<img>').attr('src', smileyURL).height(25)]
+	});
+});
+</script>
+<p>You can use regular elements and jQuery UI buttons and checkboxes. To get the flexcal element, the enclosing button pane, which is a <code class=language-html>&lt;div class="ui-datepicker-buttonpane"&gt;</code>, has jQuery data attached with key 'flexcal' of:</p>
+<pre><code class=language-javascript>{
+	element: // the attached input element
+	widget: // the &lt;div&gt; that contains the calendar
+	instance: // the flexcal object itself
+}</code></pre>
+<p>Thus, using regular elements:</p>
+<input id=4>
+<script class=demo>
+var hidetabs = $('<label><input type=checkbox /> Hide Tabs</label>');
+hidetabs.find('input').on('change', function(){
+	var element = $(this).parents('.ui-datepicker-buttonpane').data('flexcal').element;
+	element.flexcal('option', 'hidetabs', $(this).is(':checked'));
+});
+flexcalReady.then(function(){
+	$('#4').flexcal({
+		buttons: [hidetabs]
+	});
+});</script>
+<p>Or, using the jQuery UI <a href=http://jqueryui.com/button/#checkbox>button plugin</a>:</p>
+<input id=5>
+<script class=demo>
+// bug in jQuery UI button requires label for/id rather than wrapping
+var hidetabs2 = $('<input type=checkbox id=5a /> <label for=5a>Hide Tabs</label>').appendTo('body');
+flexcalReady.then(function(){
+	$('#5').flexcal({
+		buttons: [hidetabs2]
+	});
+});
+$('#5a').button().on('change', function(){
+	var element = $(this).parents('.ui-datepicker-buttonpane').data('flexcal').element;
+	element.flexcal('option', 'hidetabs', $(this).is(':checked'));
+});
+</script>
+<p>I have to admit, I do not like the jQuery UI buttons much and have no intention of using them.</p>
+<p>If the item in the <code>buttons</code> is a string, then a new <code class=language-html>&lt;button&gt;</code> is created and given a class list of that string. The first word (space-delimited) in that string is used as the "data-flexcal-l10n" attribute. This means that these buttons are localized with the flexcal <a href=l10n.html#text>text localization</a>. So <code class=language-javascript>buttons: ['today commit big']</code> creates <code class=language-html>&lt;button class="today commit big" data-flexcal-l10n="today"&gt;</code> and the text of the button as displayed will be the <code>todayText</code> of the current <a href=l10n.html>localization object</a>. The assigned classes can be used for styling and for assigning actions. For example, the "today" and "close" actions are predefined as:</p>
+<pre><code class=language-javascript>$('body').on('click', '.ui-flexcal button.today', function(){
+	var instance = $.data(this.parentNode, 'flexcal').instance;
+	if (this.classList.contains('commit')){
+		instance._commit(new Date);
+	}else{
+		instance._setDate(new Date);
+	}
+});
+$('body').on('click', '.ui-flexcal button.close', function(){
+	var instance = $.data(this.parentNode, 'flexcal').instance;
+	if (this.classList.contains('commit')){
+		instance._commit();
+	}else{
+		instance.hide();
+	}
+});</code></pre>
+<p>So using those is easy, as the <code class=language-javascript>"today"</code> and <code class=language-javascript>"today commit"</code> examples <a href=#introduction>above</a>. Using <code class=language-javascript>"close"</code> is similar:</p>
+<code class=language-javascript>['close']</code>: <input id=6>
+<script class=demo>
+flexcalReady.then(function(){
+	$('#6').flexcal({
+		buttons: ['close']
+	});
+});
+</script>
+<br /><code class=language-javascript>['close commit']</code>: <input id=7>
+<script class=demo>
+flexcalReady.then(function(){
+	$('#7').flexcal({
+		buttons: ['close commit']
+	});
+});
+</script>
+<p>Using <a href=http://fortawesome.github.io/Font-Awesome/">FontAwesome icons</a> is also easy:</p>
+<code class=language-javascript>['fa close']</code>: <input id=8>
+<script class=demo>
+flexcalReady.then(function(){
+	$('#8').flexcal({
+		buttons: ['fa fa-close close']
+	});
+});
+</script>
+<p>Note there is no text since it is looking for <code>faText</code> (the first class listed), and that isn't defined. If you want the text, list the class with text defined first. This puts the FontAwesome icon too close to the text, so I created another class "fa-text" to space it out a bit:</p>
+<code class=language-javascript>['close fa fa-close fa-text']</code>: <input id=9>
+<script class=demo>
+flexcalReady.then(function(){
+	$('#9').flexcal({
+		buttons: ['close fa fa-close fa-text']
+	});
+});
+</script>
+
+<p>As illustrated for "today" and "close", assigning an action to a button relies on event delegation; attach the event handler to the body element with a selector for that particular button, using the classes listed. Then you need to assign some text (either in the default localization or in each calendar localization) or an icon.</p>
+<p>Note from these examples that jQuery UI CSS makes the buttons <code class=language-css>float: right</code> so the last ones are the left-most ones.</p>
+<input id=10 />
+<script class=demo>
+$('body').on('click', '.ui-flexcal button.happy', window.alert.bind(window, 'Have a Nice Day!'));
+flexcalReady.then(function(){
+	$('#10').flexcal({
+		l10n: {happyText: 'Happy!'},
+		buttons: [
+			'happy', // text only
+			'happy fa fa-smile-o fa-text', // text and FontAwesome icon
+			'fa fa-smile-o happy', // FontAwesome icon only
+		]
+	});
+});
+</script>
+<br /><input id=11 />
+<script class=demo>
+flexcalReady.then(function(){
+	// jQuery UI icons are not very pretty and are harder to use with text and icons,
+	// and they impose CSS rules that change the buttons themselves
+	$('#11').flexcal({
+		l10n: {happyText: 'Happy!'},
+		buttons: [
+			'happy', // text only
+			'ui-icon ui-icon-check happy', // jQuery UI icon only
+		]
 	});
 });
 </script>
@@ -79,67 +197,5 @@ flexcalReady.then(function(){
         <p><small>Hosted on GitHub Pages&mdash;Theme Based on Minimalist by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
-<script>
-$('<input>').appendTo('body').flexcal({
-	buttons: ['today commit']
-});
-$('<input>').appendTo('body').flexcal({
-	buttons: ['today commit hide']
-});
-$('<input>').appendTo('body').flexcal({
-	buttons: ['today _commit']
-});
-$('<input>').appendTo('body').flexcal({
-	calendars: [['en', {closeText: 'Done'}],['fr', 'Français']],
-	buttons: ['close hide']
-});
-$('<input>').appendTo('body').flexcal({
-	calendars: [['en', {closeText: 'Done'}],['fr', 'Français']],
-	buttons: ['close commit hide']
-});
-var smiley = $('<img>').
-	attr('src', 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Smiley.svg/220px-Smiley.svg.png').
-	css({position: 'absolute', zIndex: 10, opacity: 0.5, pointerEvents: 'none'}).
-	hide().
-	appendTo('body');
-$.bililite.flexcal.prototype.smile = function(){
-	smiley.toggle().position( {of: this.option('box')} );
-};
-$('body').on('flexcalhidden', 'input', $.fn.hide.bind(smiley));
-$('<input>').appendTo('body').flexcal({
-	buttons: ['smile']
-});
-$('<input>').appendTo('body').flexcal({
-	buttons: ['smile'],
-	l10n: {smileText: 'Have a Happy Day'}
-});
-$('<input>').appendTo('body').flexcal({
-	buttons: ['Have&nbsp;a&nbsp;Happy&nbsp;Day smile'],
-});
-$('<input>').appendTo('body').flexcal({
-	buttons: ['Have&nbsp;a&nbsp;<strong>Happy</strong>&nbsp;Day smile'],
-});
-$('<input>').appendTo('body').flexcal({
-	calendars: [['en', {smileText: 'Smile'}],['fr', 'Français', {smileText: 'Souriez'}]],
-	buttons: ['smile'],
-});
-$('<input>').appendTo('body').flexcal({
-	calendars: [['en', {closeText: 'Done'}],['fr', 'Français'], 'he', 'he-jewish'],
-	buttons: [$('<span>Select a Date</span>'), 'close hide']
-});
-$('<input>').appendTo('body').flexcal({
-	calendars: ['en',['fr', 'Français']],
-	buttons: ['&#8203; hide fa fa-times-circle'] // zero-width space
-});
-var hidetabs = $('<label><input type=checkbox /> Hide Tab Bar</label>');
-hidetabs.find('input').on('change', function(){
-	hidetabsExample.flexcal('option', 'hidetabs', $(this).is(':checked'));
-});
-var hidetabsExample = $('<input>').appendTo('body').flexcal({
-	calendars: ['en',['fr', 'Français']],
-	buttons: [hidetabs, 'today'] 
-});
-
-	</script>
  </body>
 </html>

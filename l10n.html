@@ -135,6 +135,14 @@
 	<p><code class=language-javascript>'m/d/yyyy'</code></p>
 </div>
 
+<h2 id=text>Text Localization</h2>
+<p>In addition to localizing the calendar, <code>flexcal</code> allows for localizing text in <a href=buttons.html>buttons</a> and the like. Any element with a data attribute <code>data-flexcal-l10n</code> will have the value of that attribute + 'Text' used as the key into the localization object, and the result is used as the HTML of the element. Thus
+<pre><code class=language-html>&lt;span data-flexcal-l10n=today &gt;&lt/span&gt;</code></pre>
+will have its content replaced with <code class=language-javascript>l10n.todayText</code> for the current localization object.</p>
+<p>The localizations included in <code>flexcal</code> include <code>todayText</code> and <code>closeText</code> (along with <a href=#prevtext><code>prevText</code></a> and <a href=#nexttext><code>nextText</code></a> used in the calendars themselves). jQuery UI <code>datepicker</code> calls the text for "today" <code>currentText</code>, but I think that's wrong.</p>
+<p>If setting the attribute from javascript, you can use <code class=language-javascript>$(...).attr('data-flexcal-l10n', 'today')</code> or use jQuery's <code>data</code> method: <code class=language-javascript>$(...).data('flexcalL10n', 'today')</code>, remembering to camelCase the name of the data key to "flexcalL10n".</p>
+<p>See the <a href=buttons.html>buttons</a> page for examples.</p>
+
 <h2 id=calendarsystem>Calendar systems</h2>
 <p>A calendar system is represented by a function that takes a <code>Date d</code> object and returns an object with the following fields:</p>
 <h3 id=first><code>first</code></h3>
