@@ -340,19 +340,25 @@ will have its content replaced with <code class=language-javascript>l10n.todayTe
  <p>The <a href="http://en.wikipedia.org/wiki/French_Revolutionary_Calendar">French Revolutionary calendar</a>. This is just to show off how flexible the widget is; 10-day weeks and 5-day months are no problem.</p>
 <input id=jacobin />
 <script class=demo>
+function toJacobin(d){
+	// algorithm from Romme's rule; valid 1992-2091. See http://en.wikipedia.org/wiki/French_Revolutionary_Calendar#Converting_from_the_Gregorian_Calendar
+	// look at  http://www.fourmilab.ch/documents/calendar/ for more accurate algorithms
+	var y = d.getFullYear();
+	var jNY = new Date(y, 8, 22); // Jacobin New Year
+	if (jNY > d) jNY = new Date(y-1, 8, 22);
+	var jD = (d-jNY)/(24*60*60*1000); // day of the Jacobin year, 0-indexed
+	return {y: jNY.getFullYear()-1791, m: Math.floor(jD/30), d: Math.floor(jD % 30)+1};
+}
+function fromJacobin(j){
+	var jNY = new Date(1791+j.y, 8, 22); // Jacobin New Year
+	var days = j.m * 30 + j.d - 1; // days into year
+	return new Date(jNY.getTime()+days*(24*60*60*1000));
+}
 flexcalReady.then(function(){
 $.bililite.flexcal.l10n.jacobin = { // insert the calendar system directly into the list
 	name: 'Jacobin',
 	calendar: function(d){
-		var j = (function (d){
-			// algorithm from Romme's rule; valid 1992-2091. See http://en.wikipedia.org/wiki/French_Revolutionary_Calendar#Converting_from_the_Gregorian_Calendar
-			// look at  http://www.fourmilab.ch/documents/calendar/ for more accurate algorithms
-			var y = d.getFullYear();
-			var jNY = new Date(y, 8, 22); // Jacobin New Year
-			if (jNY > d) jNY = new Date(y-1, 8, 22);
-			var jD = (d-jNY)/(24*60*60*1000); // day of the Jacobin year, 0-indexed
-			return {y: jNY.getFullYear()-1791, m: Math.floor(jD/30), d: Math.floor(jD % 30)+1};
-		})(d);
+		var j = toJacobin(d);
 		// number of Sans-culottide days this year (5 for regular year, 6 for leap year. Our algorithm is only accurate for 1992-2091, so this is simple
 		function sc() {return d.getFullYear() % 4 == 0 ? 6 : 5}
 		function addDay(d, n){
@@ -360,18 +366,21 @@ $.bililite.flexcal.l10n.jacobin = { // insert the calendar system directly into 
 			return new Date(d.getFullYear(), d.getMonth(), d.getDate()+n);
 		}
 		var prev = addDay(d, -30);
-		if (j.m == 0) if (j.d > sc()) prev = addDay(prev, 31-sc()-j.d);
+		if (j.m == 0 && j.d > sc()) prev = addDay(prev, 31-sc()-j.d);
 		var next = addDay(d, 30);
-		if (j.m == 11) if (j.d > sc()) next = addDay(next, -j.d+sc());
+		if (j.m == 11 && j.d > sc()) next = addDay(next, -j.d+sc());
 		var first = addDay(d, -j.d+1)
 		return {
 			first: first,
 			last: addDay(first, j.m == 12 ? sc()-1 : 29),
 			prev: prev,
 			next: next,
+			prevYear: fromJacobin({y: j.y-1, m: j.m, d: j.d}),
+			nextYear: fromJacobin({y: j.y+1, m: j.m, d: j.d}),
 			m: j.m, 
 			y: j.y,
-			dow: 0
+			dow: 0,
+			toDate: fromJacobin
 		};
 	},
 	monthNames: ["Vendémiaire", "Brumaire", "Frimaire", "Nivôse",
