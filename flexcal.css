@@ -70,6 +70,7 @@ position: absolute;
 }
 .ui-flexcal .ui-datepicker-buttonpane button {
 	margin: 0 0.1em;
+	line-height: 1;
 }
 .ui-flexcal .go {
 	z-index: 1;
