@@ -15,13 +15,12 @@
     <script src="javascripts/scale.fix.js"></script>
     <script src="javascripts/prism.linenumber.js"></script>
 	<script src="loadflexcal.js"></script>
-	<script>
-	flexcalReady.then(function(){
-		// change some of the defaults for these examples
-		$.bililite.flexcal.prototype.options.position = 'bl';
-		$.bililite.flexcal.prototype.options.calendars = ['en',['fr', 'Français']];
-	});
-	</script>
+	<style>
+		div.example {
+			display: inline-block;
+			vertical-align: top;
+		}
+	</style>
   </head>
   <body>
     <div class="wrapper">
@@ -42,12 +41,15 @@
       </header>
       <section>
 <h1>Flexcal Buttons</h1>
+<p>I apologize for the French; I had to use Google translate for some of this.</p>
 <h2 id=introduction>Introduction</h2>
 <p>Though I don't really like them, I've had requests for things like a "Today" button in the calendar. So there is a <code class=language-html>&lt;div&gt;</code> at the bottom of the calendar with <code>class=ui-datepicker-buttonpane</code> for putting them in. The <a href=options.html#buttons><code>buttons</code></a> option is an array of elements or button description strings to insert. The simplest ones are <code class=language-javascript>['today']</code> for a button that switches the calendar to today's date, and  <code class=language-javascript>['today commit']</code> to "commit" to today's date, entering it in the attached input box and closing the calendar:</p>
 <code class=language-javascript>['today']</code>: <input id=1>
 <script class=demo>
 flexcalReady.then(function(){
 	$('#1').flexcal({
+		calendars: ['en', ['fr', 'Français']],
+		box: $('<div>').addClass('example').insertAfter('#1'),
 		buttons: ['today']
 	});
 });
@@ -56,6 +58,8 @@ flexcalReady.then(function(){
 <script class=demo>
 flexcalReady.then(function(){
 	$('#2').flexcal({
+		calendars: ['en', ['fr', 'Français']],
+		box: $('<div>').addClass('example').insertAfter('#2'),
 		buttons: ['today commit']
 	});
 });
@@ -67,6 +71,8 @@ flexcalReady.then(function(){
 var smileyURL = 'http://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Smiley.svg/200px-Smiley.svg.png';
 flexcalReady.then(function(){
 	$('#3').flexcal({
+		calendars: ['en', ['fr', 'Français']],
+		box: $('<div>').addClass('example').insertAfter('#3'),
 		buttons: [$('<span>&copy; 2015 Me</span>'), $('<img>').attr('src', smileyURL).height(25)]
 	});
 });
@@ -87,6 +93,8 @@ hidetabs.find('input').on('change', function(){
 });
 flexcalReady.then(function(){
 	$('#4').flexcal({
+		calendars: ['en', ['fr', 'Français']],
+		box: $('<div>').addClass('example').insertAfter('#4'),
 		buttons: [hidetabs]
 	});
 });</script>
@@ -97,6 +105,8 @@ flexcalReady.then(function(){
 var hidetabs2 = $('<input type=checkbox id=5a /> <label for=5a>Hide Tabs</label>').appendTo('body');
 flexcalReady.then(function(){
 	$('#5').flexcal({
+		calendars: ['en', ['fr', 'Français']],
+		box: $('<div>').addClass('example').insertAfter('#5'),
 		buttons: [hidetabs2]
 	});
 });
@@ -128,6 +138,8 @@ $('body').on('click', '.ui-flexcal button.close', function(){
 <script class=demo>
 flexcalReady.then(function(){
 	$('#6').flexcal({
+		calendars: ['en', ['fr', 'Français']],
+		box: $('<div>').addClass('example').insertAfter('#6'),
 		buttons: ['close']
 	});
 });
@@ -136,15 +148,19 @@ flexcalReady.then(function(){
 <script class=demo>
 flexcalReady.then(function(){
 	$('#7').flexcal({
+		calendars: ['en', ['fr', 'Français']],
+		box: $('<div>').addClass('example').insertAfter('#7'),
 		buttons: ['close commit']
 	});
 });
 </script>
 <p>Using <a href=http://fortawesome.github.io/Font-Awesome/">FontAwesome icons</a> is also easy:</p>
-<code class=language-javascript>['fa close']</code>: <input id=8>
+<code class=language-javascript>['fa fa-close close']</code>: <input id=8>
 <script class=demo>
 flexcalReady.then(function(){
 	$('#8').flexcal({
+		calendars: ['en', ['fr', 'Français']],
+		box: $('<div>').addClass('example').insertAfter('#8'),
 		buttons: ['fa fa-close close']
 	});
 });
@@ -154,6 +170,8 @@ flexcalReady.then(function(){
 <script class=demo>
 flexcalReady.then(function(){
 	$('#9').flexcal({
+		calendars: ['en', ['fr', 'Français']],
+		box: $('<div>').addClass('example').insertAfter('#9'),
 		buttons: ['close fa fa-close fa-text']
 	});
 });
@@ -166,6 +184,8 @@ flexcalReady.then(function(){
 $('body').on('click', '.ui-flexcal button.happy', window.alert.bind(window, 'Have a Nice Day!'));
 flexcalReady.then(function(){
 	$('#10').flexcal({
+		calendars: ['en', ['fr', 'Français']],
+		box: $('<div>').addClass('example').insertAfter('#10'),
 		l10n: {happyText: 'Happy!'},
 		buttons: [
 			'happy', // text only
@@ -175,12 +195,14 @@ flexcalReady.then(function(){
 	});
 });
 </script>
-<br /><input id=11 />
+<br />jQuery UI icons: <input id=11 />
 <script class=demo>
 flexcalReady.then(function(){
 	// jQuery UI icons are not very pretty and are harder to use with text and icons,
 	// and they impose CSS rules that change the buttons themselves
 	$('#11').flexcal({
+		calendars: ['en', ['fr', 'Français']],
+		box: $('<div>').addClass('example').insertAfter('#11'),
 		l10n: {happyText: 'Happy!'},
 		buttons: [
 			'happy', // text only
@@ -189,6 +211,48 @@ flexcalReady.then(function(){
 	});
 });
 </script>
+<p>Localization is done by putting the text for each locale into the <a href=options.html#calendars>calendars</code></a> option:</p>
+<input id=12 />
+<script class=demo>
+var smiley = $('<img>').attr('src', smileyURL).
+	css({position: 'absolute', zIndex: 10, opacity: 0.5, pointerEvents: 'none'}).
+	hide().
+	appendTo('body');
+$('body').on ('click', '.ui-flexcal button.smile', function(evt){
+	var widget = $.data(this.parentNode, 'flexcal').widget;
+	smiley.toggle().position( {of: widget} );
+});	
+$('body').on('flexcalhidden', 'input', $.fn.hide.bind(smiley));
+
+flexcalReady.then(function(){
+	$('#12').flexcal({
+		box: $('<div>').addClass('example').insertAfter('#12'),
+		calendars: [
+			['en', {smileText: 'Smile!'}],
+			['fr', {name: 'Français', smileText: 'Souriez!'}]
+		],
+		buttons: ['smile']
+	});
+});
+</script>
+<p>The localization is not specific to buttons; anything with the <code>data-flexcal-l10n</code> attribute is localized:</p>
+<input id=13>
+<script class=demo>
+var hidetabs3 = $('<label><input type=checkbox /> <span data-flexcal-l10n=hide></span></label>');
+hidetabs3.find('input').on('change', function(){
+	var element = $(this).parents('.ui-datepicker-buttonpane').data('flexcal').element;
+	element.flexcal('option', 'hidetabs', $(this).is(':checked'));
+});
+flexcalReady.then(function(){
+	$('#13').flexcal({
+		calendars: [
+			['en', {hideText: 'Hide Tabs'}],
+			['fr', {name: 'Français', hideText: 'Masquez les Onglets'}]
+		],
+		box: $('<div>').addClass('example').insertAfter('#13'),
+		buttons: [hidetabs3, 'today']
+	});
+});</script>
 
      </section>
       <footer>
