@@ -8,7 +8,7 @@
 .fontawesome .ui-icon span {
 	text-indent: -99999px; /* move text for icon replacement */
 }
-button.fa {
+button.fa:before {
 	font-family: FontAwesome !important;
 }
 .fa-text:before {
