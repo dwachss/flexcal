@@ -119,10 +119,6 @@
 			$('body').unbind('.textpopup');
 			this.theBox = undefined;
 		},
-		option: function (key, value){
-			if (key === 'box' && arguments.length === 1) return this._box();
-			return this._super.apply(this, arguments);
-		},
 		_setOption: function(key, value) {
 			this._super(key, value);
 			if (key == 'trigger' || 'hideOnOutsideClick' || 'position' || 'duration') this._init;
