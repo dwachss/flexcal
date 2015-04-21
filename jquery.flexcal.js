@@ -1,6 +1,6 @@
 // flexcal: a multi-calendar date picker 
 
-// Version 3.4
+// Version 3.4.1
 
 // Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
@@ -347,12 +347,12 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			l10n.years(cal.y),
 			'</span></caption>'
 		);
-		if ((cal.last - cal.first)/1000/60/60/24 > daysinweek){
-			// short "months" are only present in calendars that add days that are not part of the week (see the French Revolutionary calendar)
-			var dayNames = l10n.dayNamesMin.slice(); // copy
-			for (var i = 0; i < l10n.firstDay; ++i) dayNames.push(dayNames.shift()); // rotate the names
-			ret.push('<thead><tr><th><span>', dayNames.join('</span></th><th><span>'),'</span></th></tr></thead>');
-		}
+		// short "months" are only present in calendars that add days that are not part of the week (see the French Revolutionary calendar)
+		var showWeekHeader = (cal.last - cal.first)/oneDay > daysinweek;
+		var dayNames = l10n.dayNamesMin.slice(); // copy
+		for (var i = 0; i < l10n.firstDay; ++i) dayNames.push(dayNames.shift()); // rotate the names
+		ret.push('<thead' + (showWeekHeader ? '' : ' style="visibility: hidden; line-height: 0"') + '>');
+		ret.push('<tr><th><span>', dayNames.join('</span></th><th><span>'),'</span></th></tr></thead>');
 		ret.push('<tbody>');
 		if (dow > 0) ret.push('<tr>');
 		for (var i = 0; i < dow; ++i) ret.push ('<td class="ui-datepicker-other-month ui-state-disabled"></td>');
