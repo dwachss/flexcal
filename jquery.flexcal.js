@@ -573,6 +573,7 @@ function addDay(d, n){
 // takes a Date object
 // and returns an object with the following fields: first: Date of the first of the month, Last: Date of the last of the month, prev: Date of one month ago,
 // next: one month from now, m: month number (0 indexed), y: year number, dow: day of the week (0 indexed)
+function toDate (d) {return new Date (d.y, d.m, d.d)}
 $.bililite.flexcal.calendars = {
 	gregorian: function(d){
 		var m = d.getMonth(), y = d.getFullYear(), date = d.getDate(), first = new Date (y, m, 1);
@@ -589,9 +590,9 @@ $.bililite.flexcal.calendars = {
 			nextYear: new Date (y+1, m, nextYearDate),
 			m: m,
 			y: y,
-			d: d,
+			d: d.getDate(),
 			dow: first.getDay(),
-			toDate: function (d) {return new Date (d.y, d.m, d.d)}
+			toDate: toDate
 		};
 	},
 	jewish: function(d){
@@ -944,6 +945,7 @@ if ($.calendars) tol10n.localizers.woodsCalendar = function (name){
 			var cdate = c.fromJSDate(d), y = cdate.year(), m = cdate.month(), d = cdate.day();
 			var first = c.newDate(y, m, 1).toJSDate();
 			var last = c.newDate(y, m, c.daysInMonth(y,m)).toJSDate();
+			function toDate (d) { return c.newDate(d.y, d.m+1, d.d).toJSDate() };
 			return {
 				first: first,
 				last: last,
@@ -955,7 +957,7 @@ if ($.calendars) tol10n.localizers.woodsCalendar = function (name){
 				m: m-1, // Wood's code uses 1-based counting
 				d: d,
 				dow: first.getDay(),
-				toDate: function (d) { return c.newDate(d.y, d.m+1, d.d).toJSDate() }
+				toDate: toDate
 			}
 		}
 	}
