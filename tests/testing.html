@@ -21,8 +21,11 @@
 	<script src="../jquery.textpopup.js"></script>
 	<script src="../jquery.flexcal.js"></script>
 	<script src="tests.js"></script>
-	<script src="../jquery.flexcal.format.js"></script>
-	<script src="format.tests.js"></script>
+	<script>
+	$.getScript('../jquery.flexcal.format.js').then(function(){
+		$.getScript('format.tests.js');
+	});
+	</script>
 	
 </body>
 </html>

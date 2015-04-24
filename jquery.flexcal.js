@@ -85,12 +85,6 @@ function parseISO(s) {
 	return new Date(m[0],m[1]-1,m[2]);
 }
 
-function localizer (l10n){
-	return function(text){
-		return l10n[text+'Text'] || '';
-	}
-}
-
 // from http://stackoverflow.com/a/1268377 . Assumes whole positive numbers; too-long numbers are left as is
 function pad(n, p) {
 	var zeros = Math.max(0, p - n.toString().length );
@@ -131,25 +125,27 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	 **************/
 	commit: function(d){
 		d = d || this.options.current;
-		this.element.val(this.format(d));
+		this.element.val(this.format(d, this._firstL10n.dateFormat, this._firstL10n));
 		this._setDate(d, false);
 		this._trigger('commit', 0, d);
 	},
-	format: function (d){ // external formatting; the this.element.val is set to this.format(d) on commit
-		var o = this.options;
-		var l10n = tol10n(o.calendars[0], o.l10n); // use the first calendar
-		return $.bililite.flexcal.format(d, l10n);
+	format: function (d, format, l10n){
+		l10n = l10n || this._l10n;
+		return $.bililite.flexcal.format(d, format, l10n);
+	},
+	localize: function (text, l10n){
+		l10n = l10n || this._l10n;
+		return $.bililite.flexcal.localize(text, l10n);
 	},
 	option: function (key, value){
 		if (arguments.length === 1 && key === 'l10n') return this._l10n; // return the current localization object, not the default
 		return this._super.apply(this, arguments);
 	},
-	parse: function (d){ // external string (this.element.val) to a date
+	parse: function (d, format, l10n){
 		if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return parseISO(d); // always allow ISO date strings
-		var o = this.options;
 		if (typeof d === 'string'){
-			var l10n = tol10n(o.calendars[0], o.l10n); // use the first calendar
-			d = $.bililite.flexcal.parse (d, l10n);
+			l10n = l10n || this._l10n;
+			d = $.bililite.flexcal.parse (d, format, l10n);
 		}
 		if (!(d instanceof Date)) d = new Date(d);
 		return d;
@@ -169,25 +165,27 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	 * Protected fields (public ones are in the options object)
 	 **************/
 	 _excludefilter: undefined, // function to disable specified dates
+	 _firstL10n: {}, // the localization object of the first calendar; used for formatting/parsing the attached text box
 	 _l10n: {}, // the localization object of the currently showing calendar
 	 _oldCalendar: $(), // the currently showing calendar
 	 _newCalendar: $(), // the calendar to show next
 	 _rev: false, // true if the transition between calendars is to be reversed (to a previous month)
 	 _tabs: $(), // the calendar-selection tabs
-	 // there is also _duration, _html, _position, _triggerElement from textpopup and ajaxpopup
+	 // there is also _duration, _position, _triggerElement from textpopup
 	/**************
 	 * Protected methods
 	 **************/
 	_adjustHTML: function(cal){
 		cal.find('a').removeClass('ui-state-focus').filter('.commit[rel="'+formatISO(this.options.current)+'"]').addClass('ui-state-focus');
-		cal.find('a').removeClass('ui-state-active').filter('.commit[rel="'+formatISO(this.parse(this.element.val()))+'"]').addClass('ui-state-active');
+		var current = this.parse(this.element.val(), this._firstL10n.dateFormat, this._firstL10n);
+		cal.find('a').removeClass('ui-state-active').filter('.commit[rel="'+formatISO(current)+'"]').addClass('ui-state-active');
 		cal.find('a').removeClass('ui-state-highlight').filter('.commit[rel="'+formatISO(new Date)+'"]').addClass('ui-state-highlight');
 		cal.find('a:not([href])')['ui-clickable']();
 		cal.find('a.go').removeClass('ui-state-default') // ui-datepicker has its own styling
 			.each(function(){ this.title = $(this).text() }); // when we use image replacement for the prev/next buttons, leave the text as a tooltip title
 		// allow for using either the jQuery UI icons or the FontAwesome icon font
-		cal.find('a.ui-datepicker-prev').find('span.ui-icon').addClass('ui-icon-circle-triangle-w fa fa-chevron-circle-left');
-		cal.find('a.ui-datepicker-next').find('span.ui-icon').addClass('ui-icon-circle-triangle-e fa fa-chevron-circle-right');
+		cal.find('a.ui-datepicker-prev').children().addClass('ui-icon ui-icon-circle-triangle-w fa fa-chevron-circle-left');
+		cal.find('a.ui-datepicker-next').children().addClass('ui-icon ui-icon-circle-triangle-e fa fa-chevron-circle-right');
 		cal.css('direction', this._l10n.isRTL ? 'rtl' : 'ltr');
 		cal.find('a.commit').filter(this._excludefilter).
 		  removeClass('commit')['ui-unclickable']().addClass('ui-state-disabled');
@@ -214,7 +212,7 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	_init: function(){
 		if (!$.Widget.prototype.yield) this._super(); // if not using my subclassing code, need to initialize the textpopup explicitly
 		var self = this;
-		this.options.current = this.parse(this.options.current);
+		this.options.current = this.parse(this.options.current, this._firstL10n.dateFormat, this._firstL10n);
 		if (isNaN(this.options.current.getDate())) this.options.current = new Date;
 		if (this.options.filter){
 			// the filter option returns true for elements to allow, but _adjustHTML expects a filter that returns true for elements to disable
@@ -320,55 +318,18 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		var cal = l10n.calendar(d);
 		var daysinweek = l10n.dayNamesMin.length;
 		var dow = (cal.dow - l10n.firstDay + daysinweek) % daysinweek; // mod operator (% fails for negative dividends)
-		ret.push (
-			'<a class="go ',
-			l10n.isRTL ? 'ui-datepicker-next ' : 'ui-datepicker-prev ',
-			'ui-corner-all" rel="', formatISO(cal.prev) ,'">',
-			'<span class="ui-icon">',
-			'<span>'+l10n.prevText || 'Previous'+'</span>', // internal span for icon replacement
-			'</span>',
-			'</a>'
-		);
-		ret.push (
-			'<a class="go ',
-			l10n.isRTL ? 'ui-datepicker-prev ' : 'ui-datepicker-next ',
-			'ui-corner-all" rel="', formatISO(cal.next),'">',
-			'<span class="ui-icon">',
-			'<span>'+l10n.nextText || 'Next'+'</span>', // internal span for icon replacement
-			'</span>',
-			'</a>'
-		);
-		ret.push(
-			'<table class="ui-widget-content" style="border: none">',
-			'<caption class="ui-datepicker-header ui-widget-header ui-corner-all">',
-			'<span class="ui-datepicker-month">',
-			l10n.monthNames[cal.m],
-			'</span> <span class="ui-datepicker-year">',
-			l10n.years(cal.y),
-			'</span></caption>'
-		);
-		// short "months" are only present in calendars that add days that are not part of the week (see the French Revolutionary calendar)
-		var showWeekHeader = (cal.last - cal.first)/oneDay > daysinweek;
-		var dayNames = l10n.dayNamesMin.slice(); // copy
-		for (var i = 0; i < l10n.firstDay; ++i) dayNames.push(dayNames.shift()); // rotate the names
-		ret.push('<thead' + (showWeekHeader ? '' : ' style="visibility: hidden; line-height: 0"') + '>');
-		ret.push('<tr><th><span>', dayNames.join('</span></th><th><span>'),'</span></th></tr></thead>');
+
+		ret.push(this._generateGoButton('prev', cal));
+		ret.push(this._generateGoButton('next', cal));
+		ret.push ('<table class="ui-widget-content" style="border: none">');
+		ret.push (this._generateCaption(d, cal));
+		ret.push(this._generateWeekHeader(cal));
 		ret.push('<tbody>');
 		if (dow > 0) ret.push('<tr>');
 		for (var i = 0; i < dow; ++i) ret.push ('<td class="ui-datepicker-other-month ui-state-disabled"></td>');
 		for (i = 1, d = cal.first; d <= cal.last; ++i, ++dow, d.setDate(d.getDate()+1)){
-			var dstring = formatISO(d);
 			if (dow == 0) ret.push('<tr>');
-			ret.push(
-				'<td><a class="',
-				'commit" rel="',
-				dstring,
-				'" title="',
-				dstring, // I think it would take too much time to run every single day through this.format. TODO: check this!
-				'">',
-				l10n.dates(i),
-				'</a></td>'
-			);
+			ret.push(this._generateDate(d, i));
 			if (dow >= daysinweek-1){
 				ret.push('</tr>');
 				dow=-1;
@@ -381,6 +342,74 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		ret.push('</tbody>');
 		ret.push('</table>');
 		return $(ret.join(''));
+	},
+	// all these are separated out to allow for easy overriding
+	_generateDate: function (d, i){
+		// element for date d with number i
+		var dstring = formatISO(d);
+		return [
+			'<td><a class=commit rel='+dstring+' title='+dstring+' >',
+				this._generateDateText(d,i),
+			'</a></td>'
+		].join('');
+	},
+	_generateDateText: function (d, i){
+		return this._l10n.dates(i);
+	},
+	_generateCaption(d, cal){
+		return [
+			'<caption class="ui-datepicker-header ui-widget-header ui-corner-all">',
+				this._generateCaptionText(d, cal),
+			'</caption>'
+		].join('\n');
+	},
+	_generateCaptionText (d, cal){
+		return [
+			'<span class=ui-datepicker-month>',
+			this._l10n.monthNames[cal.m],
+			'</span> <span class=ui-datepicker-year>',
+			this._l10n.years(cal.y),
+			'</span>'
+		].join('\n');
+	},
+	_generateGoButton(which, cal){
+		// unfortunately, datepicker uses prev/next for classes that really mean left/right
+		var rtlClass = 'ui-datepicker-'+which;
+		if (this._l10n.isRTL) rtlClass = rtlClass.replace('next', '.').replace('prev', 'next').replace('.', 'prev');
+		return [
+			'<a class="go '+rtlClass+' ui-corner-all" rel='+formatISO(cal[which])+' >',
+			'	<span>'+
+				'<span>'+this._generateGoText(which, cal)+'</span>'+ // internal span for icon replacement
+				'</span>',
+			'</a>'
+		].join('\n');
+		
+	},
+	_generateGoText(which, cal){
+		return this.localize(which, this._l10n);
+	},
+	_generateWeekHeader: function (cal){
+		// short "months" are only present in calendars that add days that are not part of the week (see the French Revolutionary calendar)
+		var dayNames = this._listDaysOfWeek (cal.first, cal.dow);
+		var showWeekHeader = (cal.last - cal.first)/oneDay > dayNames.length;
+		for (var i = 0; i < l10n.firstDay; ++i) dayNames.push(dayNames.shift()); // rotate the names
+		return [
+			'<thead' + (showWeekHeader ? '' : ' style="visibility: hidden; line-height: 0"') + '>',
+			'	<tr>',
+					dayNames.map(function(day){
+						return '<th><span>'+day+'</span></th>';
+					}).join(''),
+			'	</tr>',
+			'</thead>'
+		].join('\n');
+	},
+	_listDaysOfWeek: function (d, dow){
+		// returns an array of days of the week, starting at the localized first day of the week
+		// uses the week centered around d, which is on dow day of the week.
+		// not used in this version, but allows for localized formatting
+		var dayNames = this._l10n.dayNamesMin.slice(); // copy
+		for (var i = 0; i < this._l10n.firstDay; ++i) dayNames.push(dayNames.shift()); // rotate the names
+		return dayNames;
 	},
 	_listMonths: function(d){
 		// returns an array of months of the year of Date d, as [monthName, Date, isThisMonth]
@@ -440,7 +469,7 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		// set animate == true to force the animated transition, false to prevent it.
 		// if undefined, only animate if the new date is not on the currently visible calendar
 		var oldd = this.options.current;
-		d = this.parse(d);
+		d = this.parse(d, this._firstL10n.dateFormat, this._firstL10n);
 		if (isNaN(d.getTime())) d = oldd;
 		this.options.current = d;
 		this._trigger('set', 0, [d, oldd]);
@@ -469,10 +498,9 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		// jQuery UI standards say don't include the little arrows, but many localizations don't obey this
 		this._l10n.nextText = this._l10n.nextText.replace (/&#x3e;|>/gi,'');
 		this._l10n.prevText = this._l10n.prevText.replace (/&#x3c;|</gi,'');
-		var localized = localizer(this._l10n);
 		this._box().find(':data(flexcalL10n), [data-flexcal-l10n]').each(function(){
 			// need to search for both because data attributes are not pulled into $.data until requested
-			$(this).html(localized($(this).data('flexcalL10n')));
+			$(this).html(this.localize($(this).data('flexcalL10n'), this._l10n));
 		});
 		this._trigger('setL10n', 0, this._l10n);
 	},
@@ -518,6 +546,7 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		}else{
 			this._tabs.parent().show();
 		}
+		this._firstL10n = tol10n(this.options.calendars[0], this.options.l10n);
 		this._makeCurrentCalendar(this.options.tab);
 	},
 	_transition: function(size, animate){
@@ -616,7 +645,11 @@ $.bililite.flexcal.calendars = {
 	}
 };
 
-// need to add the default after it is defined
+// need to add to the default after all this is defined
+$.extend($.bililite.flexcal.prototype, {
+	_l10n: tol10n(),
+	_firstL10n: tol10n()
+});
 $.extend(
 	$.bililite.flexcal.prototype.options.l10n,
 	$.datepicker.regional[''], // use the jQuery UI defaults where possible
@@ -691,13 +724,6 @@ var latin2hebrew = archaicNumbers([
 	[1,'א'],
 	[/יה/, 'ט״ו'], // special cases for 15 and 16
 	[/יו/, 'ט״ז'],
-	/*
-	[/כ$/,'ך'], // sofit letters; from my Israeli correspondents it seems that numbers do not use sofit letters
-	[/מ$/,'ם'],
-	[/נ$/,'ן'],
-	[/פ$/,'ף'],
-	[/צ$/,'ץ'],
-	*/
 	[/([א-ת])([א-ת])$/, '$1״$2'], // gershayim (what I always called "choopchiks"--the double or single hash marks
 	[/^([א-ת])$/, "$1׳"] // geresh
 ]);
@@ -712,7 +738,7 @@ var l10n = $.bililite.flexcal.l10n = {
 		monthNames: ['Nisan', 'Iyar', 'Sivan', 'Tammuz', 'Av', 'Elul',
 			'Tishrei', 'Cheshvan', 'Kislev', 'Tevet', 'Shevat', 'Adar',
 			'Adar I', 'Adar II'],
-		dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','ש'],
+		dayNamesMin: ['Su','Mo','Tu','We','Th','Fr','ש']
 	},
 	'he-jewish': {
 		name: 'עברית',
@@ -974,8 +1000,9 @@ if ($.calendars) tol10n.localizers.woodsCalendar = function (name){
 
 // TODO: the Globalize routines
 	
-$.bililite.flexcal.format = function (d, l10n){
-	return l10n.dateFormat.
+$.bililite.flexcal.format = function (d, format, l10n){
+	// the l10n is for possible extension
+	return format.
 		replace (/dd/g, pad(d.getDate(), 2)).
 		replace (/d/g, d.getDate()).
 		replace (/mm/g, pad(d.getMonth()+1, 2)).
@@ -984,9 +1011,14 @@ $.bililite.flexcal.format = function (d, l10n){
 		replace (/yy/g, d.getFullYear()); // jQuery UI datepicker uses yy for the 4-digit year
 };
 
-$.bililite.flexcal.parse = function (s, l10n){
+$.bililite.flexcal.localize = function (text, l10n){
+	return l10n[text+'Text'] || '';
+};
+
+$.bililite.flexcal.parse = function (s, format, l10n){
 	// I want to accept as many inputs as possible; we just look for 3 numbers in the right order
-	var ymd = l10n.dateFormat. // determine the order of year-month-day
+	// the l10n is for possible extension
+	var ymd = format. // determine the order of year-month-day
 		replace(/[^ymd]/g,'').
 		replace(/y+/g,'y').
 		replace(/m+/g,'m').

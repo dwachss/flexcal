@@ -56,13 +56,13 @@ f.localize = function (name, l10n){
 	return l10n[name+'Text'] || '';
 }
 
-f.format = function (d, l10n){
+f.format = function (d, format, l10n){
 	// I am aware that regular expressions are not a parser, but this will serve for now.
 	// http://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags/1732454#1732454
 	d = l10n.calendar(d); // convert to the localized date
 	var dow = (d.dow + d.d - 1) % l10n.dayNames.length; // d.dow is the day of week of the first day of the month
 	// replace text in braces
-	var ret = l10n.dateFormat.replace(/{(\w+)}/g, function(match, name){
+	var ret = format.replace(/{(\w+)}/g, function(match, name){
 		return f.localize(name, l10n);
 	});
 
@@ -87,12 +87,12 @@ f.format = function (d, l10n){
 	});
 };
 
-f.parse = function (s, l10n){
+f.parse = function (s, format, l10n){
 	// replace text in braces
-	var dateFormat = l10n.dateFormat.replace(/{(\w+)}/g, function(match, name){
+	var dateFormat = format.replace(/{(\w+)}/g, function(match, name){
 		return f.localize(name, l10n);
 	});
-	// to allow for as generous a parse as possibe, simplify the format to just look for date parts
+	// to allow for as generous a parse as possible, simplify the format to just look for date parts
 	// note that we ignore capital D; no way to parse days of the week meaningfully
 	dateFormat = dateFormat.replace(/'((?:[^']|'')*)'|[dmMyY]+|./g, function(match, part1){
 		if (/^d+$/.test(match)){
@@ -186,5 +186,57 @@ f.parse = function (s, l10n){
 		return ret;
 	}
 };
+
+// extend the defaults to allow use of the new formatting
+$.extend ($.bililite.flexcal.prototype.options.l10n, {
+	nextButtonText: "'{next}'",
+	prevButtonText: "'{prev}'",
+	captionText: "'<span class=ui-datepicker-month>'MM'</span>' "+
+		"'<span class=ui-datepicker-year>'YYYY'</span>'",
+	dayOfWeekText: 'D',
+	dateText: 'dddd'
+});
+$.extend (true, $.bililite.flexcal.l10n, {
+	jewish: {
+		dayNames: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','שבת'],
+		dayNamesShort: ['Sun','Mon','Tue','Wed','Thu','Fri','שבת'],
+		monthNamesShort: $.bililite.flexcal.l10n.jewish.monthNames,
+	},
+	'he-jewish':{
+		dayNames: ['יום א׳','יום ב׳','יום ג׳','יום ד׳','יום ה׳','יום ו׳','שבת'],
+		dayNamesShort: $.bililite.flexcal.l10n['he-jewish'].dayNamesMin,
+		monthNamesShort: $.bililite.flexcal.l10n['he-jewish'].monthNames
+	}
+});
+
+// fancier text generators
+$.extend($.bililite.flexcal.prototype,{
+	_generateCaptionText (d, cal){
+		return this.format(d, this._l10n.captionText, this._l10n);
+	},
+	_generateDateText: function (d, i){
+		return this.format(d, this._l10n.dateText, this._l10n);
+	},
+	_generateGoText(which, cal){
+		var text = this._l10n[which+'ButtonText'];
+		return this.format(cal[which], text, this._l10n);
+	},
+	_listDaysOfWeek: function (d, dow){
+		// returns an array of days of the week, starting at the localized first day of the week
+		// uses the week centered around d, which is on dow day of the week.
+		function addDay (d, n){
+			return new Date (d.getTime()+n*86400000); // msec/day
+		}
+		var daysInWeek = this._l10n.dayNames.length;
+		d = addDay (d, this._l10n.firstDay - dow); // positive or negative should not matter
+		var dayNames = [];
+		for (var i = 0; i < daysInWeek; ++i){
+			dayNames.push(this.format(d, this._l10n.dayOfWeekText, this._l10n));
+			d = addDay (d, 1);
+		}
+		return dayNames;
+	}
+});
+
 
 })(jQuery, jQuery.bililite.flexcal);

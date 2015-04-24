@@ -1,19 +1,20 @@
 QUnit.test( "parse", function( assert ) {
 	var p = $.bililite.flexcal.parse;
-	var l = $.bililite.flexcal.tol10n;
+	var l = $.bililite.flexcal.tol10n();
 	var d = new Date(2015,1,12);
-	assert.equal(p('2/12/2015', l({dateFormat: 'm/d/yyyy'})).getTime(), d.getTime(), "parse 'm/d/yyyy'" );
-	assert.equal(p('02/12/2015', l({dateFormat: 'm/d/yyyy'})).getTime(), d.getTime(), "parse 'm/d/yyyy' liberally" );
-	assert.equal(p('12.02.2015', l({dateFormat: 'dd.mm.yyyy'})).getTime(), d.getTime(), "parse 'dd.mm.yyyy'" );
-	assert.equal(p('12/2/2015', l({dateFormat: 'dd.mm.yyyy'})).getTime(), d.getTime(), "parse 'dd.mm.yyyy' liberally" );
+	assert.equal(p('2/12/2015', 'm/d/yyyy', l).getTime(), d.getTime(), "parse 'm/d/yyyy'" );
+	assert.equal(p('02/12/2015', 'm/d/yyyy', l).getTime(), d.getTime(), "parse 'm/d/yyyy' liberally" );
+	assert.equal(p('12.02.2015', 'dd.mm.yyyy', l).getTime(), d.getTime(), "parse 'dd.mm.yyyy'" );
+	assert.equal(p('12/2/2015', 'dd.mm.yyyy', l).getTime(), d.getTime(), "parse 'dd.mm.yyyy' liberally" );
 });
 
 QUnit.test( "format", function( assert ) {
 	var f = $.bililite.flexcal.format;
-	var l = $.bililite.flexcal.tol10n;
+	var l = $.bililite.flexcal.tol10n();
 	var d = new Date(2015,1,12);
-	assert.equal(f(d,  l({dateFormat: 'm/d/yyyy'})), '2/12/2015', "format 'm/d/yyyy'" );
-	assert.equal(f(d, l({dateFormat: 'dd.mm.yyyy'})), '12.02.2015', "format 'dd.mm.yyyy'" );
+	assert.equal(f(d,  'm/d/yyyy', l), '2/12/2015', "format 'm/d/yyyy'" );
+	assert.equal(f(d, 'dd.mm.yyyy', l), '12.02.2015', "format 'dd.mm.yyyy'" );
+	assert.equal(f(d, 'd MM YYYY', l), '12 MM YYYY', "format 'd MM YYYY' fails with simple formatting" );
 });
 
 // from the flexcal code. Not DRY
