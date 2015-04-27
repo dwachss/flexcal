@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="stylesheets/prism-dw.css" />
  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/i18n/datepicker-fr.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/i18n/datepicker-he.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.js"></script>
 	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars-ar.js"></script>
@@ -71,8 +70,154 @@
 <li><code>MM</code>: Month name, full ('January', 'February', etc.)</li>
 <li><code>yy</code>: Year number. There is no option for a two-digit year.</li>
 <li><code>yyyy</code>: Year number, padded to four digits (which really shouldn't be relevant)</li>
-<li><code>YYYY</code>: Year number, , formatted (using the <a href=l10n.html#years><code>years</code></a> function)</li>
+<li><code>YYYY</code>: Year number, formatted (using the <a href=l10n.html#years><code>years</code></a> function)</li>
 </ul>
+<p>Note the order of the replacement, and how the quoting works. Using <code class=language-javascript>d = new Date (2015, 3, 27) // April 27, 2015</code> and <code class=language-javascript>loc = $.bililite.flexcal.toL10n() // default localization</code>, we have <code class=language-javascript>$.bililite.flexcal.format(d, "'{today}'", loc) === 'Today' // localize the text in braces but don't replace the date formatting codes since it is in single quotes</code>. But <code class=language-javascript>$.bililite.flexcal.format(d, "{today}", loc) // no single quotes</code> is <code class=language-javascript>'To27ay'</code>, since the <code class=language-javascript>'d'</code> is interpreted as a date number.</p>
+<h3>Examples</h3>
+<p><code>dateFormat: 'DDDD, d MM yyyy'</code> <input id=1 ></p>
+<div class=example id=div1></div>
+<script class=demo>
+flexcalFormatReady.then(function(){
+	$('#1').flexcal({
+		box: '#div1',
+		calendars: [ ['en', {dateFormat: 'DDDD, d MM yyyy'}] ],
+		set: function (evt, d){
+			this.value = $(this).flexcal('format', d);
+		}
+	});
+});
+</script>
+<p>Using formatted years (a <code>years</code> function that shows <a href=http://bililite.com/blog/2009/03/09/roman-numerals-in-javascript/>Roman numerals</a>).</p>
+<p><code>dateFormat: 'd MM YYYY'</code> <input id=2 ></p>
+<div class=example id=div2></div>
+<script class=demo>
+var romanNumerals = { // assumes objects are enumerated in order
+	M: 1000,
+	CM: 900,
+	D: 500,
+	CD: 400,
+	C: 100,
+	XC: 90,
+	L: 50,
+	XL: 40,
+	X: 10,
+	IX: 9,
+	V: 5,
+	IV: 4,
+	I: 1
+};
+var arabic2roman = function(n){
+	var r = '';
+	for (var x in romanNumerals){
+		for (var i = romanNumerals[x]; n >= i; n -= i) r += x;
+	}
+	return r;
+}
+flexcalFormatReady.then(function(){
+	$('#2').flexcal({
+		box: '#div2',
+		calendars: [ ['en', {dateFormat: 'd MM YYYY', years: arabic2roman}] ],
+		set: function (evt, d){
+			this.value = $(this).flexcal('format', d);
+		}
+	});
+});
+</script>
+<p>Varied languages</p>
+<p><input id=3 /><div class=example id=display></div></p>
+<div class=example id=div3></div>
+<script class=demo>
+flexcalFormatReady.then(function(){
+	var jewish = $.bililite.flexcal.tol10n(['jewish', {dateFormat: 'dddd MM YYYY'}]);
+	var heJewish = $.bililite.flexcal.tol10n(['he-jewish', {dateFormat: 'dddd MM YYYY'}]);
+	var arabic = $.bililite.flexcal.tol10n(['ar', {dateFormat: '\u200Fdddd MM YYYY'}]); // need to left-to-right Unicode indicator for mixed roman/Arabic
+	$('#3').flexcal({
+		box: '#div3',
+		set:function (e, d){
+			$('#display').html(
+				$(this).flexcal('format', d) + '<br/>' +
+				$(this).flexcal('format', d, jewish) + '<br/>' +
+				$(this).flexcal('format', d, heJewish) + '<br/>' +
+				$(this).flexcal('format', d, arabic)
+			);
+		}
+	});
+});
+</script>
+
+<h2>Customizing the calendar</h2>
+<p><code>jquery.flexcal.format.js</code> also extends the presentation of the calendar itself to allow customizing the title, date numbers and next/prev buttons. Five more fields are added to the localization object:</p>
+<h3 id=captiontext><code>captionText</code></h3>
+<div class=definition>
+	<p>Formatting string to use for formatting the caption (the month/year title bar) of the calendar. In order to use drop-down menus, the month has to be in a span with <code>class=ui-datepicker-month</code> and the year has to be in a span with <code>class=ui-datepicker-year</code>.</p>
+	<h4>Default value</h4>
+	<p><code class="language-javascript">"'&lt;span class=ui-datepicker-month&gt;'MM'&lt;/span&gt;' '&lt;span class=ui-datepicker-year&gt;'YYYY'&lt;/span&gt;'"</code></p>
+	<p>Note the use of single quotes to prevent parsing the embedded HTML.</p>
+	<h4>Example</h4>
+	<p><code class=language-javascript>captionText: 'mm/yyyy'</code></p>
+	<div class=example id=4></div>
+	<script class=demo>
+	flexcalFormatReady.then(function(){
+		$('<input>').flexcal({
+			box: '#4',
+			l10n: {captionText: 'mm/yyyy'} // the rest is default; we are not using drop-down menus
+		});
+	});
+	</script>
+</div>
+<h3 id=datetext><code>dateText</code></h3>
+<div class=definition>
+	<p>Formatting string to use for the dates (the individual cells of the table that makes up the calendar).</p>
+	<h4>Default value</h4>
+	<p><code class="language-javascript">"dddd"</code></p>
+	<h4>Example</h4>
+	<p><code class=language-javascript>dateText: "'&lt;span style=transform:rotate(180deg)&gt;'dd'&lt;/span&gt;'"</code>. OK, that's silly.</p>
+	<div class=example id=5></div>
+	<script class=demo>
+	flexcalFormatReady.then(function(){
+		$('<input>').flexcal({
+			box: '#5',
+			l10n: {dateText: "'<span style=transform:rotate(180deg)>'dd'</span>'"} 
+		});
+	});
+	</script>
+</div>
+<h3 id=dayofweektext><code>dayOfWeekText</code></h3>
+<div class=definition>
+	<p>Formatting string to use for the days of the week (the header of the calendar columns).</p>
+	<h4>Default value</h4>
+	<p><code class="language-javascript">"D"</code></p>
+	<h4>Example</h4>
+	<p><code class=language-javascript>dayOfWeekText: "DDDD"</code></p>
+	<div class=example id=6></div>
+	<script class=demo>
+	flexcalFormatReady.then(function(){
+		$('<input>').flexcal({
+			box: '#6',
+			l10n: {dayOfWeekText: "DDDD"} 
+		});
+	});
+	</script>
+</div>
+<h3 id=nextbuttontext><code>nextButtonText</code>, <code>prevButtonText</code></h3>
+<div class=definition>
+	<p>Formatting strings to use for the Next and Previous month buttons. The unextended <code>flexcal</code> just uses <code>nextText</code> and <code>prevText</code>, but this allows customizing (such as putting in the name of the month. See the example.</p>
+	<h4>Default value</h4>
+	<p><code class="language-javascript">"'{next}'"</code> and <code class="language-javascript">"'{prev}'"</code></p>
+	<h4>Example</h4>
+	<p><code class=language-javascript>nextButtonText: "MM", prevButtonText: "MM"</code>. The CSS replaces the text with the icons, but uses that text for the title. Hover over the next/prev icons to see the month names.</p>
+	<div class=example id=7></div>
+	<script class=demo>
+	flexcalFormatReady.then(function(){
+		$('<input>').flexcal({
+			box: '#7',
+			l10n: {nextButtonText: "MM", prevButtonText: "MM"} 
+		});
+	});
+	</script>
+</div>
+
+
 
      </section>
       <footer>
