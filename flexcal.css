@@ -21,9 +21,11 @@ button.fa:before {
 .ui-flexcal-container {
 	position: relative;
 	overflow: hidden;
+	transition-property: height, width; /* resize gradually */
+	transition-duration: 0.4s;
 }
 .ui-flexcal-pane {
-position: absolute;
+	position: absolute;
 	left: 0em; /* IE seems to require this, as its left: auto centers it */
 }
 .ui-flexcal .ui-tabs-nav {

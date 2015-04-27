@@ -570,27 +570,24 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			self._newCalendar = first;
 		}
 		this._box().find('.ui-datepicker-buttonpane').css('width', size.width);
+		this._box().find('.ui-flexcal-container').css('height'); // odd bug: if I don't check the height, the next line doesn't transition, just runs
+		this._box().find('.ui-flexcal-container').css(size);
 		if (!animate || this._box().is(':hidden')){
 			// if box is hidden, then we don't need to animate anything
 			first.hide();
 			second.css({top: 0, left: 0, opacity: 1}).show(); // make sure we correct any leftover css from the transition effects
-			second.parent().css(size);
 			nextSlide();
 		}else{
-			// Make the parent sized correctly then animate
-			second.parent().animate(size, 100, function(){
-				first.add(second).stop (true, true); // make sure that the new calendar is available to show
-				self.options.transition.call(self.element, first, second, self._rev);
-				nextSlide();
-				if (self.options.reposition) self.position(); // adjust position for new size
-			});
+			first.add(second).stop (true, true); // make sure that the new calendar is available to show
+			self.options.transition.call(self.element, first, second, self._rev);
+			nextSlide();
+			if (self.options.reposition) self.position(); // adjust position for new size
 		}
 	}
 });
 
 // predefined button classes
 $('body').on('click', '.ui-flexcal button.today', function(){
-	console.log('here');
 	var instance = $.data(this.parentNode, 'flexcal').instance;
 	if (this.classList.contains('commit')){
 		instance._commit(new Date);
