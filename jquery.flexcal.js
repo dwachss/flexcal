@@ -369,14 +369,14 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	_generateDateText: function (d, i){
 		return this._l10n.dates(i);
 	},
-	_generateCaption(d, cal){
+	_generateCaption: function(d, cal){
 		return [
 			'<caption class="ui-datepicker-header ui-widget-header ui-corner-all">',
 				this._generateCaptionText(d, cal),
 			'</caption>'
 		].join('\n');
 	},
-	_generateCaptionText (d, cal){
+	_generateCaptionText: function(d, cal){
 		return [
 			'<span class=ui-datepicker-month>',
 			this._l10n.monthNames[cal.m],
@@ -385,7 +385,7 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			'</span>'
 		].join('\n');
 	},
-	_generateGoButton(which, cal){
+	_generateGoButton: function(which, cal){
 		// unfortunately, datepicker uses prev/next for classes that really mean left/right
 		var rtlClass = 'ui-datepicker-'+which;
 		if (this._l10n.isRTL) rtlClass = rtlClass.replace('next', '.').replace('prev', 'next').replace('.', 'prev');
@@ -398,7 +398,7 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		].join('\n');
 		
 	},
-	_generateGoText(which, cal){
+	_generateGoText: function(which, cal){
 		return this.localize(which, this._l10n);
 	},
 	_generateWeekHeader: function (cal){
@@ -570,7 +570,7 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			self._newCalendar = first;
 		}
 		this._box().find('.ui-datepicker-buttonpane').css('width', size.width);
-		this._box().find('.ui-flexcal-container').css('height'); // odd bug: if I don't check the height, the next line doesn't transition, just runs
+		this._box().find('.ui-flexcal-container').css('height'); // odd bug in Chrome: if I don't check the height, the next line doesn't transition, just runs
 		this._box().find('.ui-flexcal-container').css(size);
 		if (!animate || this._box().is(':hidden')){
 			// if box is hidden, then we don't need to animate anything
