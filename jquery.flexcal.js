@@ -1,6 +1,6 @@
 // flexcal: a multi-calendar date picker 
 
-// Version 3.4.1
+// Version 3.5
 
 // Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
@@ -125,12 +125,19 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	 **************/
 	commit: function(d){
 		d = d || this.options.current;
-		this.element.val(this.format(d, this._firstL10n.dateFormat, this._firstL10n));
+		this.element.val(this.format(d));
 		this._setDate(d, false);
 		this._trigger('commit', 0, d);
 	},
 	format: function (d, format, l10n){
+		if (typeof format !== 'string'){
+			l10n = format;
+			format = undefined;
+		}
+		// special case: parse(d) alone uses the first calendar format
+		l10n = l10n || (arguments.length === 1 ? this._firstL10n : this._l10n);
 		l10n = l10n || this._l10n;
+		format = format || l10n.dateFormat;
 		return $.bililite.flexcal.format(d, format, l10n);
 	},
 	localize: function (text, l10n){
@@ -144,7 +151,13 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	parse: function (d, format, l10n){
 		if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return parseISO(d); // always allow ISO date strings
 		if (typeof d === 'string'){
-			l10n = l10n || this._l10n;
+			if (typeof format !== 'string'){
+				l10n = format;
+				format = undefined;
+			}
+			// special case: parse(d) alone uses the first calendar format
+			l10n = l10n || (arguments.length === 1 ? this._firstL10n : this._l10n);
+			format = format || l10n.dateFormat;
 			d = $.bililite.flexcal.parse (d, format, l10n);
 		}
 		if (!(d instanceof Date)) d = new Date(d);
@@ -177,8 +190,8 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	 **************/
 	_adjustHTML: function(cal){
 		cal.find('a').removeClass('ui-state-focus').filter('.commit[rel="'+formatISO(this.options.current)+'"]').addClass('ui-state-focus');
-		var current = this.parse(this.element.val(), this._firstL10n.dateFormat, this._firstL10n);
-		cal.find('a').removeClass('ui-state-active').filter('.commit[rel="'+formatISO(current)+'"]').addClass('ui-state-active');
+		var val = this.parse(this.element.val());
+		cal.find('a').removeClass('ui-state-active').filter('.commit[rel="'+formatISO(val)+'"]').addClass('ui-state-active');
 		cal.find('a').removeClass('ui-state-highlight').filter('.commit[rel="'+formatISO(new Date)+'"]').addClass('ui-state-highlight');
 		cal.find('a:not([href])')['ui-clickable']();
 		cal.find('a.go').removeClass('ui-state-default') // ui-datepicker has its own styling
@@ -190,13 +203,13 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		cal.find('a.commit').filter(this._excludefilter).
 		  removeClass('commit')['ui-unclickable']().addClass('ui-state-disabled');
 		if (this.options.changeMonth){
-			var monthMenu = $('<select>').html(this._listMonths(this.option('current')).map(function(m){
+			var monthMenu = $('<select>').html(this._listMonths(this.options.current).map(function(m){
 				return $('<option>').text(m[0]).val(m[1]).prop('selected', m[2]);
 			}));
 			cal.find('.ui-datepicker-month').html(monthMenu);
 		}
 		if (this.options.changeYear){
-			var yearMenu = $('<select>').html(this._listYears(this.option('current')).map(function(m){
+			var yearMenu = $('<select>').html(this._listYears(this.options.current).map(function(m){
 				return $('<option>').text(m[0]).val(m[1]).prop('selected', m[2]);
 			}));
 			cal.find('.ui-datepicker-year').html(yearMenu);
@@ -494,13 +507,14 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		}
 	},
 	_setL10n: function(name){
+		var self = this;
 		this._l10n = tol10n(name, this.options.l10n);
 		// jQuery UI standards say don't include the little arrows, but many localizations don't obey this
 		this._l10n.nextText = this._l10n.nextText.replace (/&#x3e;|>/gi,'');
 		this._l10n.prevText = this._l10n.prevText.replace (/&#x3c;|</gi,'');
 		this._box().find(':data(flexcalL10n), [data-flexcal-l10n]').each(function(){
 			// need to search for both because data attributes are not pulled into $.data until requested
-			$(this).html(this.localize($(this).data('flexcalL10n'), this._l10n));
+			$(this).html(self.localize($(this).data('flexcalL10n'), self._l10n));
 		});
 		this._trigger('setL10n', 0, this._l10n);
 	},
@@ -576,6 +590,7 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 
 // predefined button classes
 $('body').on('click', '.ui-flexcal button.today', function(){
+	console.log('here');
 	var instance = $.data(this.parentNode, 'flexcal').instance;
 	if (this.classList.contains('commit')){
 		instance._commit(new Date);

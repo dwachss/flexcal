@@ -1,5 +1,7 @@
 // Extend flexcal with better formatting
 // 
+// for flexcal version 3.5
+//
 // Copyright (c) 2015 Daniel Wachsstock
 // MIT license:
 // Permission is hereby granted, free of charge, to any person
