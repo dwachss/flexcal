@@ -36,8 +36,8 @@ DD - day name, short
 DDDD - day name, full
 m - month of the year (no leading zero)
 mm - month of the year (two digit)
-M - month name, short (monthNamesShort then monthNames)
-MM - month name, long (monthNames then monthNamesShort)
+M - month name, short
+MM - month name, long
 yy - year (full year but not padded digit; no two-year dates)
 yyyy - year (four digit)
 YYYY - formatted year (result of l10n.years(yyyy))
