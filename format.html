@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Advanced Flexcal Formatting</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="stylesheets/prism-dw.css" />
+ 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/i18n/datepicker-fr.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/i18n/datepicker-he.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars-ar.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.islamic.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.islamic-ar.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/flexcal/master/jquery.calendars.picker-mock.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/calendars/master/jquery.calendars.picker-ar.js"></script>
+	<script src="https://cdn.rawgit.com/dwachss/prism/gh-pages/prism.js"></script>
+    <script src="javascripts/scale.fix.js"></script>
+    <script src="javascripts/prism.linenumber.js"></script>
+	<script src="loadflexcal.js"></script>
+	<script>
+		var flexcalFormatReady = flexcalReady.then(function(){
+			return $.repo('dwachss/flexcal');
+		}).then(function (repo){
+			return $.getScript(repo+'/jquery.flexcal.format.js');
+		});
+	</script>
+	<style>
+		div.example {
+			display: inline-block;
+			vertical-align: top;
+		}
+	</style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Flexcal</h1>
+        <p>jQuery UI datepicker</p>
+
+        <p class="view"><a href="https://github.com/dwachss/flexcal">View the Project on GitHub <small>dwachss/flexcal</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/dwachss/flexcal/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/dwachss/flexcal/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/dwachss/flexcal">View On <strong>GitHub</strong></a></li>
+        </ul>
+		<nav>
+		</nav>
+      </header>
+      <section>
+<h2>Advanced Formatting</h2>
+<p>The date formatting in <code>flexcal</code> lets you do simple formatting and parsing, with numbers only. Including <code>jquery.flexcal.format.js</code> allows much more sophisticated formatting, and formatting the calendar itself. It replaces <code>$.bililite.flexcal.format</code> and <code>$.bililite.flexcal.parse</code>, which are used by the <code>flexcal</code> plugin itself.</p>
+<p>In the format string, any word in braces (<code class=language-javascript>/{(\w+)}/</code>) is replaced by the localized version (with <a href=l10n.html#localize><code>$.bililite.flexcal.localize</code></a>), then any text in single quotes is frozen from further replacement. Use two single quotes (<code class=language-javascript>''</code>) for an actual single quote.</p>
+<p>Then the following date-specific replacements are made:</p>
+<ul>
+<li><code>d</code>: Date number</li>
+<li><code>dd</code>: Date number, padded to two digits</li>
+<li><code>dddd</code>: Date number, formatted (using the <a href=l10n.html#dates><code>dates</code></a> function)</li>
+<li><code>D</code>: Day name, minimized ('S', 'M', etc.)</li>
+<li><code>DD</code>: Day name, short ('Sun', 'Mon',etc.)</li>
+<li><code>DDDD</code>: Day name, full, ('Sunday', 'Monday',etc.)</li>
+<li><code>m</code>: Month number (1-indexed. Note that internally (as with <code>Date</code>) months are 0-based)</li>
+<li><code>mm</code>: Month number, padded to two digits</li>
+<li><code>M</code>: Month name, short ('Jan', 'Feb', etc.)</li>
+<li><code>MM</code>: Month name, full ('January', 'February', etc.)</li>
+<li><code>yy</code>: Year number. There is no option for a two-digit year.</li>
+<li><code>yyyy</code>: Year number, padded to four digits (which really shouldn't be relevant)</li>
+<li><code>YYYY</code>: Year number, , formatted (using the <a href=l10n.html#years><code>years</code></a> function)</li>
+</ul>
+
+     </section>
+      <footer>
+		<p>Comments? Questions? Create an <a href=https://github.com/dwachss/flexcal/issues>issue</a>!</p>
+		<p><small><a href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"></a> This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 License</a>.</small></p>
+        <p><small>Hosted on GitHub Pages&mdash;Theme Based on Minimalist by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+ </body>
+</html>

@@ -133,6 +133,7 @@ $('body').on('click', '.ui-flexcal button.close', function(){
 		instance.hide();
 	}
 });</code></pre>
+<p><strong>Note that these attach the event handlers to the body element, so the body element must exist when the code is included. Don't put the <code class=language-html>&lt;script src=jquery.flexcal.js&gt;</code> in the head or the buttons won't work.</strong></p>
 <p>So using those is easy, as the <code class=language-javascript>"today"</code> and <code class=language-javascript>"today commit"</code> examples <a href=#introduction>above</a>. Using <code class=language-javascript>"close"</code> is similar:</p>
 <code class=language-javascript>['close']</code>: <input id=6>
 <script class=demo>
