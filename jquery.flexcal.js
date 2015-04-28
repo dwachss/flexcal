@@ -189,17 +189,17 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 	 * Protected methods
 	 **************/
 	_adjustHTML: function(cal){
+		cal.attr ('dir', this._l10n.isRTL ? 'rtl' : 'ltr');
 		cal.find('a').removeClass('ui-state-focus').filter('.commit[rel="'+formatISO(this.options.current)+'"]').addClass('ui-state-focus');
 		var val = this.parse(this.element.val());
 		cal.find('a').removeClass('ui-state-active').filter('.commit[rel="'+formatISO(val)+'"]').addClass('ui-state-active');
 		cal.find('a').removeClass('ui-state-highlight').filter('.commit[rel="'+formatISO(new Date)+'"]').addClass('ui-state-highlight');
 		cal.find('a:not([href])')['ui-clickable']();
 		cal.find('a.go').removeClass('ui-state-default') // ui-datepicker has its own styling
-			.each(function(){ this.title = $(this).text() }); // when we use image replacement for the prev/next buttons, leave the text as a tooltip title
+			.each(function(){ this.title = $(this).text().trim() }); // when we use image replacement for the prev/next buttons, leave the text as a tooltip title
 		// allow for using either the jQuery UI icons or the FontAwesome icon font
 		cal.find('a.ui-datepicker-prev').children().addClass('ui-icon ui-icon-circle-triangle-w fa fa-chevron-circle-left');
 		cal.find('a.ui-datepicker-next').children().addClass('ui-icon ui-icon-circle-triangle-e fa fa-chevron-circle-right');
-		cal.css('direction', this._l10n.isRTL ? 'rtl' : 'ltr');
 		cal.find('a.commit').filter(this._excludefilter).
 		  removeClass('commit')['ui-unclickable']().addClass('ui-state-disabled');
 		if (this.options.changeMonth){
@@ -386,11 +386,9 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		].join('\n');
 	},
 	_generateGoButton: function(which, cal){
-		// unfortunately, datepicker uses prev/next for classes that really mean left/right
-		var rtlClass = 'ui-datepicker-'+which;
-		if (this._l10n.isRTL) rtlClass = rtlClass.replace('next', '.').replace('prev', 'next').replace('.', 'prev');
+		var whichClass = 'ui-datepicker-'+which;
 		return [
-			'<a class="go '+rtlClass+' ui-corner-all" rel='+formatISO(cal[which])+' >',
+			'<a class="go '+whichClass+' ui-corner-all" rel='+formatISO(cal[which])+' >',
 			'	<span>'+
 				'<span>'+this._generateGoText(which, cal)+'</span>'+ // internal span for icon replacement
 				'</span>',

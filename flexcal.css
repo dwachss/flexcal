@@ -90,3 +90,22 @@ button.fa:before {
 .ui-flexcal .ui-state-hover {
 	cursor: pointer;
 }
+/* for rtl calendars, have to reverse the prev/next buttons */
+.ui-flexcal [dir=rtl]  .ui-datepicker-next {
+	left: 2px;
+	right: auto;
+	transform: scaleX(-1);
+}
+.ui-flexcal [dir=rtl]  .ui-datepicker-prev {
+	right: 2px;
+	left: auto;
+	transform: scaleX(-1);
+}
+.ui-flexcal [dir=rtl] .go.ui-state-hover.ui-datepicker-prev {
+	right: 1px;
+	left: auto;
+}
+.ui-flexcal [dir=rtl] .go.ui-state-hover.ui-datepicker-next {
+	left: 1px;
+	right: auto;
+}
