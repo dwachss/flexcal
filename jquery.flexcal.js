@@ -656,10 +656,6 @@ $.bililite.flexcal.calendars = {
 };
 
 // need to add to the default after all this is defined
-$.extend($.bililite.flexcal.prototype, {
-	_l10n: tol10n(),
-	_firstL10n: tol10n()
-});
 $.extend(
 	$.bililite.flexcal.prototype.options.l10n,
 	$.datepicker.regional[''], // use the jQuery UI defaults where possible
@@ -672,6 +668,10 @@ $.extend(
 		todayText: 'Today'
 	}
 );
+$.extend($.bililite.flexcal.prototype, {
+	_l10n: tol10n(),
+	_firstL10n: tol10n()
+});
 
 function archaicNumbers(arr){
 	// arr is assumed to be ordered in the order desired for formatting
@@ -1026,8 +1026,8 @@ $.bililite.flexcal.localize = function (text, l10n){
 };
 
 $.bililite.flexcal.parse = function (s, format, l10n){
-	// I want to accept as many inputs as possible; we just look for 3 numbers in the right order
-	// the l10n is for possible extension
+	// I want to accept as many inputs as possible; we just look for 3 numbers in the right order.
+	// The l10n argument is for possible extension
 	var ymd = format. // determine the order of year-month-day
 		replace(/[^ymd]/g,'').
 		replace(/y+/g,'y').
