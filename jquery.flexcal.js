@@ -501,6 +501,7 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			var table = this._newCalendar.find('table');
 			var size = {width: table.trueWidth(), height: table.trueHeight() };
 			this._newCalendar.css(size);
+			this._box().css(size);
 			this._transition(size, animate);
 		}
 	},
@@ -562,7 +563,8 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 		this._makeCurrentCalendar(this.options.tab);
 	},
 	_transition: function(size, animate){
-		var first = this._oldCalendar, second = this._newCalendar, self = this;
+		var first = this._oldCalendar, second = this._newCalendar, container = second.closest('.ui-flexcal-container');
+		var self = this;
 		function nextSlide(){
 			self._oldCalendar = second;
 			self._newCalendar = first;
@@ -577,9 +579,16 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			nextSlide();
 		}else{
 			first.add(second).stop (true, true); // make sure that the new calendar is available to show
-			self.options.transition.call(self.element, first, second, self._rev);
+			this.options.transition.call(this.element, first, second, this._rev);
 			nextSlide();
-			if (self.options.reposition) self.position(); // adjust position for new size
+			if (this.options.reposition){
+				// deal with Issue #8: the transition means position is called too early
+				if (container.css('transitionDuration') == '0s'){
+					this.position(); // adjust position for new size
+				}else{
+					container.on('transitionend', this.position.bind(this));
+				}
+			}
 		}
 	}
 });

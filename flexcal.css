@@ -22,7 +22,7 @@ button.fa:before {
 	position: relative;
 	overflow: hidden;
 	transition-property: height, width; /* resize gradually */
-	transition-duration: 0.4s;
+	transition-duration: 0.2s;
 }
 .ui-flexcal-pane {
 	position: absolute;
