@@ -1,6 +1,6 @@
 QUnit.test( "parse", function( assert ) {
-	var p = $.bililite.flexcal.parse;
-	var l = $.bililite.flexcal.tol10n();
+	var p = $.bililite.parse;
+	var l = $.bililite.tol10n();
 	var d = new Date(2015,1,12);
 	assert.equal(p('2/12/2015', 'm/d/yyyy', l).getTime(), d.getTime(), "parse 'm/d/yyyy'" );
 	assert.equal(p('02/12/2015', 'm/d/yyyy', l).getTime(), d.getTime(), "parse 'm/d/yyyy' liberally" );
@@ -9,28 +9,12 @@ QUnit.test( "parse", function( assert ) {
 });
 
 QUnit.test( "format", function( assert ) {
-	var f = $.bililite.flexcal.format;
-	var l = $.bililite.flexcal.tol10n();
+	var f = $.bililite.format;
+	var l = $.bililite.tol10n();
 	var d = new Date(2015,1,12);
 	assert.equal(f(d,  'm/d/yyyy', l), '2/12/2015', "format 'm/d/yyyy'" );
 	assert.equal(f(d, 'dd.mm.yyyy', l), '12.02.2015', "format 'dd.mm.yyyy'" );
 	assert.equal(f(d, 'd MM YYYY', l), '12 MM YYYY', "format 'd MM YYYY' fails with simple formatting" );
-});
-
-// from the flexcal code. Not DRY
-function ISOdate(d) { return d.toISOString().slice(0,10) } 
-QUnit.test( "datepicker", function( assert ) {
-	var fixture = $( "#qunit-fixture" );
-	var target = $('<input>').appendTo(fixture);
-	target.flexcal();
-	target.val('2/12/2015');
-	target.flexcal('show'); 
-	var d = new Date(2015,1,12);
-	var current = target.flexcal('option', 'current');
-	assert.equal(ISOdate(current), ISOdate(d), 'current set');
-	d = new Date(2015,2,13);
-	target.flexcal('commit', d);
-	assert.equal(target.val(), '03/13/2015', 'commit');
 });
 
 QUnit.test('archaicNumbers', function (assert){
@@ -49,11 +33,12 @@ QUnit.test('archaicNumbers', function (assert){
 		[4, 'IV'], 
 		[1, 'I'] 
 	];
-	var convertToRoman = $.bililite.flexcal.archaicNumbers(roman);
+	var convertToRoman = $.bililite.archaicNumbers(roman);
 	assert.equal(convertToRoman.format(2015), 'MMXV');
 	assert.equal(convertToRoman.parse('MMXV'), 2015);
 	assert.equal(convertToRoman.format(409), 'CDIX');
 	assert.equal(convertToRoman.parse('CDIX'), 409);
+	assert.equal(convertToRoman.parse('CDIX ', undefined));
 	var hebrew = [
 		[1000,''], // over 1000 is ignored
 		[400,'ת'],
@@ -83,7 +68,25 @@ QUnit.test('archaicNumbers', function (assert){
 		[/([א-ת])([א-ת])$/, '$1״$2'], // gershayim
 		[/^([א-ת])$/, "$1׳"] // geresh
 	];
-	var convertToHebrew = $.bililite.flexcal.archaicNumbers(hebrew);
+	var convertToHebrew = $.bililite.archaicNumbers(hebrew);
+	convertToHebrew.parse = (function (orig){ // monkey patch idiom
+		return function (s){
+			// simple hack for 3-digit years. We assume we don't really want early dates
+			var ret = orig(s);
+			if (ret < 1000) ret += 5000;
+			return ret;
+		}
+	})(convertToHebrew.parse);
 	assert.equal(convertToHebrew.format(5775), 'תשע״ה');
-	assert.equal(convertToHebrew.parse('תשע״ה'), 775);
+	assert.equal(convertToHebrew.parse('תשע״ה'), 5775);
+	assert.equal(convertToHebrew.parse('תשע״ה '), undefined);
+});
+
+QUnit.test('woodsCalendar', function (assert){
+	var p = $.bililite.parse;
+	var f = $.bililite.format;
+	var l = $.bililite.tol10n('ar-islamic');
+	var d = new Date(2015,1,12);
+	assert.equal(p('04/22/1436', 'm/d/yyyy', l).getTime(), d.getTime(), "parse 'm/d/yyyy' liberally" );
+	assert.equal(f(d, 'dd.mm.yyyy', l), '22.04.1436', "format 'dd.mm.yyyy'" );	
 });

@@ -1,111 +1,30 @@
 /* allow using an icon font instead of the images from jQuery UI */
 @import url("http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
-.fontawesome .ui-icon{
-	background-image:none !important;
-	text-indent: 0 !important;
-	margin-top: -0.5em !important;
-}
-.fontawesome .ui-icon span {
-	text-indent: -99999px; /* move text for icon replacement */
-}
-button.fa:before {
-	font-family: FontAwesome !important;
-}
-.fa-text:before {
-	padding: 0 0.2em; /* some space around the icon */
-}
-.ui-flexcal {
+
+
+.flexcalpage.ui-datepicker {
+	display: inline-block; /* the datepicker css starts out display: none */
 	z-index: 0; /* establish a stacking context */
-	padding: 0.2em !important;
+	padding: 0.2em;
+	width: auto;
 }
-.ui-flexcal-container {
-	position: relative;
-	overflow: hidden;
-	transition-property: height, width; /* resize gradually */
-	transition-duration: 0.4s;
+
+.flexcalpage table {
+	border: none;
+	position: relative; /* for accurate width measurements */
 }
-.ui-flexcal-pane {
-	position: absolute;
-	left: 0em; /* IE seems to require this, as its left: auto centers it */
-}
-.ui-flexcal .ui-tabs-nav {
-	margin-bottom: 0.2em !important;
-}
-.ui-flexcal .ui-tabs-nav li a {
-	padding: 0.1em 1em !important; /* tabs should be smaller */
-}
-.ui-flexcal .ui-tabs-selected a:hover { /* any other stylesheet that styles a's needs to be overridden */
-	border: none !important;
-	color: inherit !important;
-}
-.ui-flexcal table {
-	width: auto !important;
-	table-layout: fixed;
-	position: absolute; /* for accurate width measurements */
-	left: 0;
-}
-.ui-flexcal th {
-	padding: 0.1em 0.3em !important;
+
+.flexcalpage th {
+	padding: 0.1em 0.3em;
 	box-sizing: border-box; /* makes calculating widths easier */
 }
-.ui-flexcal th span {
+.flexcalpage th span {
 	display: inline-block;
 	min-width: 1.8em; /* td's themselves do not respect widths */
 }
-.ui-flexcal {
-	width: auto !important;
-	display: block !important; /* the 1.9 UI has a display: none; we don't want that */
-}
-.ui-flexcal td a.ui-state-disabled {
-	border: 1px solid transparent; /* to keep the boxes the same size as the active ones */
-}
-.ui-flexcal caption.ui-datepicker-header {
-	line-height: 1.52em; /* to align with the prev/next buttons */
-}
-.ui-flexcal .ui-datepicker-buttonpane {
-	margin: 0.2em 0 0 0 !important;
-	padding: 0.2em 0 0 ! important;
-}
-.ui-flexcal .ui-datepicker-buttonpane:empty {
-	margin: 0;
-	border: none;
-}
-.ui-flexcal .ui-datepicker-buttonpane button {
-	margin: 0 0.1em;
-	line-height: 1;
-}
-.ui-flexcal .go {
-	z-index: 1;
-	font-size: 0.90em;
-}
-.ui-flexcal .go.ui-state-hover {
-	top: 1px;
-}
-.ui-flexcal .go.ui-state-hover.ui-datepicker-prev {
-	left: 1px;
-}
-.ui-flexcal .go.ui-state-hover.ui-datepicker-next {
-	right: 1px;
-}
-.ui-flexcal .ui-state-hover {
+.flexcalpage .go , .flexcalpage .commit {
 	cursor: pointer;
 }
-/* for rtl calendars, have to reverse the prev/next buttons */
-.ui-flexcal [dir=rtl]  .ui-datepicker-next {
-	left: 2px;
-	right: auto;
-	transform: scaleX(-1);
-}
-.ui-flexcal [dir=rtl]  .ui-datepicker-prev {
-	right: 2px;
-	left: auto;
-	transform: scaleX(-1);
-}
-.ui-flexcal [dir=rtl] .go.ui-state-hover.ui-datepicker-prev {
-	right: 1px;
-	left: auto;
-}
-.ui-flexcal [dir=rtl] .go.ui-state-hover.ui-datepicker-next {
-	left: 1px;
-	right: auto;
+.flexcalpage .hidden {
+	visibility: hidden;
 }
