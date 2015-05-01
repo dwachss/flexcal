@@ -501,7 +501,14 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			var table = this._newCalendar.find('table');
 			var size = {width: table.trueWidth(), height: table.trueHeight() };
 			this._newCalendar.css(size);
-			this._box().css(size);
+			// deal with Issue #8: the transition means position is called too early and the box has the wrong size. Set it manually.
+			var container = this._box().find('.ui-flexcal'), buttonpane = this._box().find('ui-datepicker-buttonpane');
+			this._box().css({
+				// add the extra border/padding around the container
+				width: size.width+container.outerWidth(true)-container.width(),
+				// odd bug: the outerHeight does not seem to include the padding. This is an empirical solution
+				height: size.height+container.outerHeight(true)+container.innerHeight()-2*container.height() 
+			});
 			this._transition(size, animate);
 		}
 	},
@@ -581,14 +588,7 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			first.add(second).stop (true, true); // make sure that the new calendar is available to show
 			this.options.transition.call(this.element, first, second, this._rev);
 			nextSlide();
-			if (this.options.reposition){
-				// deal with Issue #8: the transition means position is called too early
-				if (container.css('transitionDuration') == '0s'){
-					this.position(); // adjust position for new size
-				}else{
-					container.on('transitionend', this.position.bind(this));
-				}
-			}
+			if (this.options.reposition) this.position();
 		}
 	}
 });

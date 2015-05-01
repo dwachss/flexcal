@@ -34,7 +34,7 @@
 			this._position = $.extend({
 				of: this.element, // the input element that flexcal was called on
 				collision: 'none',
-				using: function(to) { $(this).stop(true, false).animate(to) } // animate the repositioning	
+				using: function(to) { $(this).stop(true, false).animate(to, 200) } // animate the repositioning	
 			}, this.options.position.my ? this.options.position : position[this.options.position]);
 			// turn the duration into an array to be used with Function.apply
 			this._duration = $.isArray(this.options.duration) ? this.options.duration : [this.options.duration];
