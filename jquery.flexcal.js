@@ -138,8 +138,12 @@ bililite.l10n = {
 
 // create a localization object from a description.
 function tol10n (name){
-	return $.extend({}, bililite.l10n[''], partialL10n(name));
-};
+	var l10n = $.extend({}, bililite.l10n[''], partialL10n(name));
+	// jQuery UI standards say don't include the little arrows, but many localizations don't obey this
+	l10n.nextText = l10n.nextText.replace (/&#x3e;|>/gi,'');
+	l10n.prevText = l10n.prevText.replace (/&#x3c;|</gi,'');
+	return l10n;
+}
 bililite.tol10n = tol10n;
 
 function partialL10n (name){
@@ -218,7 +222,14 @@ $.widget ('bililite.flexcalpage', {
 			'td a': 'ui-state-default',
 			'td:not(.ui-datepicker-other-month) a': 'commit',
 			'td.ui-datepicker-other-month > *': 'ui-priority-secondary',
-			'.ui-datepicker-other-month a': 'hidden'
+			'.ui-datepicker-other-month a': 'hidden',
+			'caption': "ui-datepicker-header ui-widget-header ui-corner-all",
+			'nav': 'ui-widget-header',
+			'.ui-datepicker-next, .ui-datepicker-prev': 'go',
+			'button.ui-datepicker-next, button.ui-datepicker-prev': 'ui-corner-all',
+			'.ui-datepicker-next > span': 'ui-icon ui-icon-circle-triangle-e fa fa-chevron-circle-right',
+			'.ui-datepicker-prev > span': 'ui-icon ui-icon-circle-triangle-w fa fa-chevron-circle-left',
+			'thead': 'ui-widget-content'
 		},
 		switchPage: function (d){ this._setOption('current', d); }
 	},
@@ -238,12 +249,20 @@ $.widget ('bililite.flexcalpage', {
 		if (this.isDateShowing(d)){
 			this._setOption('current', d);
 		}else{
-			this._trigger ('beforeswitchPage', event, d);
+			this._trigger ('beforeswitchPage', null, d);
 			this.options.switchPage.call(this, d);
 		}
 	},		
 	isDateShowing: function (d){
 		return this._elementForDate(d).closest('td').is(':not(.ui-datepicker-other-month)');
+	},
+	isValidDate: function (d, filter){
+		if (isNaN(d.getTime())) return false;
+		return !filter || filter(d);
+	},
+	localize: function (text, l10n){
+		l10n = l10n || this._l10n;
+		return $.bililite.localize(text, l10n);
 	},
 	parse: function (d, format, l10n){
 		if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return parseISO(d); // always allow ISO date strings
@@ -261,6 +280,7 @@ $.widget ('bililite.flexcalpage', {
 		return d;
 	},
 	// protected members
+	_id: 0, // unique id for ARIA (which stupidly uses id's rather than selectors. So 1994)
 	_l10n: tol10n(),
 	// protected methods
 	_addHandlers: function(){
@@ -269,6 +289,7 @@ $.widget ('bililite.flexcalpage', {
 		this._on({
 			'click .commit': function (event){
 				this._setOption('value', this._dateForElement(event.currentTarget));
+				this.go(this._dateForElement(event.currentTarget));
 			},
 			'click .go': function (event){
 				this.go(this._dateForElement(event.currentTarget));
@@ -286,7 +307,7 @@ $.widget ('bililite.flexcalpage', {
 				}).bind(this);
 				if (!event.ctrlKey && !event.altKey) switch (event.keyCode){
 					case $.ui.keyCode.ENTER:
-					case $.ui.keyCode.SPACE:this._setOption('value', this.options.current); return false;
+					case $.ui.keyCode.SPACE: this._setOption('value', this.options.current); return false;
 					case $.ui.keyCode.RIGHT: return offsetDate(dir);
 					case $.ui.keyCode.LEFT: return offsetDate(-dir);
 					case $.ui.keyCode.UP: return offsetDate(-this._l10n.dayNamesMin.length);
@@ -299,7 +320,19 @@ $.widget ('bililite.flexcalpage', {
 				if (event.altKey) switch (event.keyCode){
 					case $.ui.keyCode.PAGE_UP: return calendarDate('prevYear');
 					case $.ui.keyCode.PAGE_DOWN: return calendarDate('nextYear');
+					case $.ui.keyCode.HOME: this._setOption('current', new Date); return false;
+					case $.ui.keyCode.ENTER: this._setOption('current', this.options.value); return false;
 				}
+			},
+			wheel: function(event){
+				event.preventDefault();
+				event = event.originalEvent; // jQuery doesn't automatically copy these over
+				if (event.deltaY > 0){ // scroll down
+					this.element.trigger({type: 'keydown', keyCode: $.ui.keyCode.PAGE_DOWN, altKey: event.altKey}); // next month/year
+				}else if (event.deltaY < 0){ // scroll up
+					this.element.trigger({type: 'keydown', keyCode: $.ui.keyCode.PAGE_UP, altKey: event.altKey});  // prev month/year
+				}
+
 			}
 		});
 	},
@@ -309,15 +342,20 @@ $.widget ('bililite.flexcalpage', {
 		$.each(this.options.otherClasses, function (selector, classes){
 			$(selector, self.element).addClass(classes);
 		});
+		$('a', this.element).filter(function(){
+			return !self.isValidDate(self._dateForElement(this), self.options.filter);
+		}).removeClass('go commit').addClass('ui-state-disabled');
 		// the following are the states from jQuery UI datepicker
 		$('a', this.element).removeClass ('ui-state-highlight ui-state-focus ui-state-active');
 		this._elementForDate(new Date).addClass('ui-state-highlight');
 		this._elementForDate(this.options.current).addClass('ui-state-focus');
 		this._elementForDate(this.options.value).addClass('ui-state-active');
 		this._hoverable ($('.go, .commit', this.element));
+		$('#'+this._id+'-focus', this.element).removeAttr('id'); // ARIA
+		$('.ui-state-focus', this.element).attr('id', this._id+'-focus');
 	},
-	_dateForElement(e){
-		return this.parse($(e).attr('aria-label'));
+	_dateForElement: function(e){
+		return this.parse(e.getAttribute('aria-label'));
 	},
 	_destroy: function(){
 		this.element.removeAttr('dir').removeClass('flexcalpage').empty();
@@ -326,6 +364,13 @@ $.widget ('bililite.flexcalpage', {
 		return $('td a[aria-label='+formatISO(d)+']', context || this.element);
 	},
 	_init: function (){
+		this._id = this.element.attr('id') || this.widgetName+this.constructor.prototype._id++;
+		this.element.attr({
+			id: this._id,
+			'aria-activedescendant': this._id+'-focus',
+			'aria-labelledby': this._id+'-caption',
+			role: 'application' // indicates that this is not text to be read
+		});
 		this._setL10n(this.options.l10n);
 		this.options.value = this.parse(this.options.value);
 		if (isNaN(this.options.value.getDate())) this.options.value = new Date;
@@ -383,7 +428,7 @@ $.widget ('bililite.flexcalpage', {
 	},
 	_generateCaption: function (cal, d){
 		return $('<caption>').
-			addClass("ui-datepicker-header ui-widget-header ui-corner-all").
+			attr({id: this._id+'-caption'}).
 			append (this._generateCaptionText(cal, d));
 	},
 	_generateCaptionText: function(cal, d){
@@ -394,29 +439,43 @@ $.widget ('bililite.flexcalpage', {
 		return $('<td>').append($('<a>').
 			attr('aria-label', dstring).
 			attr('title', dstring).
-			text(this._generateDateText(cal, d, i))
+			html(this._generateDateText(cal, d, i))
 		);
 	},
 	_generateDateText: function(cal, d, i){
 		return this._l10n.dates(i);
+	},
+	_generateGoButton: function(which, cal, d){
+		var text = this._generateGoText(which, cal, d);
+		return $('<button>').
+			addClass('ui-datepicker-'+which).
+			attr('aria-label', formatISO(cal[which])).
+			attr('tabindex', -1). // keyboard accessibility is via pgUp etc., not tabbing
+			attr('title', text).	
+			append($('<span>').html('<span>'+text+'</span>')); // internal span for icon replacement
+	},
+	_generateGoText: function(which, cal, d){
+		return this.localize(which, this._l10n);
+	},
+	_generateNav: function (cal, d){
+		return $('<nav>').append([
+			this._generateGoButton('prev', cal, d),
+			this._generateGoButton('next', cal, d)
+		]);;
+	},
+	_generateOtherDate: function(cal, d, i){
+		// TODO: allow for other month dates
+		return this._generateDate(cal,d,i).addClass('ui-datepicker-other-month');
 	},
 	_generateWeekHeader: function (cal, d){
 		var dayNames = this._listDaysOfWeek (cal.first, cal.dow);
 		// short "months" are only present in calendars that add days that are not part of the week (see the French Revolutionary calendar)
 		var hideWeekHeader = (cal.last - cal.first)/oneDay < dayNames.length;
 		var header = $('<thead>').append(dayNames.map (function(day){
-			return $('<th>').append($('<span>').text(day));
+			return $('<th>').append($('<span>').html(day));
 		}));
 		if (hideWeekHeader) header.css({visibility: 'hidden', lineHeight: 0});
 		return header;
-	},
-	_generateNav: function (cal, d){
-		// TODO: next/prev buttons
-		return $('<nav>');
-	},
-	_generateOtherDate: function(cal, d, i){
-		// TODO: allow for other month dates
-		return this._generateDate(cal,d,i).addClass('ui-datepicker-other-month');
 	},
 	_listDaysOfWeek: function (d, dow){
 		// returns an array of days of the week, starting at the localized first day of the week
@@ -433,7 +492,8 @@ $.widget ('bililite.flexcalpage', {
 	_setOption: function(key, value) {
 		if (key == 'value' || key == 'current'){
 			value = this.parse(value);
-			if (isNaN(value.getDate())) return; // reject invalid dates
+			// we can go (set current) to any date, but commit (set value) to valid ones
+			if (!this.isValidDate(value, key == 'value' ? this.options.filter : null)) return;
 		}
 		this._super.apply(this, [key, value]);
 		if (key == 'l10n'){
@@ -450,6 +510,12 @@ $.widget ('bililite.flexcalpage', {
 			this._trigger('go', null, this.options.current);
 		}
 	}
+});
+
+$.widget('bililite.flexcalendar', {
+	options: $.extend($.bililite.flexcalpage.prototype.options, {
+		calendars: ['en']
+	}),
 });
 
 })(jQuery, jQuery.bililite);

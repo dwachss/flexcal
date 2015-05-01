@@ -1,24 +1,67 @@
-/* allow using an icon font instead of the images from jQuery UI */
-@import url("http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
-
-
 .flexcalpage.ui-datepicker {
 	display: inline-block; /* the datepicker css starts out display: none */
 	z-index: 0; /* establish a stacking context */
 	padding: 0.2em;
 	width: auto;
+	position: relative;
 }
-
+.flexcalpage:focus {
+	box-shadow: 0 0 5px grey;
+	outline: none;
+}
+.flexcalpage:focus .ui-state-focus {
+	box-shadow: 0 0 2px grey; /* needs more contrasty indicator */
+}
+.flexcalpage nav {
+	border: none;
+}
+.flexcalpage nav button {
+	z-index: 1; /* make sure it's visible */
+	margin: 0; /* remove default styling; let jQuery UI take care of it */
+	padding: 0;
+	border: none;
+	background: transparent;
+	font-family: inherit;
+	color: inherit;
+	font-size: 0.8em; /* make it fit */
+	top: 4px !important; /* need the specificity to be less than jQuery UI for the hover class, but this has to override */
+}
+.flexcalpage nav button::-moz-focus-inner {
+	/* silly firefox */
+	padding: 0;
+	border: 0;
+}
+/* for rtl calendars, have to reverse the prev/next buttons */
+.flexcalpage[dir=rtl]  .ui-datepicker-next {
+	left: 2px;
+	right: auto;
+	transform: scaleX(-1);
+}
+.flexcalpage[dir=rtl]  .ui-datepicker-prev {
+	right: 2px;
+	left: auto;
+	transform: scaleX(-1);
+}
+.flexcalpage[dir=rtl] .ui-state-hover.ui-datepicker-prev {
+	right: 2px;
+	left: auto;
+}
+.flexcalpage[dir=rtl] .ui-state-hover.ui-datepicker-next {
+	left: 2px;
+	right: auto;
+}
 .flexcalpage table {
 	border: none;
 	position: relative; /* for accurate width measurements */
 }
-
-.flexcalpage th {
-	padding: 0.1em 0.3em;
+.flexcalpage thead {
+	border: none;
+}
+.flexcalpage thead th {
+	padding: 0.2em 0.3em;
 	box-sizing: border-box; /* makes calculating widths easier */
 }
-.flexcalpage th span {
+.flexcalpage thead th span {
 	display: inline-block;
 	min-width: 1.8em; /* td's themselves do not respect widths */
 }
@@ -27,4 +70,18 @@
 }
 .flexcalpage .hidden {
 	visibility: hidden;
+}
+.fontawesome .ui-icon{
+	background-image:none !important;
+	text-indent: 0 !important;
+	margin-top: -0.5em !important;
+}
+.fontawesome .ui-icon span {
+	text-indent: -99999px; /* move text for icon replacement */
+}
+button.fa:before {
+	font-family: FontAwesome !important;
+}
+.fa-text:before {
+	padding: 0 0.2em; /* some space around the icon */
 }
