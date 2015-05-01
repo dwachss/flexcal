@@ -1,17 +1,25 @@
+This branch is a rewrite of flexcal to more completely use jQuery UI version 11.
+
 A jQuery UI datepicker widget that allows for multiple calendars and calendar systems.
 Documentation at http://github.bililite.com/flexcal .
 
 jquery.flexcal.js is the main file; it requires the flexcal.css file for styling.
 
-It depends on my textpopup plugin, jquery.textpopup.js, documented at http://bililite.com/blog/2009/01/02/new-ui-widgets-textpopup-and-hebrewkeyboard/ .
+There are various extensions:
 
 jquery.flexcal.format.js extends jquery.flexcal.js to add more formatting options. Documentation at http://github.bililite.com/flexcal/format.html .
 
+jquery.flexcal.jewish.js adds a Jewish calendar localization, in English and Hebrew. Note that the Unicode CLDR localization data ( https://github.com/unicode-cldr/cldr-cal-hebrew-full ) calls this the "hebrew" calendar, but that is wrong (Hebrew is the language).
+
+jquery.flexcal.woodsCalendar.js adds a bridge to use Keith Wood's excellent calendar plugin ( http://keith-wood.name/calendars.html )to implement many different calendars and localizations.
+
+jquery.timepickr.js is a time picker widget (documentation at http://github.bililite.com/flexcal/timepickr.html )
+
+The other files are not terribly useful:
 jquery.ui.subclass.js is my extension of the jQuery widget framework, documentation at http://github.bililite.com/extending-widgets.html that originally was needed for flexcal and is still included in this project.
+
+jquery.textpopup.js was the framework for a popup widget that I originally used, but now I use jQuery UI dialog. The original is documented at http://bililite.com/blog/2009/01/02/new-ui-widgets-textpopup-and-hebrewkeyboard/ .
 
  jquery.hebrewKeyboard.js is a popup Hebrew keyboard that uses much of the same framework, documented at http://bililite.com/blog/2009/01/02/new-ui-widgets-textpopup-and-hebrewkeyboard/ . Though honestly, if you need a foreign-language virtual keyboard, look at Ilya Lebedev's JavaScript VirtualKeyboard (http://www.allanguages.info/#layouts= ) or my jQuery plugin that uses it, jsvk ( https://github.com/dwachss/bililiteRange/blob/master/jquery.jsvk.js ) and the bililiteRange library ( https://github.com/dwachss/bililiteRange ).
 
 
-jquery.timepickr.js is a time picker widget (documentation at http://github.bililite.com/flexcal/timepickr.html )
-
-jquery.calendars.picker-mock.js is a stub that allows localization using Keith Woods's calendar systems (http://keith-wood.name/calendarsRef.html ) without loading his whole datepicker. See http://github.bililite.com/flexcal/l10n.html for details.
