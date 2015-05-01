@@ -501,6 +501,9 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			var table = this._newCalendar.find('table');
 			var size = {width: table.trueWidth(), height: table.trueHeight() };
 			this._newCalendar.css(size);
+			this._box().find('.ui-datepicker-buttonpane').css('width', size.width);
+			this._box().find('.ui-flexcal-container').css('height'); // odd bug in Chrome: if I don't check the height, the next line doesn't transition, just runs
+			this._box().find('.ui-flexcal-container').css(size);
 			this._transition(size, animate);
 		}
 	},
@@ -568,9 +571,6 @@ $.widget('bililite.flexcal', $.bililite.textpopup, {
 			self._oldCalendar = second;
 			self._newCalendar = first;
 		}
-		this._box().find('.ui-datepicker-buttonpane').css('width', size.width);
-		this._box().find('.ui-flexcal-container').css('height'); // odd bug in Chrome: if I don't check the height, the next line doesn't transition, just runs
-		this._box().find('.ui-flexcal-container').css(size);
 		if (!animate || this._box().is(':hidden')){
 			// if box is hidden, then we don't need to animate anything
 			first.hide();
