@@ -213,13 +213,13 @@ $.extend (true, $.bililite.flexcal.l10n, {
 
 // fancier text generators
 $.extend($.bililite.flexcal.prototype,{
-	_generateCaptionText (d, cal){
+	_generateCaptionText: function(d, cal){
 		return this.format(d, this._l10n.captionText, this._l10n);
 	},
 	_generateDateText: function (d, i){
 		return this.format(d, this._l10n.dateText, this._l10n);
 	},
-	_generateGoText(which, cal){
+	_generateGoText: function(which, cal){
 		var text = this._l10n[which+'ButtonText'];
 		return this.format(cal[which], text, this._l10n);
 	},
