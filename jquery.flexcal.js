@@ -514,8 +514,30 @@ $.widget ('bililite.flexcalpage', {
 
 $.widget('bililite.flexcalendar', {
 	options: $.extend($.bililite.flexcalpage.prototype.options, {
-		calendars: ['en']
+		calendars: ['en'],
+		transition: function (from, to, isRTL){
+			from.hide();
+			to.show();
+		}
 	}),
+	// public methods
+	// protected members
+	_pageOne: null, // pages for animating the transition
+	_pageTwo: null,
+	// protected methods
+	_init: function(){
+		var self = this;
+		this._pageOne = this.element.find('flexcal-page')[0]; // or should we create it?
+		this._pageTwo = this.element.find('flexcal-page')[1];
+		var opts = $.extend({
+			l10n: this.options.calendars[0],
+			switchPage: function (d){
+				self._pageTwo.flexcal(options).flexcal('option', 'current', d);
+				self.transition.call(self, self._pageOne, self._pageTwo); // TODO: how to get isRTL?
+			}
+		}, this.options);
+		this._pageOne.flexcal(options);
+	}	
 });
 
 })(jQuery, jQuery.bililite);
