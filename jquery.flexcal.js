@@ -35,13 +35,35 @@ function makeVisible (callback){
 		if (arguments.length < 2) parent = elem;
 		if (!elem) return undefined;
 		if (!parent || !parent.style) return callback.call(this);
-		return $.swap(
+		return swap(
 			parent,
 			{display:'inline-block'}, // make it visible but shrink to contents
 			swapper.bind(this, elem, parent.parentNode)			
 		);
 	};
 }
+
+function swap ( elem, options, callback ) {
+	// copied from jQuery source code
+	var ret, name,
+		old = {};
+
+	// Remember the old values, and insert the new ones
+	for ( name in options ) {
+		old[ name ] = elem.style[ name ];
+		elem.style[ name ] = options[ name ];
+	}
+
+	ret = callback.call( elem );
+
+	// Revert the old values
+	for ( name in options ) {
+		elem.style[ name ] = old[ name ];
+	}
+
+	return ret;
+};
+
 
 $.fn.extend({
 	// add indicators that an element is active; UI doesn't use :hover, which probably makes sense for IE
